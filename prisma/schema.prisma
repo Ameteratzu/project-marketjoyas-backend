@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// This is your Prisma schema file, 
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -10,6 +8,308 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+//////////////////////////////
+///////////ENUMS//////////////
+//////////////////////////////
+
+enum Rol {
+  ADMIN
+  CLIENTE
+  VENDEDOR
+}
+
+enum EstadoPedido {
+  EMPAQUETADO
+  DESPACHO
+  ENVIO
+  ENTREGA
+}
+
+enum EstadoCotizacion {
+  PENDIENTE
+  APROBADA
+  PUBLICADA
+}
+
+enum Material {
+  PLATA
+  ORO
+  ORO_18K
+}
+
+enum Gema {
+  ZIRCONIA
+  DIAMANTE
+  ESMERALDA
+}
+
+enum Estilo {
+  NINOS
+  NINAS
+  HOMBRES
+  MUJERES
+}
+
+enum Ocasion {
+  GRADUACION
+  ANIVERSARIO
+  REGALO
+  BODA
+}
+
+
+//////////////////////////////
+///////////USUARIO///////////
+//////////////////////////////
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  email     String   @unique
+  telefono  String
+  contraseña  String
+  rol       Rol      @default(CLIENTE)
+  creadoEn  DateTime @default(now())
+
+  pedidos        Pedido[]           // 1:N → un usuario puede hacer muchos pedidos
+  favoritos      Favorito[]         // 1:N → un usuario puede marcar muchos productos como favoritos
+  carrito        CarritoProducto[]  // 1:N → un usuario puede tener muchos productos en el carrito
+  comparaciones  Comparacion[]      // 1:N → un usuario puede comparar varios productos
+  calificaciones Calificacion[]     // 1:N → un usuario puede calificar muchos productos
+  cotizaciones   Cotizacion[]       // 1:N → un usuario puede solicitar varias cotizaciones
+  vendedor       Vendedor?          // 1:1 opcional → un usuario puede ser vendedor (pero no es obligatorio)
+}
+
+//////////////////////////////
+///////////VENDEDOR///////////
+//////////////////////////////
+
+model Vendedor {
+  id             Int      @id @default(autoincrement())
+  usuario        Usuario  @relation(fields: [usuarioId], references: [id]) 
+  usuarioId      Int      @unique // 1:1 → un usuario solo puede ser un vendedor una vez
+  nombreTienda         String
+  direccionTienda      String
+  pais           String
+  ciudad         String
+  provincia         String
+  codigoPostal   String
+
+  productos            Producto[]            // 1:N → un vendedor puede tener muchos productos
+  cupones              Cupon[]               // 1:N → un vendedor puede crear muchos cupones
+  propuestaCotizacion  PropuestaCotizacion[] // 1:N → un vendedor puede responder a muchas cotizaciones
+}
+
+//////////////////////////////
+///////////CATEGORIA//////////
+//////////////////////////////
+
+model Categoria {
+  id        Int       @id @default(autoincrement())
+  nombre    String    @unique
+  productos Producto[] // 1:N → una categoría puede tener muchos productos
+}
+
+//////////////////////////////
+///////////PRODUCTO///////////
+//////////////////////////////
+
+model Producto {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  precio      Float
+  enStock     Int       @default(0)
+  creadoEn    DateTime  @default(now())
+
+  vendedor    Vendedor  @relation(fields: [vendedorId], references: [id]) // N:1 → un producto pertenece a un vendedor
+  vendedorId  Int
+
+  material    Material?
+  gema        Gema?
+  estilo      Estilo?
+  ocasion     Ocasion?
+
+  categoria   Categoria? @relation(fields: [categoriaId], references: [id]) // N:1 opcional → un producto puede pertenecer a una categoría
+  categoriaId Int?
+
+  cupones        Cupon[]            // 1:N → un producto puede tener varios cupones asignados
+  pedidos        PedidoProducto[]   // N:M → relación con Pedido a través de PedidoProducto
+  calificaciones Calificacion[]     // 1:N → un producto puede recibir muchas calificaciones
+  favoritos      Favorito[]         // N:M → relación con Usuario
+  carrito        CarritoProducto[]  // N:M → relación con Usuario
+  comparaciones  Comparacion[]      // N:M → relación con Usuario
+
+  ofertaGlobal   OfertaGlobal? @relation(fields: [ofertaGlobalId], references: [id]) // N:1 → un producto puede tener como máximo UNA oferta global activa
+  ofertaGlobalId Int?
+}
+
+//////////////////////////////
+///////////PEDIDO////////////
+//////////////////////////////
+
+model Pedido {
+  id               Int       @id @default(autoincrement())
+  usuario          Usuario   @relation(fields: [usuarioId], references: [id]) // N:1 → cada pedido pertenece a un usuario
+  usuarioId        Int
+  fecha            DateTime  @default(now())
+  estado           EstadoPedido @default(EMPAQUETADO)
+  codigoSeguimiento String   @unique
+  productos        PedidoProducto[] // N:M → relación con Producto
+}
+
+////////////////////////////////
+///////////PEDIDOPRODUCTO///////
+////////////////////////////////
+
+model PedidoProducto {
+  id          Int      @id @default(autoincrement())
+  pedido      Pedido   @relation(fields: [pedidoId], references: [id])  // N:1 → pertenece a un pedido
+  pedidoId    Int
+  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → pertenece a un producto
+  productoId  Int
+  cantidad    Int
+}
+
+////////////////////////////////
+///////////CALIFICACION/////////
+////////////////////////////////
+
+model Calificacion {
+  id          Int      @id @default(autoincrement())
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una calificación pertenece a un usuario
+  usuarioId   Int
+  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → una calificación pertenece a un producto
+  productoId  Int
+  estrellas   Int      
+  comentario  String?
+  fecha       DateTime @default(now())
+}
+
+////////////////////////////////
+///////////CUPON///////////////
+////////////////////////////////
+
+model Cupon {
+  id           Int      @id @default(autoincrement())
+  codigo       String   @unique
+  descuento    Float
+  vendedor     Vendedor @relation(fields: [vendedorId], references: [id]) // N:1 → un cupón pertenece a un vendedor
+  vendedorId   Int
+  producto     Producto? @relation(fields: [productoId], references: [id]) // N:1 opcional → un cupón puede aplicarse a un producto específico
+  productoId   Int?
+  validoHasta  DateTime
+}
+
+////////////////////////////////
+///////////COTIZACION///////////
+////////////////////////////////
+
+model Cotizacion {
+  id           Int      @id @default(autoincrement())
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una cotización pertenece a un usuario
+  usuarioId    Int
+  imagenUrl    String
+  estado       EstadoCotizacion @default(PENDIENTE)
+  propuestas   PropuestaCotizacion[] // 1:N → una cotización puede recibir muchas propuestas de vendedores
+}
+
+////////////////////////////////
+//////PROPUESTACOTIZACION///////
+//////////////////////////////
+
+model PropuestaCotizacion {
+  id           Int       @id @default(autoincrement())
+  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id]) // N:1 → pertenece a una cotización
+  cotizacionId Int
+  vendedor     Vendedor   @relation(fields: [vendedorId], references: [id])   // N:1 → pertenece a un vendedor
+  vendedorId   Int
+  precio       Float
+  descripcion  String?
+  fecha        DateTime @default(now())
+}
+
+////////////////////////////////
+///////////FAVORITO////////////
+////////////////////////////////
+
+model Favorito {
+  id          Int      @id @default(autoincrement())
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → un favorito pertenece a un usuario
+  usuarioId   Int
+  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → un favorito pertenece a un producto
+  productoId  Int
+}
+
+//////////////////////////////
+//////CARRITOPRODUCTO///////////
+////////////////////////////////
+
+model CarritoProducto {
+  id          Int      @id @default(autoincrement())
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → un ítem de carrito pertenece a un usuario
+  usuarioId   Int
+  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → un ítem de carrito pertenece a un producto
+  productoId  Int
+  cantidad    Int
+}
+
+////////////////////////////////
+//////////COMPARACION//////
+////////////////////////////////
+
+model Comparacion {
+  id          Int      @id @default(autoincrement())
+  usuario     Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una comparación pertenece a un usuario
+  usuarioId   Int
+  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → una comparación pertenece a un producto
+  productoId  Int
+}
+
+////////////////////////////////
+///////////OFERTAGLOBAL//////
+///////////////////////////////
+
+model OfertaGlobal {
+  id          Int       @id @default(autoincrement())
+  titulo      String
+  descripcion String?
+  descuento   Float
+  validoHasta DateTime
+
+  productos   Producto[] // 1:N → una oferta global puede aplicarse a varios productos
+}
+
+
+////////////////////////////
+/////// RESUMEN RELACIONES ///
+//////////////////////////////
+
+// Usuario - Vendedor → 1:1 opcional
+// Usuario - Pedido → 1:N
+// Usuario - Calificacion → 1:N
+// Usuario - Favorito → 1:N
+// Usuario - CarritoProducto → 1:N
+// Usuario - Comparacion → 1:N
+// Usuario - Cotizacion → 1:N
+
+// Vendedor - Producto → 1:N
+// Vendedor - Cupon → 1:N
+// Vendedor - PropuestaCotizacion → 1:N
+
+// Categoria - Producto → 1:N
+
+// Producto - Pedido → N:M (a través de PedidoProducto)
+// Producto - Calificacion → 1:N
+// Producto - Favorito → N:M
+// Producto - CarritoProducto → N:M
+// Producto - Comparacion → N:M
+// Producto - Cupon → 1:N (producto puede tener varios cupones)
+// Producto - OfertaGlobal → N:1 (un producto solo puede estar en UNA oferta global a la vez)
+// OfertaGlobal - Producto → 1:N (una oferta global aplica a muchos productos)
+
+// Cotizacion - PropuestaCotizacion → 1:N
