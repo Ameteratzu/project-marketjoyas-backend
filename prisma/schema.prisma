@@ -4,7 +4,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -20,6 +19,7 @@ enum Rol {
   ADMIN
   CLIENTE
   VENDEDOR
+  TRABAJADOR
 }
 
 enum EstadoPedido {
@@ -48,8 +48,8 @@ enum Gema {
 }
 
 enum Estilo {
-  NINOS
-  NINAS
+  NIÑOS
+  NIÑAS
   HOMBRES
   MUJERES
 }
@@ -63,46 +63,69 @@ enum Ocasion {
 
 
 //////////////////////////////
-///////////USUARIO///////////
+///////////USUARIO/////////// check
 //////////////////////////////
 
 model Usuario {
   id        Int      @id @default(autoincrement())
-  nombre    String
+  nombre_completo    String //incluye apellidos
+  username    String?   @unique // opcional para CLIENTE, requerido para VENDEDOR
   email     String   @unique
+  dni         String    @unique
   telefono  String
   contraseña  String
   rol       Rol      @default(CLIENTE)
   creadoEn  DateTime @default(now())
+
+  tiendaPropia Tienda?   @relation("DueñoTienda")     // solo si es VENDEDOR
+  trabajaEn    Tienda?   @relation("TrabajadoresTienda", fields: [tiendaId], references: [id]) // si es TRABAJADOR
+  tiendaId      Int?
 
   pedidos        Pedido[]           // 1:N → un usuario puede hacer muchos pedidos
   favoritos      Favorito[]         // 1:N → un usuario puede marcar muchos productos como favoritos
   carrito        CarritoProducto[]  // 1:N → un usuario puede tener muchos productos en el carrito
   comparaciones  Comparacion[]      // 1:N → un usuario puede comparar varios productos
   calificaciones Calificacion[]     // 1:N → un usuario puede calificar muchos productos
-  cotizaciones   Cotizacion[]       // 1:N → un usuario puede solicitar varias cotizaciones
-  vendedor       Vendedor?          // 1:1 opcional → un usuario puede ser vendedor (pero no es obligatorio)
+  cotizaciones   SolicitudCotizacion[]       // 1:N → un usuario puede solicitar varias cotizaciones
 }
 
 //////////////////////////////
-///////////VENDEDOR///////////
+///////////TIENDA///////////  check
 //////////////////////////////
 
-model Vendedor {
-  id             Int      @id @default(autoincrement())
-  usuario        Usuario  @relation(fields: [usuarioId], references: [id]) 
-  usuarioId      Int      @unique // 1:1 → un usuario solo puede ser un vendedor una vez
-  nombreTienda         String
-  direccionTienda      String
-  pais           String
-  ciudad         String
-  provincia         String
-  codigoPostal   String
+model Tienda {
+  id            Int       @id @default(autoincrement())
+  usuario        Usuario   @relation("DueñoTienda", fields: [usuarioId], references: [id])
+  usuarioId       Int       @unique
+  nombre        String
+  direccion     String
+  telefono      String
+  pais          String
+  ciudad        String
+  provincia     String
+  codigoPostal  String
 
-  productos            Producto[]            // 1:N → un vendedor puede tener muchos productos
-  cupones              Cupon[]               // 1:N → un vendedor puede crear muchos cupones
-  propuestaCotizacion  PropuestaCotizacion[] // 1:N → un vendedor puede responder a muchas cotizaciones
+  productos     Producto[]
+  cupones       Cupon[]
+  propuestas    PropuestaCotizacion[]
+  trabajadores  Usuario[] @relation("TrabajadoresTienda") // varios usuarios con rol TRABAJADOR
+  suscripcion   Suscripcion?
 }
+
+//////////////////////////////
+///////////SUSCRIPCION////////// check
+//////////////////////////////
+
+model Suscripcion {
+  id         Int      @id @default(autoincrement())
+  tienda     Tienda   @relation(fields: [tiendaId], references: [id])
+  tiendaId   Int      @unique
+  tipo       String   // mensual o anual
+  inicio     DateTime @default(now())
+  fin        DateTime
+  activa     Boolean  @default(true)
+}
+
 
 //////////////////////////////
 ///////////CATEGORIA//////////
@@ -126,8 +149,9 @@ model Producto {
   enStock     Int       @default(0)
   creadoEn    DateTime  @default(now())
 
-  vendedor    Vendedor  @relation(fields: [vendedorId], references: [id]) // N:1 → un producto pertenece a un vendedor
-  vendedorId  Int
+  imagen       String?   // URL o path de la imagen, opcional
+  tienda       Tienda    @relation(fields: [tiendaId], references: [id])
+  tiendaId     Int
 
   material    Material?
   gema        Gema?
@@ -149,7 +173,7 @@ model Producto {
 }
 
 //////////////////////////////
-///////////PEDIDO////////////
+///////////PEDIDO//////////// check
 //////////////////////////////
 
 model Pedido {
@@ -163,7 +187,7 @@ model Pedido {
 }
 
 ////////////////////////////////
-///////////PEDIDOPRODUCTO///////
+///////////PEDIDOPRODUCTO/////// check
 ////////////////////////////////
 
 model PedidoProducto {
@@ -176,7 +200,7 @@ model PedidoProducto {
 }
 
 ////////////////////////////////
-///////////CALIFICACION/////////
+///////////CALIFICACION///////// check
 ////////////////////////////////
 
 model Calificacion {
@@ -191,25 +215,26 @@ model Calificacion {
 }
 
 ////////////////////////////////
-///////////CUPON///////////////
+///////////CUPON/////////////// check
 ////////////////////////////////
 
 model Cupon {
   id           Int      @id @default(autoincrement())
   codigo       String   @unique
   descuento    Float
-  vendedor     Vendedor @relation(fields: [vendedorId], references: [id]) // N:1 → un cupón pertenece a un vendedor
-  vendedorId   Int
+  tienda       Tienda    @relation(fields: [tiendaId], references: [id]) // N:1 → un cupón pertenece a una tienda
+  tiendaId     Int
   producto     Producto? @relation(fields: [productoId], references: [id]) // N:1 opcional → un cupón puede aplicarse a un producto específico
   productoId   Int?
   validoHasta  DateTime
+  usado       Boolean  @default(false) // para ver si ya ha sido usado
 }
 
 ////////////////////////////////
-///////////COTIZACION///////////
+///////////SolicitudCOTIZACION/////////// check
 ////////////////////////////////
 
-model Cotizacion {
+model SolicitudCotizacion {
   id           Int      @id @default(autoincrement())
   usuario      Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una cotización pertenece a un usuario
   usuarioId    Int
@@ -219,22 +244,22 @@ model Cotizacion {
 }
 
 ////////////////////////////////
-//////PROPUESTACOTIZACION///////
+//////PROPUESTACOTIZACION/////// check pero es opcional ya que los mensajes se manejaran por wsp
 //////////////////////////////
 
 model PropuestaCotizacion {
   id           Int       @id @default(autoincrement())
-  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id]) // N:1 → pertenece a una cotización
+  cotizacion   SolicitudCotizacion @relation(fields: [cotizacionId], references: [id]) // N:1 → pertenece a una cotización
   cotizacionId Int
-  vendedor     Vendedor   @relation(fields: [vendedorId], references: [id])   // N:1 → pertenece a un vendedor
-  vendedorId   Int
+  tienda       Tienda    @relation(fields: [tiendaId], references: [id]) // N:1 → un cupón pertenece a una tienda
+  tiendaId     Int
   precio       Float
   descripcion  String?
   fecha        DateTime @default(now())
 }
 
 ////////////////////////////////
-///////////FAVORITO////////////
+///////////FAVORITO//////////// check
 ////////////////////////////////
 
 model Favorito {
@@ -243,10 +268,11 @@ model Favorito {
   usuarioId   Int
   producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → un favorito pertenece a un producto
   productoId  Int
+   @@unique([usuarioId, productoId]) // un usuario no puede tener el mismo favorito dos veces, no duplicados
 }
 
 //////////////////////////////
-//////CARRITOPRODUCTO///////////
+//////CARRITOPRODUCTO///////////  check
 ////////////////////////////////
 
 model CarritoProducto {
@@ -256,10 +282,11 @@ model CarritoProducto {
   producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → un ítem de carrito pertenece a un producto
   productoId  Int
   cantidad    Int
+  @@unique([usuarioId, productoId]) //Evito duplicados igual que en favoritos
 }
 
 ////////////////////////////////
-//////////COMPARACION//////
+//////////COMPARACION////// check
 ////////////////////////////////
 
 model Comparacion {
@@ -268,10 +295,13 @@ model Comparacion {
   usuarioId   Int
   producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → una comparación pertenece a un producto
   productoId  Int
+
+  @@unique([usuarioId, productoId]) //Evito duplicados igual que en favoritos y carrito
+
 }
 
 ////////////////////////////////
-///////////OFERTAGLOBAL//////
+///////////OFERTAGLOBAL////// check
 ///////////////////////////////
 
 model OfertaGlobal {
@@ -280,16 +310,19 @@ model OfertaGlobal {
   descripcion String?
   descuento   Float
   validoHasta DateTime
+  activo Boolean @default(true) //para no estar eliminando ofertas globales
 
   productos   Producto[] // 1:N → una oferta global puede aplicarse a varios productos
 }
 
 
-////////////////////////////
+////////////////////////////// 
 /////// RESUMEN RELACIONES ///
 //////////////////////////////
 
-// Usuario - Vendedor → 1:1 opcional
+// Usuario - Tienda (dueño) → 1:1 opcional
+// Usuario - Tienda (trabajador) → N:1 (un trabajador pertenece a una tienda, una tienda tiene muchos trabajadores)
+
 // Usuario - Pedido → 1:N
 // Usuario - Calificacion → 1:N
 // Usuario - Favorito → 1:N
@@ -297,9 +330,9 @@ model OfertaGlobal {
 // Usuario - Comparacion → 1:N
 // Usuario - Cotizacion → 1:N
 
-// Vendedor - Producto → 1:N
-// Vendedor - Cupon → 1:N
-// Vendedor - PropuestaCotizacion → 1:N
+// Tienda - Producto → 1:N
+// Tienda - Cupon → 1:N
+// Tienda - PropuestaCotizacion → 1:N
 
 // Categoria - Producto → 1:N
 
@@ -310,6 +343,8 @@ model OfertaGlobal {
 // Producto - Comparacion → N:M
 // Producto - Cupon → 1:N (producto puede tener varios cupones)
 // Producto - OfertaGlobal → N:1 (un producto solo puede estar en UNA oferta global a la vez)
+
 // OfertaGlobal - Producto → 1:N (una oferta global aplica a muchos productos)
 
 // Cotizacion - PropuestaCotizacion → 1:N
+
