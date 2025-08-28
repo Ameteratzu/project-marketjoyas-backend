@@ -1,5 +1,9 @@
 //jwt.strategy.ts
 
+
+//esto sirve basicamente para validar el token, cuando un usuario se loguea genera un token con payload
+//cuando el usuario hace uso de un endpoint manda su token y JwtStrategy lo valida 
+
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -11,12 +15,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET')!, // el "!" le dice a TS: confía, no es undefined
+      secretOrKey: configService.get<string>('JWT_SECRET')!, 
     });
   }
 
   async validate(payload: any) {
-    // Lo que devuelvas aquí estará disponible en req.user
+    // Lo que se devuelve aqui estara disponible en req.user
     if (!payload) throw new UnauthorizedException();
     return payload;
   }

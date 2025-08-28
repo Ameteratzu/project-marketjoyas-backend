@@ -40,22 +40,25 @@ export class UsersService {
     });
   }
 
-  //funcion para registro de vendedores, tambien registra tienda.
+  //funcion para registro de VENDEDORES, tambien registra tienda y actualiza datos si el usuario
+  // es CLIENTE.
 
-  async crearVendedor(dto: CrearVendedorDto) {
-    const hashed = await this.hashPassword(dto.contraseña);
+  async crearVendedor(dto: CrearVendedorDto, userId?: number) {
+  const hashed = await this.hashPassword(dto.contraseña);
 
-    return this.prisma.usuario.create({
+  if (userId) {
+    // Usuario existente, actualiza datos
+    return this.prisma.usuario.update({
+      where: { id: userId },
       data: {
+        rol: 'VENDEDOR',
         nombre_completo: dto.nombre_completo,
-        username: dto.username,
         email: dto.email,
+        username: dto.username,
         dni: dto.dni,
         telefono: dto.telefono,
         contraseña: hashed,
         direccion: dto.direccion,
-        rol: 'VENDEDOR',
-
         tiendaPropia: {
           create: {
             nombre: dto.tienda.nombre_tienda,
@@ -71,6 +74,35 @@ export class UsersService {
       include: { tiendaPropia: true },
     });
   }
+
+  // Usuario nuevo, lo registra de 0
+  return this.prisma.usuario.create({
+    data: {
+      nombre_completo: dto.nombre_completo,
+      username: dto.username,
+      email: dto.email,
+      dni: dto.dni,
+      telefono: dto.telefono,
+      contraseña: hashed,
+      direccion: dto.direccion,
+      rol: 'VENDEDOR',
+      tiendaPropia: {
+        create: {
+          nombre: dto.tienda.nombre_tienda,
+          direccion: dto.tienda.direccion_tienda,
+          telefono: dto.tienda.telefono_tienda,
+          pais: dto.tienda.pais,
+          ciudad: dto.tienda.ciudad,
+          provincia: dto.tienda.provincia,
+          codigoPostal: dto.tienda.codigoPostal,
+        },
+      },
+    },
+    include: { tiendaPropia: true },
+  });
+}
+
+
 
 
   //Funcion para buscar por email.
