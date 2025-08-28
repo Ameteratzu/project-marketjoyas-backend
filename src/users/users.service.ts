@@ -4,10 +4,17 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CrearClienteDto } from './dtos/crear-cliente.dto';
 import * as bcrypt from 'bcrypt';
 import { CrearVendedorDto } from './dtos/crear-vendedor.dto';
-
+import { Prisma, Usuario } from 'generated/prisma';
 
 ///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE USUARIOS/////////////////////////
 
+
+//type para que prisma reconozca las relaciones y no solo los campos de Usuario
+//lo uso en findByEmail
+
+ type UsuarioConTienda = Prisma.UsuarioGetPayload<{
+    include: { tiendaPropia: true };
+  }>;
 
 
 @Injectable()
@@ -35,37 +42,50 @@ export class UsersService {
 
   //funcion para registro de vendedores, tambien registra tienda.
 
-async crearVendedor(dto: CrearVendedorDto) {
-  const hashed = await this.hashPassword(dto.contraseña);
+  async crearVendedor(dto: CrearVendedorDto) {
+    const hashed = await this.hashPassword(dto.contraseña);
 
-  return this.prisma.usuario.create({
-    data: {
-      nombre_completo: dto.nombre_completo,
-      username: dto.username,
-      email: dto.email,         
-      dni: dto.dni,
-      telefono: dto.telefono,
-      contraseña: hashed,
-      direccion: dto.direccion,
-      rol: 'VENDEDOR',
+    return this.prisma.usuario.create({
+      data: {
+        nombre_completo: dto.nombre_completo,
+        username: dto.username,
+        email: dto.email,
+        dni: dto.dni,
+        telefono: dto.telefono,
+        contraseña: hashed,
+        direccion: dto.direccion,
+        rol: 'VENDEDOR',
 
-      tiendaPropia: {
-        create: {
-          nombre: dto.tienda.nombre_tienda,  
-          direccion: dto.tienda.direccion_tienda, 
-          telefono: dto.tienda.telefono_tienda,   
-          pais: dto.tienda.pais,                  
-          ciudad: dto.tienda.ciudad,
-          provincia: dto.tienda.provincia,
-          codigoPostal: dto.tienda.codigoPostal
-        }
-      }
-    },
-    include: { tiendaPropia: true } 
-  });
+        tiendaPropia: {
+          create: {
+            nombre: dto.tienda.nombre_tienda,
+            direccion: dto.tienda.direccion_tienda,
+            telefono: dto.tienda.telefono_tienda,
+            pais: dto.tienda.pais,
+            ciudad: dto.tienda.ciudad,
+            provincia: dto.tienda.provincia,
+            codigoPostal: dto.tienda.codigoPostal,
+          },
+        },
+      },
+      include: { tiendaPropia: true },
+    });
+  }
+
+
+  //Funcion para buscar por email.
+
+  //busco usuario por email, incluyo relacion de tienda propia ya que si el usuario es vendedor
+  //al momento de loguearse se debe saber a que tienda pertenece.
+
+   async findByEmail(email: string): Promise<UsuarioConTienda | null> {
+    return this.prisma.usuario.findUnique({
+      where: { email },
+      include: {
+        tiendaPropia: true, // si es vendedor cargamos la tienda
+      },
+    });
+  }
+
+
 }
-
-
-}
-
-
