@@ -21,7 +21,7 @@ enum Rol {
   VENDEDOR
   TRABAJADOR
 }
-
+  
 enum EstadoPedido {
   EMPAQUETADO
   DESPACHO
@@ -73,6 +73,7 @@ model Usuario {
   email     String   @unique
   dni         String    @unique
   telefono  String
+  direccion String?
   contraseña  String
   rol       Rol      @default(CLIENTE)
   creadoEn  DateTime @default(now())
