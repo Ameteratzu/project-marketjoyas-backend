@@ -4,6 +4,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config'; 
 import { ProductosModule } from './productos/productos.module';
+import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { ProductosModule } from './productos/productos.module';
     PrismaModule,
     AuthModule,
     ProductosModule,
+    CloudinaryModule,
   ],
+  providers: [CloudinaryService],
 })
 export class AppModule {}

@@ -155,6 +155,8 @@ model Producto {
   precio      Decimal   @db.Decimal(10,2)
   enStock     Int       @default(0)
   creadoEn    DateTime  @default(now())
+  habilitado Boolean @default(true) // lo he añadido para soft delete, para mantener trazabilidad.
+
 
   imagen       String?   
   tienda       Tienda    @relation(fields: [tiendaId], references: [id])
