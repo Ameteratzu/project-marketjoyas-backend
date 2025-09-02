@@ -2,7 +2,10 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { CrearProductoDto } from './dtos/crear-producto.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
-import {  Prisma } from 'generated/prisma';
+import { Prisma } from '@prisma/client';
+
+
+///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE PRODUCTOS/////////////////////////
 
 @Injectable()
 export class ProductosService {
@@ -127,7 +130,7 @@ export class ProductosService {
     });
   }
 
-  // Eliminar producto //falta corregir
+  // Eliminar producto //corregido
   async remove(id: number, user: JwtPayload) {
   if (!user.tiendaId) {
     throw new ForbiddenException('El usuario no pertenece a ninguna tienda');
@@ -148,6 +151,34 @@ export class ProductosService {
     data: { habilitado: false },
   });
 }
+
+
+//Funcion para habilitar productos
+
+
+async habilitarProducto(id: number, user: JwtPayload) {
+  const producto = await this.prisma.producto.findUnique({
+    where: { id },
+  });
+
+  if (!producto) {
+    throw new NotFoundException('Producto no encontrado');
+  }
+
+  if (producto.tiendaId !== user.tiendaId) {
+    throw new ForbiddenException('No tienes permiso para habilitar este producto');
+  }
+
+  if (producto.habilitado) {
+    throw new BadRequestException('El producto ya está habilitado');
+  }
+
+  return this.prisma.producto.update({
+    where: { id },
+    data: { habilitado: true },
+  });
+}
+
 
   // Listar todos los productos (para clientes o internautas no logueados)
   async findAll() {
@@ -183,4 +214,42 @@ export class ProductosService {
       include: { imagenes: true, categoria: true },
     });
   }
+
+    //Funcion para buscar por nombre PRIVADO
+
+
+  async buscarPorNombrePrivado(user: JwtPayload, nombre: string){
+    const nombreLimpio = nombre?.trim();
+    if (!nombreLimpio || nombreLimpio.length < 2 ){
+      throw new BadRequestException('Introducir al menos 2 caracteres.')
+    }
+    return this.prisma.producto.findMany({
+      where: {
+        tiendaId: user.tiendaId,
+        nombre :{
+          contains: nombreLimpio,
+          // mode: 'insensitive', 
+
+        },
+
+      },
+    });
+  }
+
+  //Funcion para buscar por nombre
+
+ async buscarPorNombrePublico(nombre: string) {
+  const nombreLimpio = nombre.trim();
+
+  return this.prisma.producto.findMany({
+    where: {
+      nombre: {
+        contains: nombreLimpio,
+        // mode: 'insensitive',
+      },
+      habilitado: true,
+    },
+  });
+}
+
 }

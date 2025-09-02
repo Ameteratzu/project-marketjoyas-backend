@@ -267,6 +267,86 @@
         ]
       }
     },
+    "/productos/{id}/habilitar": {
+      "patch": {
+        "operationId": "ProductosController_habilitar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/buscar": {
+      "get": {
+        "operationId": "ProductosController_buscarPorNombre",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minLength": 2,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/buscar/mis-productos": {
+      "get": {
+        "operationId": "ProductosController_buscarPorNombrePrivado",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
     "/productos/upload": {
       "post": {
         "operationId": "ProductosController_uploadImage",

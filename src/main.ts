@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { existsSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { ValidationPipe } from '@nestjs/common';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -37,10 +38,20 @@ async function bootstrap() {
     mkdirSync('./docs');
   }
   writeFileSync('./docs/swagger.json', JSON.stringify(document, null, 2));
+   // Leer CSS oscuro
+  const customCss = readFileSync(
+    join(process.cwd(), 'swagger-dark.css'),
+    'utf8',
+  );
 
-  SwaggerModule.setup('api', app, document);
-
+  SwaggerModule.setup('api', app, document, {
+  customCss,
+  swaggerOptions: {
+    persistAuthorization: true, 
+  },
+  customSiteTitle: 'Documentación API - MarketJoyas',
+});
   await app.listen(process.env.PORT ?? 3000);
 }
 
-bootstrap();
+bootstrap();//

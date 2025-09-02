@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CrearClienteDto } from './dtos/crear-cliente.dto';
 import * as bcrypt from 'bcrypt';
 import { CrearVendedorDto } from './dtos/crear-vendedor.dto';
-import { Prisma, Usuario } from 'generated/prisma';
+import { Prisma, Usuario } from '@prisma/client';
 
 ///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE USUARIOS/////////////////////////
 
