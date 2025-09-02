@@ -38,14 +38,10 @@ async function bootstrap() {
     mkdirSync('./docs');
   }
   writeFileSync('./docs/swagger.json', JSON.stringify(document, null, 2));
-   // Leer CSS oscuro
-  const customCss = readFileSync(
-    join(process.cwd(), 'swagger-dark.css'),
-    'utf8',
-  );
+   
+ 
 
   SwaggerModule.setup('api', app, document, {
-  customCss,
   swaggerOptions: {
     persistAuthorization: true, 
   },

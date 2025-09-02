@@ -449,6 +449,90 @@
           "Favoritos"
         ]
       }
+    },
+    "/comparacion": {
+      "post": {
+        "operationId": "ComparacionController_addComparacion",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateComparacionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Comparación de productos"
+        ]
+      },
+      "get": {
+        "operationId": "ComparacionController_getComparacion",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Comparación de productos"
+        ]
+      }
+    },
+    "/comparacion/{productoId}": {
+      "delete": {
+        "operationId": "ComparacionController_removeComparacion",
+        "parameters": [
+          {
+            "name": "productoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Comparación de productos"
+        ]
+      }
     }
   },
   "info": {
@@ -649,6 +733,17 @@
         ]
       },
       "CreateFavoritoDto": {
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "productoId"
+        ]
+      },
+      "CreateComparacionDto": {
         "type": "object",
         "properties": {
           "productoId": {
