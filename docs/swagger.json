@@ -365,6 +365,90 @@
           "Productos"
         ]
       }
+    },
+    "/favoritos": {
+      "post": {
+        "operationId": "FavoritosController_addFavorito",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFavoritoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Favoritos"
+        ]
+      },
+      "get": {
+        "operationId": "FavoritosController_getMisFavoritos",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Favoritos"
+        ]
+      }
+    },
+    "/favoritos/{productoId}": {
+      "delete": {
+        "operationId": "FavoritosController_removeFavorito",
+        "parameters": [
+          {
+            "name": "productoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Favoritos"
+        ]
+      }
     }
   },
   "info": {
@@ -562,6 +646,17 @@
         "required": [
           "nombre",
           "precio"
+        ]
+      },
+      "CreateFavoritoDto": {
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "productoId"
         ]
       }
     }

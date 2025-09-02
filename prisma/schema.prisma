@@ -171,7 +171,7 @@ model Producto {
   categoriaId Int?
 
   cupones        Cupon[]            // 1:N → un producto puede tener varios cupones asignados
-  pedidos        PedidoProducto[]   // N:M → relación con Pedido a través de PedidoProducto
+  pedidos        PedidoDetalle[]   // N:M → relación con Pedido a través de PedidoProducto
   calificaciones Calificacion[]     // 1:N → un producto puede recibir muchas calificaciones
   favoritos      Favorito[]         // N:M → relación con Usuario
   carrito        CarritoProducto[]  // N:M → relación con Usuario
@@ -228,14 +228,14 @@ model Pedido {
   fecha            DateTime  @default(now())
   estado           EstadoPedido @default(EMPAQUETADO)
   codigoSeguimiento String   @unique
-  productos        PedidoProducto[] // N:M → relación con Producto
+  productos        PedidoDetalle[] // N:M → relación con Producto
 }
 
 ////////////////////////////////
 ///////////PEDIDOPRODUCTO/////// check
 ////////////////////////////////
 
-model PedidoProducto {
+model PedidoDetalle {
   id          Int      @id @default(autoincrement())
   pedido      Pedido   @relation(fields: [pedidoId], references: [id])  // N:1 → pertenece a un pedido
   pedidoId    Int

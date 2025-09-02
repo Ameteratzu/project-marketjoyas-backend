@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ProductosModule } from './productos/productos.module';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { FavoritosModule } from './favoritos/favoritos.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     AuthModule,
     ProductosModule,
     CloudinaryModule,
+    FavoritosModule,
   ],
   providers: [CloudinaryService],
 })
