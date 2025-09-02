@@ -61,6 +61,11 @@ enum Ocasion {
   BODA
 }
 
+enum tipoMovimiento {
+  ENTRADA
+  SALIDA
+}
+
 
 //////////////////////////////
 ///////////USUARIO/////////// check
@@ -88,6 +93,7 @@ model Usuario {
   comparaciones  Comparacion[]      // 1:N → un usuario puede comparar varios productos
   calificaciones Calificacion[]     // 1:N → un usuario puede calificar muchos productos
   cotizaciones   SolicitudCotizacion[]       // 1:N → un usuario puede solicitar varias cotizaciones
+  movimientoInventario MovimientoInventario[] 
 }
 
 //////////////////////////////
@@ -146,11 +152,13 @@ model Producto {
   id          Int       @id @default(autoincrement())
   nombre      String
   descripcion String?
-  precio      Float
+  precio      Decimal   @db.Decimal(10,2)
   enStock     Int       @default(0)
   creadoEn    DateTime  @default(now())
+  habilitado Boolean @default(true) // lo he añadido para soft delete, para mantener trazabilidad.
 
-  imagen       String?   // URL o path de la imagen, opcional
+
+  imagen       String?   
   tienda       Tienda    @relation(fields: [tiendaId], references: [id])
   tiendaId     Int
 
@@ -171,6 +179,42 @@ model Producto {
 
   ofertaGlobal   OfertaGlobal? @relation(fields: [ofertaGlobalId], references: [id]) // N:1 → un producto puede tener como máximo UNA oferta global activa
   ofertaGlobalId Int?
+
+  movimientoInventario MovimientoInventario[]
+
+  imagenes    ImagenProducto[] // Relación 1:N
+}
+
+//////////////////////////////
+///////////Imagen producto/////////// Para que tenga varias imagenes
+//////////////////////////////
+
+model ImagenProducto {
+  id         Int      @id @default(autoincrement())
+  url        String   
+  producto   Producto @relation(fields: [productoId], references: [id])
+  productoId Int
+}
+
+
+//////////////////////////////
+///////////MOVIMIENTO INVENTARIO///////////
+//////////////////////////////
+
+//AGREGUE ESTA TABLA PARA TENER REGISTRO DE LOS MOVIMIENTOS DE INVENTARIO
+//CUANDO UN CLIENTE COMPRE O UN VENDEDOR/TRABAJADOR ELIMINE/AÑADA PRODUCTOS QUEDARA REGISTRADO AQUI
+
+model MovimientoInventario {
+  id         Int      @id @default(autoincrement())
+  tipo       tipoMovimiento @default(ENTRADA)   // "ENTRADA" o "SALIDA"
+  cantidad   Int
+  fecha      DateTime @default(now())
+
+  producto   Producto @relation(fields: [productoId], references: [id])
+  productoId Int
+
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId  Int
 }
 
 //////////////////////////////

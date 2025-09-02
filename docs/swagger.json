@@ -1,0 +1,569 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/usuarios/registro/cliente": {
+      "post": {
+        "operationId": "UsuariosController_crearCliente",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearClienteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/usuarios/registro/vendedor": {
+      "post": {
+        "operationId": "UsuariosController_crearVendedor",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearVendedorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/productos": {
+      "post": {
+        "operationId": "ProductosController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearProductoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Productos"
+        ]
+      },
+      "get": {
+        "operationId": "ProductosController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/{id}": {
+      "patch": {
+        "operationId": "ProductosController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearProductoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Productos"
+        ]
+      },
+      "delete": {
+        "operationId": "ProductosController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Deshabilita (soft delete) un producto de la tienda",
+        "tags": [
+          "Productos"
+        ]
+      },
+      "get": {
+        "operationId": "ProductosController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/mis-productos": {
+      "get": {
+        "operationId": "ProductosController_findByTienda",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/{id}/habilitar": {
+      "patch": {
+        "operationId": "ProductosController_habilitar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/buscar": {
+      "get": {
+        "operationId": "ProductosController_buscarPorNombre",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minLength": 2,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/buscar/mis-productos": {
+      "get": {
+        "operationId": "ProductosController_buscarPorNombrePrivado",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/upload": {
+      "post": {
+        "operationId": "ProductosController_uploadImage",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Productos"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "MarketJoyas",
+    "description": "Documentacion de endpoints de marketjoyas",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "ENDPOINTS",
+      "description": ""
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CrearClienteDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "direccion": {
+            "type": "string"
+          },
+          "dni": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 8
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "contraseña": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "email",
+          "direccion",
+          "dni",
+          "telefono",
+          "contraseña"
+        ]
+      },
+      "TiendaDto": {
+        "type": "object",
+        "properties": {
+          "nombre_tienda": {
+            "type": "string"
+          },
+          "direccion_tienda": {
+            "type": "string"
+          },
+          "telefono_tienda": {
+            "type": "string"
+          },
+          "pais": {
+            "type": "string"
+          },
+          "ciudad": {
+            "type": "string"
+          },
+          "provincia": {
+            "type": "string"
+          },
+          "codigoPostal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre_tienda",
+          "direccion_tienda",
+          "telefono_tienda",
+          "pais",
+          "ciudad",
+          "provincia",
+          "codigoPostal"
+        ]
+      },
+      "CrearVendedorDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "direccion": {
+            "type": "string"
+          },
+          "dni": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 8
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "contraseña": {
+            "type": "string"
+          },
+          "tienda": {
+            "$ref": "#/components/schemas/TiendaDto"
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "username",
+          "email",
+          "direccion",
+          "dni",
+          "telefono",
+          "contraseña",
+          "tienda"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "contraseña": {
+            "type": "string",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "email",
+          "contraseña"
+        ]
+      },
+      "CrearProductoDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          },
+          "descripcion": {
+            "type": "string"
+          },
+          "precio": {
+            "type": "number"
+          },
+          "enStock": {
+            "type": "number",
+            "minimum": 0
+          },
+          "imagen": {
+            "type": "string"
+          },
+          "categoriaId": {
+            "type": "number",
+            "minimum": 1
+          },
+          "imagenes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "material": {
+            "type": "object"
+          },
+          "ocasion": {
+            "type": "object"
+          },
+          "gema": {
+            "type": "object"
+          },
+          "estilo": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "nombre",
+          "precio"
+        ]
+      }
+    }
+  }
+}
