@@ -8,6 +8,8 @@ import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FavoritosModule } from './favoritos/favoritos.module';
 import { ComparacionModule } from './comparacion/comparacion.module';
+import { AdminModule } from './admin/admin.module';
+import { CategoriaModule } from './admin/categoria/categoria.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { ComparacionModule } from './comparacion/comparacion.module';
     CloudinaryModule,
     FavoritosModule,
     ComparacionModule,
+    AdminModule,
+    CategoriaModule,
   ],
   providers: [CloudinaryService],
 })

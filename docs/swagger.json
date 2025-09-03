@@ -56,6 +56,35 @@
         ]
       }
     },
+    "/usuarios/registro/trabajador": {
+      "post": {
+        "operationId": "UsuariosController_crearTrabajador",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearTrabajadorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "AuthController_login",
@@ -533,6 +562,252 @@
           "Comparación de productos"
         ]
       }
+    },
+    "/admin/crear-admin": {
+      "post": {
+        "operationId": "AdminController_createAdmin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearAdminDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/usuarios": {
+      "get": {
+        "operationId": "AdminController_findAllUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/usuarios/{id}/rol": {
+      "patch": {
+        "operationId": "AdminController_changeUserRole",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CambiarRol"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/cotizaciones/{id}/estado": {
+      "patch": {
+        "operationId": "AdminController_cambiarEstadoCotizacion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CambiarEstadoCotizacionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/tiendas": {
+      "get": {
+        "operationId": "AdminController_getAllTiendas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/categoria": {
+      "post": {
+        "operationId": "CategoriaController_createCategory",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearCategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categoria"
+        ]
+      }
+    },
+    "/categoria/{id}": {
+      "patch": {
+        "operationId": "CategoriaController_updateCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarCategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categoria"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoriaController_deleteCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Categoria"
+        ]
+      }
     }
   },
   "info": {
@@ -668,6 +943,35 @@
           "tienda"
         ]
       },
+      "CrearTrabajadorDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "contraseña": {
+            "type": "string",
+            "minLength": 6
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "dni": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "email",
+          "contraseña",
+          "telefono",
+          "dni"
+        ]
+      },
       "LoginDto": {
         "type": "object",
         "properties": {
@@ -752,6 +1056,79 @@
         },
         "required": [
           "productoId"
+        ]
+      },
+      "CrearAdminDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "dni": {
+            "type": "string"
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "contraseña": {
+            "type": "string",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "email",
+          "dni",
+          "telefono",
+          "contraseña"
+        ]
+      },
+      "CambiarRol": {
+        "type": "object",
+        "properties": {
+          "rol": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "rol"
+        ]
+      },
+      "CambiarEstadoCotizacionDto": {
+        "type": "object",
+        "properties": {
+          "estado": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "estado"
+        ]
+      },
+      "CrearCategoriaDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre"
+        ]
+      },
+      "ActualizarCategoriaDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre"
         ]
       }
     }

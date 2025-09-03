@@ -32,7 +32,7 @@ enum EstadoPedido {
 enum EstadoCotizacion {
   PENDIENTE
   APROBADA
-  PUBLICADA
+  DENEGADA
 }
 
 enum Material {
@@ -67,6 +67,33 @@ enum tipoMovimiento {
 }
 
 
+enum ProveedorOAuth {
+  GOOGLE
+  FACEBOOK
+}
+
+
+//////////////////////////////
+///////////CuentaOAuth/////////// check
+//////////////////////////////
+
+
+model CuentaOAuth {
+
+  id Int @id @default(autoincrement())
+  proveedor ProveedorOAuth
+  oauthId String       // Este es el ID que te da Google, Facebook, etc. para identificar al usuario en su sistema.
+                       // No es unico porque dos proveedores distintos podrian dar el mismo ID por coincidencia.
+  email String         //este email viene del proveedor y se usara para buscar coincidencias en la tabla usuario
+  usuario Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId    Int 
+
+  @@unique([proveedor, oauthId]) // evita que se repita el mismo oauth id con el mismo proveedor
+
+
+}
+
+
 //////////////////////////////
 ///////////USUARIO/////////// check
 //////////////////////////////
@@ -94,6 +121,7 @@ model Usuario {
   calificaciones Calificacion[]     // 1:N → un usuario puede calificar muchos productos
   cotizaciones   SolicitudCotizacion[]       // 1:N → un usuario puede solicitar varias cotizaciones
   movimientoInventario MovimientoInventario[] 
+  cuentasOAuth  CuentaOAuth[] //1:N
 }
 
 //////////////////////////////
@@ -229,10 +257,11 @@ model Pedido {
   estado           EstadoPedido @default(EMPAQUETADO)
   codigoSeguimiento String   @unique
   productos        PedidoDetalle[] // N:M → relación con Producto
+  pago             Pago?  //1:1
 }
 
 ////////////////////////////////
-///////////PEDIDOPRODUCTO/////// check
+///////////PEDIDO DETALLE/////// check
 ////////////////////////////////
 
 model PedidoDetalle {
@@ -243,6 +272,25 @@ model PedidoDetalle {
   productoId  Int
   cantidad    Int
 }
+
+////////////////////////////////
+///////////PAGO TRANSACCIONES/////// check
+////////////////////////////////
+
+model Pago {
+  id                 Int       @id @default(autoincrement())
+  pedido             Pedido    @relation(fields: [pedidoId], references: [id])
+  pedidoId           Int       @unique
+  mercadoPagoId      String    @unique  // ID de la transacción en Mercado Pago
+  estado             String    // approved, Pending, rejected, etc.
+  metodoPago         String?   // credit_card, debit_card, ticket, etc.
+  monto              Decimal   @db.Decimal(10,2)
+  fechaPago          DateTime
+  datosAdicionales   Json?     // para guardar info extra 
+} //TODOS LOS DATOS SON PROPORCIONADOS POR MERCADO PAGO MENOS ID Y PEDIDO ID 
+
+
+
 
 ////////////////////////////////
 ///////////CALIFICACION///////// check
@@ -304,7 +352,7 @@ model PropuestaCotizacion {
 }
 
 ////////////////////////////////
-///////////FAVORITO//////////// check
+///////////FAVORITO//////////// check 
 ////////////////////////////////
 
 model Favorito {
@@ -331,7 +379,7 @@ model CarritoProducto {
 }
 
 ////////////////////////////////
-//////////COMPARACION////// check
+//////////COMPARACION////// check 
 ////////////////////////////////
 
 model Comparacion {
