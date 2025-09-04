@@ -1,10 +1,12 @@
 // users/users.service.ts
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrearClienteDto } from './dtos/crear-cliente.dto';
 import * as bcrypt from 'bcrypt';
 import { CrearVendedorDto } from './dtos/crear-vendedor.dto';
 import { Prisma, Usuario } from '@prisma/client';
+import { CrearTrabajadorDto } from './dtos/crear-trabajador.dto';
+import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 
 ///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE USUARIOS/////////////////////////
 
@@ -101,6 +103,47 @@ export class UsersService {
     include: { tiendaPropia: true },
   });
 }
+
+//Funcion para crear trabajador
+
+async crearTrabajador(dto: CrearTrabajadorDto, creador: JwtPayload) {
+
+  if (creador.rol !== 'VENDEDOR') {
+    throw new ForbiddenException('Solo un vendedor puede registrar trabajadores');
+  }
+
+  if (!creador.tiendaId) {
+    throw new ForbiddenException('El vendedor no tiene una tienda asociada');
+  }
+
+  const yaExiste = await this.prisma.usuario.findUnique({
+    where: { email: dto.email },
+  });
+
+  if (yaExiste) {
+    throw new ForbiddenException('El email ya está registrado');
+  }
+
+  const hashed = await this.hashPassword(dto.contraseña);
+
+  const trabajador = await this.prisma.usuario.create({
+    data: {
+      nombre_completo: dto.nombre_completo,
+      email: dto.email,
+      contraseña: hashed,
+      telefono: dto.telefono,
+      dni: dto.dni,
+      rol: 'TRABAJADOR',
+      tiendaId: creador.tiendaId,
+    },
+  });
+
+  return {
+    message: 'Trabajador registrado correctamente',
+    trabajador,
+  };
+}
+
 
 
 

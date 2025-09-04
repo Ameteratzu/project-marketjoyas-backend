@@ -56,6 +56,35 @@
         ]
       }
     },
+    "/usuarios/registro/trabajador": {
+      "post": {
+        "operationId": "UsuariosController_crearTrabajador",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearTrabajadorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "AuthController_login",
@@ -111,6 +140,7 @@
             "bearer": []
           }
         ],
+        "summary": "Un VENDEDOR o TRABAJADOR añaden un producto",
         "tags": [
           "Productos"
         ]
@@ -133,6 +163,7 @@
             }
           }
         },
+        "summary": "Obtener todos lo productos, endpoint con acceso libre al publico",
         "tags": [
           "Productos"
         ]
@@ -178,6 +209,7 @@
             "bearer": []
           }
         ],
+        "summary": "Un VENDEDOR o TRABAJADOR actualizan un producto",
         "tags": [
           "Productos"
         ]
@@ -233,6 +265,7 @@
             }
           }
         },
+        "summary": "Obtener todos lo productos por ID, endpoint para todo publico",
         "tags": [
           "Productos"
         ]
@@ -262,6 +295,7 @@
             "bearer": []
           }
         ],
+        "summary": "Un VENDEDOR o TRABAJADOR obtienen sus productos segun su tienda",
         "tags": [
           "Productos"
         ]
@@ -290,6 +324,7 @@
             "bearer": []
           }
         ],
+        "summary": "Un VENDEDOR o TRABAJADOR habilitan un producto de su tienda",
         "tags": [
           "Productos"
         ]
@@ -311,9 +346,20 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
           }
         },
+        "summary": "Obtener todos lo productos por nombre, endpoint con acceso libre al publicoo",
         "tags": [
           "Productos"
         ]
@@ -334,7 +380,17 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -342,6 +398,176 @@
             "bearer": []
           }
         ],
+        "summary": "Obtener todos lo productos por nombre, endpoint para VENDEDORES O TRABAJADORES, obtiene solo productos de su tienda",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/categoria/{categoriaId}": {
+      "get": {
+        "operationId": "ProductosController_findByCategoryPublic",
+        "parameters": [
+          {
+            "name": "categoriaId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "minimum": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Obtener productos por categoraiaId publico",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/categoria/mis-productos/{categoriaId}": {
+      "get": {
+        "operationId": "ProductosController_findByCategoryPrivate",
+        "parameters": [
+          {
+            "name": "categoriaId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "minimum": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener productos por por categoriaId para trabajadores o vendedores",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/filtrar": {
+      "get": {
+        "operationId": "ProductosController_filtrarProductos",
+        "parameters": [
+          {
+            "name": "material",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          },
+          {
+            "name": "gema",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          },
+          {
+            "name": "estilo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          },
+          {
+            "name": "ocasion",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          },
+          {
+            "name": "precioMin",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "precioMax",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orden",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Filtros manejados desde el backend",
         "tags": [
           "Productos"
         ]
@@ -361,6 +587,7 @@
             "bearer": []
           }
         ],
+        "summary": "Subir imagenes a cloudinary",
         "tags": [
           "Productos"
         ]
@@ -533,6 +760,417 @@
           "Comparación de productos"
         ]
       }
+    },
+    "/admin/crear-admin": {
+      "post": {
+        "operationId": "AdminController_createAdmin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearAdminDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin crea un nuevo admin",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/usuarios": {
+      "get": {
+        "operationId": "AdminController_findAllUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "un admin obtiene todos los usuarios",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/usuarios/{id}/rol": {
+      "patch": {
+        "operationId": "AdminController_changeUserRole",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CambiarRol"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin cambia el rol de cualquier usuario",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/cotizaciones/{id}/estado": {
+      "patch": {
+        "operationId": "AdminController_cambiarEstadoCotizacion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CambiarEstadoCotizacionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin cambia el estado de cotizacion, la aprueba o deniega",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/tiendas": {
+      "get": {
+        "operationId": "AdminController_getAllTiendas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin ve todas tiendas",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/categoria": {
+      "get": {
+        "operationId": "CategoriaController_getAllPublic",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener todas las categorias, endpoint publico, para que llenes tu combo box",
+        "tags": [
+          "Categoria"
+        ]
+      },
+      "post": {
+        "operationId": "CategoriaController_createCategory",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearCategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin crea una categoria",
+        "tags": [
+          "Categoria"
+        ]
+      }
+    },
+    "/categoria/{id}": {
+      "patch": {
+        "operationId": "CategoriaController_updateCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarCategoriaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin actualiza una categoria",
+        "tags": [
+          "Categoria"
+        ]
+      },
+      "delete": {
+        "operationId": "CategoriaController_deleteCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin elimina una categoria",
+        "tags": [
+          "Categoria"
+        ]
+      }
+    },
+    "/cotizacion/cotizaciones": {
+      "get": {
+        "operationId": "CotizacionController_getAllSolicitudesCotizacion",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin ve todas las solicitudes de cotizacion",
+        "tags": [
+          "Cotizacion"
+        ]
+      }
+    },
+    "/cotizacion/aprobadas": {
+      "get": {
+        "operationId": "CotizacionController_getSolicitudesAprobadas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Vendedores y trabajadores ven solicitudes aprobadas",
+        "tags": [
+          "Cotizacion"
+        ]
+      }
+    },
+    "/cotizacion": {
+      "post": {
+        "operationId": "CotizacionController_crearCotizacion",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearCotizacionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear solicitud de cotizacion",
+        "tags": [
+          "Cotizacion"
+        ]
+      }
+    },
+    "/cotizacion/mias": {
+      "get": {
+        "operationId": "CotizacionController_getMisSolicitudes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "para que los clientes vean sus solicitudes de cotizacion",
+        "tags": [
+          "Cotizacion"
+        ]
+      }
+    },
+    "/cotizacion/{id}": {
+      "delete": {
+        "operationId": "CotizacionController_eliminarSolicitud",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar solicitudes solo si le pertenece",
+        "tags": [
+          "Cotizacion"
+        ]
+      }
     }
   },
   "info": {
@@ -668,6 +1306,35 @@
           "tienda"
         ]
       },
+      "CrearTrabajadorDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "contraseña": {
+            "type": "string",
+            "minLength": 6
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "dni": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "email",
+          "contraseña",
+          "telefono",
+          "dni"
+        ]
+      },
       "LoginDto": {
         "type": "object",
         "properties": {
@@ -732,6 +1399,10 @@
           "precio"
         ]
       },
+      "Object": {
+        "type": "object",
+        "properties": {}
+      },
       "CreateFavoritoDto": {
         "type": "object",
         "properties": {
@@ -752,6 +1423,95 @@
         },
         "required": [
           "productoId"
+        ]
+      },
+      "CrearAdminDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "dni": {
+            "type": "string"
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "contraseña": {
+            "type": "string",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "email",
+          "dni",
+          "telefono",
+          "contraseña"
+        ]
+      },
+      "CambiarRol": {
+        "type": "object",
+        "properties": {
+          "rol": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "rol"
+        ]
+      },
+      "CambiarEstadoCotizacionDto": {
+        "type": "object",
+        "properties": {
+          "estado": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "estado"
+        ]
+      },
+      "CrearCategoriaDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre"
+        ]
+      },
+      "ActualizarCategoriaDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "nombre"
+        ]
+      },
+      "CrearCotizacionDto": {
+        "type": "object",
+        "properties": {
+          "imagenUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "descripcion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "imagenUrl",
+          "descripcion"
         ]
       }
     }
