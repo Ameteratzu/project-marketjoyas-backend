@@ -10,6 +10,7 @@ import { FavoritosModule } from './favoritos/favoritos.module';
 import { ComparacionModule } from './comparacion/comparacion.module';
 import { AdminModule } from './admin/admin.module';
 import { CategoriaModule } from './admin/categoria/categoria.module';
+import { CotizacionModule } from './cotizacion/cotizacion.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CategoriaModule } from './admin/categoria/categoria.module';
     ComparacionModule,
     AdminModule,
     CategoriaModule,
+    CotizacionModule,
   ],
   providers: [CloudinaryService],
 })

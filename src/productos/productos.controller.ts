@@ -1,4 +1,18 @@
-import { Controller, Post, Body, UseGuards, Req, Patch, Param, ParseIntPipe, Delete, Get, UseInterceptors, UploadedFile, BadRequestException, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Patch,
+  Param,
+  ParseIntPipe,
+  Delete,
+  Get,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
+  Query,
+} from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
@@ -11,8 +25,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { UpdateProductoDto } from './dtos/actualizar-producto.dto';
 import { BuscarProductoDto } from './dtos/buscar-producto.dto';
-
-
+import { CategoriaIdDto } from './dtos/categoria-id.dto';
+import { FiltrarProductosDto } from './dtos/filtrar-productos.dto';
 
 @Controller('productos')
 export class ProductosController {
@@ -26,6 +40,9 @@ export class ProductosController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR', 'TRABAJADOR')
+  @ApiOperation({
+    summary: 'Un VENDEDOR o TRABAJADOR añaden un producto',
+  })
   async create(@Body() dto: CrearProductoDto, @GetUser() user: JwtPayload) {
     return this.productosService.create(dto, user);
   }
@@ -37,6 +54,9 @@ export class ProductosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR', 'TRABAJADOR')
   @ApiBody({ type: CrearProductoDto })
+  @ApiOperation({
+    summary: 'Un VENDEDOR o TRABAJADOR actualizan un producto',
+  })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateProductoDto,
@@ -50,6 +70,9 @@ export class ProductosController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR', 'TRABAJADOR')
+  @ApiOperation({
+    summary: 'Un VENDEDOR o TRABAJADOR obtienen sus productos segun su tienda',
+  })
   async findByTienda(@GetUser() user: JwtPayload) {
     return this.productosService.findByTienda(user);
   }
@@ -75,6 +98,9 @@ export class ProductosController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR', 'TRABAJADOR')
+  @ApiOperation({
+    summary: 'Un VENDEDOR o TRABAJADOR habilitan un producto de su tienda',
+  })
   async habilitar(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: JwtPayload,
@@ -84,24 +110,33 @@ export class ProductosController {
 
   // obtener todos los productos, acceso libre (para CLIENTES o internautas)
   @Get()
+  @ApiOperation({
+    summary: 'Obtener todos lo productos, endpoint con acceso libre al publico',
+  })
   async findAll() {
     return this.productosService.findAll();
   }
 
   // obtener productos por nombre (para CLIENTES o internautas)
 
-
   @Get('buscar')
+  @ApiOperation({
+    summary:
+      'Obtener todos lo productos por nombre, endpoint con acceso libre al publicoo',
+  })
   async buscarPorNombre(@Query() query: BuscarProductoDto) {
     return this.productosService.buscarPorNombrePublico(query.nombre);
   }
 
-
-//obtener productos por nombre (para VENDEDORES/TRABAJADORES)
+  //obtener productos por nombre (para VENDEDORES/TRABAJADORES)
   @Get('buscar/mis-productos')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR', 'TRABAJADOR')
+  @ApiOperation({
+    summary:
+      'Obtener todos lo productos por nombre, endpoint para VENDEDORES O TRABAJADORES, obtiene solo productos de su tienda',
+  })
   async buscarPorNombrePrivado(
     @GetUser() user: JwtPayload,
     @Query('nombre') nombre: string,
@@ -111,21 +146,59 @@ export class ProductosController {
 
   // obtener producto por id, acceso libre (para CLIENTES o internautas)
   @Get(':id')
+  @ApiOperation({
+    summary: 'Obtener todos lo productos por ID, endpoint para todo publico',
+  })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productosService.findOne(id);
   }
 
-  
+  // Filtrar productos por categoria publico
+  @Get('categoria/:categoriaId')
+  @ApiOperation({
+    summary: 'Obtener productos por categoraiaId publico',
+  })
+  async findByCategoryPublic(@Param() params: CategoriaIdDto) {
+    return this.productosService.findByCategoryPublic(params.categoriaId);
+  }
 
+  // Filtrar productos por categoria para traajadores o vendedores
+  @Get('categoria/mis-productos/:categoriaId')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('VENDEDOR', 'TRABAJADOR')
+  @ApiOperation({
+    summary:
+      'Obtener productos por por categoriaId para trabajadores o vendedores',
+  })
+  async findByCategoryPrivate(
+    @GetUser() user: JwtPayload,
+    @Param() params: CategoriaIdDto,
+  ) {
+    return this.productosService.findByCategoryPrivate(
+      params.categoriaId,
+      user,
+    );
+  }
 
+  @Get('filtrar')
+   @ApiOperation({
+    summary:
+      'Filtros manejados desde el backend',
+  })
+  filtrarProductos(@Query() query: FiltrarProductosDto) {
+  return this.productosService.filtrarProductos(query);
+}
 
-  
 
   // subir imagenes a cloudinary
   @ApiBearerAuth()
   @Post('upload')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR', 'TRABAJADOR')
+  @ApiOperation({
+    summary: 'Subir imagenes a cloudinary',
+  })
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -135,4 +208,3 @@ export class ProductosController {
     return { url };
   } //
 }
-

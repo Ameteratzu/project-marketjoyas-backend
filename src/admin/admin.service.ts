@@ -41,6 +41,8 @@ export class AdminService {
     return { message: 'Admin creado exitosamente', adminUser };
   }
 
+  //Funcion para obtener todos los usuarios
+
   async getAllUsers() {
     return this.prisma.usuario.findMany({
       select: {
@@ -137,4 +139,7 @@ export class AdminService {
       },
     });
   }
+
+
+
 }
