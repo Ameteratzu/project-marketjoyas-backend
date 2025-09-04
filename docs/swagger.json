@@ -1112,12 +1112,7 @@
             "description": ""
           }
         },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Crear solicitud de cotizacion",
+        "summary": "Crear solicitud de cotizacion publica",
         "tags": [
           "Cotizacion"
         ]

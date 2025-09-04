@@ -6,8 +6,8 @@ import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 //en cada peticion futura y tener un tipado del payload mas seguro
 
 export const GetUser = createParamDecorator(
-  (_data: unknown, ctx: ExecutionContext): JwtPayload => {
+  (_data: unknown, ctx: ExecutionContext): JwtPayload | undefined => {
     const request = ctx.switchToHttp().getRequest();
-    return request.user as JwtPayload;
+    return request.user as JwtPayload | undefined;
   },
 );

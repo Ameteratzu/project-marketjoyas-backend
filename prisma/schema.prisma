@@ -329,8 +329,8 @@ model Cupon {
 
 model SolicitudCotizacion {
   id           Int      @id @default(autoincrement())
-  usuario      Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una cotización pertenece a un usuario
-  usuarioId    Int
+  usuario      Usuario? @relation(fields: [usuarioId], references: [id]) // N:1 → una cotización pertenece a un usuario
+  usuarioId    Int?
   imagenUrl    String
   descripcion  String
   estado       EstadoCotizacion @default(PENDIENTE)

@@ -32,20 +32,26 @@ async getAllSolicitudesCotizacion() {
 }
 
 
-//funcion para que usuario cree solicitud de cotizacion
+//funcion para que usuario o quien sea cree solicitud de cotizacion
 
-async crearSolicitudCotizacion(dto: CrearCotizacionDto, user: JwtPayload) {
-  const usuario = await this.prisma.usuario.findUnique({
-    where: { id: user.sub },
-  });
+async crearSolicitudCotizacion(dto: CrearCotizacionDto, user?: JwtPayload) {
+let usuarioId: number | undefined = undefined;
 
-  if (!usuario) {
-    throw new NotFoundException('Usuario no encontrado');
+  if (user) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id: user.sub },
+    });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    usuarioId = user.sub;
   }
 
   const nueva = await this.prisma.solicitudCotizacion.create({
     data: {
-      usuarioId: user.sub,
+      usuarioId: usuarioId,
       imagenUrl: dto.imagenUrl,
       descripcion: dto.descripcion,
     },
@@ -56,6 +62,7 @@ async crearSolicitudCotizacion(dto: CrearCotizacionDto, user: JwtPayload) {
     solicitud: nueva,
   };
 }
+
 
 // Ver todas las solicitudes aprobadas
 async getSolicitudesAprobadas() {

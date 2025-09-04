@@ -18,14 +18,14 @@ import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { CrearCotizacionDto } from './dtos/crear-cotizacion.dto';
 
 @ApiTags('Cotizacion')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('cotizacion')
 export class CotizacionController {
   constructor(private readonly cotizacionService: CotizacionService) {}
 
   //Para ver TODAS las cotizaciones
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   @Get('cotizaciones')
   @ApiOperation({
@@ -36,6 +36,9 @@ export class CotizacionController {
   }
 
   //Ver solicitudes aprobadas
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('aprobadas')
   @Roles('VENDEDOR', 'TRABAJADOR')
   @ApiOperation({
@@ -46,18 +49,20 @@ export class CotizacionController {
   }
 
   // Crear una solicitud
+
   @Post()
-  @Roles('CLIENTE')
-  @ApiOperation({ summary: 'Crear solicitud de cotizacion' })
+  @ApiOperation({ summary: 'Crear solicitud de cotizacion publica' })
   async crearCotizacion(
     @Body() dto: CrearCotizacionDto,
-    @GetUser() user: JwtPayload,
+    @GetUser() user?: JwtPayload,
   ) {
     return this.cotizacionService.crearSolicitudCotizacion(dto, user);
   }
 
   // Ver solicitudes
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
   @Get('mias')
   @Roles('CLIENTE')
   @ApiOperation({
@@ -68,6 +73,9 @@ export class CotizacionController {
   }
 
   // Eliminar solicitud
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar solicitudes solo si le pertenece' })
   async eliminarSolicitud(
