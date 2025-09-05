@@ -573,23 +573,34 @@
         ]
       }
     },
-    "/productos/upload": {
+    "/cloudinary/upload": {
       "post": {
-        "operationId": "ProductosController_uploadImage",
+        "operationId": "CloudinaryController_uploadImage",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Subir imagenes a cloudinary",
+        "summary": "Subir imágenes a Cloudinary",
         "tags": [
-          "Productos"
+          "Cloudinary"
         ]
       }
     },
@@ -1166,6 +1177,75 @@
           "Cotizacion"
         ]
       }
+    },
+    "/tiendas": {
+      "get": {
+        "operationId": "TiendaController_getAllPublicas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Un usuario publico puede ver todas las tiendas",
+        "tags": [
+          "Tienda"
+        ]
+      }
+    },
+    "/tiendas/{id}": {
+      "get": {
+        "operationId": "TiendaController_getUnaPublica",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Un usuario publico puede ver toda la informacion de las tiendas",
+        "tags": [
+          "Tienda"
+        ]
+      }
+    },
+    "/tiendas/mi-tienda": {
+      "patch": {
+        "operationId": "TiendaController_actualizarTienda",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarTiendaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "vendedor actualiza su tienda",
+        "tags": [
+          "Tienda"
+        ]
+      }
     }
   },
   "info": {
@@ -1508,6 +1588,41 @@
           "imagenUrl",
           "descripcion"
         ]
+      },
+      "ActualizarTiendaDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string"
+          },
+          "direccion": {
+            "type": "string"
+          },
+          "telefono": {
+            "type": "string"
+          },
+          "pais": {
+            "type": "string"
+          },
+          "ciudad": {
+            "type": "string"
+          },
+          "provincia": {
+            "type": "string"
+          },
+          "codigoPostal": {
+            "type": "string"
+          },
+          "ruc": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "logoPublicId": {
+            "type": "string"
+          }
+        }
       }
     }
   }

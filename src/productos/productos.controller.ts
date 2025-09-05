@@ -20,8 +20,6 @@ import { Roles } from 'src/auth/roles.decorator';
 import { CrearProductoDto } from './dtos/crear-producto.dto';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import type { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { UpdateProductoDto } from './dtos/actualizar-producto.dto';
 import { BuscarProductoDto } from './dtos/buscar-producto.dto';
@@ -32,7 +30,6 @@ import { FiltrarProductosDto } from './dtos/filtrar-productos.dto';
 export class ProductosController {
   constructor(
     private readonly productosService: ProductosService,
-    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   //añadir producto
@@ -191,20 +188,5 @@ export class ProductosController {
 }
 
 
-  // subir imagenes a cloudinary
-  @ApiBearerAuth()
-  @Post('upload')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('VENDEDOR', 'TRABAJADOR')
-  @ApiOperation({
-    summary: 'Subir imagenes a cloudinary',
-  })
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('No file uploaded');
-    }
-    const url = await this.cloudinaryService.uploadImage(file);
-    return { url };
-  } //
+
 }

@@ -139,6 +139,10 @@ model Tienda {
   ciudad        String
   provincia     String
   codigoPostal  String
+  logo          String?  //es una imgaen 
+  logoPublicId  String? //id que da cloudinary
+  ruc           String?
+
 
   productos     Producto[]
   cupones       Cupon[]
@@ -220,6 +224,7 @@ model Producto {
 model ImagenProducto {
   id         Int      @id @default(autoincrement())
   url        String   
+  public_id  String? // para imagenes cloudinary
   producto   Producto @relation(fields: [productoId], references: [id])
   productoId Int
 }

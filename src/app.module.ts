@@ -11,6 +11,7 @@ import { ComparacionModule } from './comparacion/comparacion.module';
 import { AdminModule } from './admin/admin.module';
 import { CategoriaModule } from './admin/categoria/categoria.module';
 import { CotizacionModule } from './cotizacion/cotizacion.module';
+import { TiendaModule } from './tienda/tienda.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CotizacionModule } from './cotizacion/cotizacion.module';
     AdminModule,
     CategoriaModule,
     CotizacionModule,
+    TiendaModule,
   ],
   providers: [CloudinaryService],
 })
