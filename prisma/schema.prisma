@@ -1,4 +1,3 @@
-
 // This is your Prisma schema file, 
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -21,7 +20,7 @@ enum Rol {
   VENDEDOR
   TRABAJADOR
 }
-  
+
 enum EstadoPedido {
   EMPAQUETADO
   DESPACHO
@@ -35,37 +34,10 @@ enum EstadoCotizacion {
   DENEGADA
 }
 
-enum Material {
-  PLATA
-  ORO
-  ORO_18K
-}
-
-enum Gema {
-  ZIRCONIA
-  DIAMANTE
-  ESMERALDA
-}
-
-enum Estilo {
-  NIÑOS
-  NIÑAS
-  HOMBRES
-  MUJERES
-}
-
-enum Ocasion {
-  GRADUACION
-  ANIVERSARIO
-  REGALO
-  BODA
-}
-
 enum tipoMovimiento {
   ENTRADA
   SALIDA
 }
-
 
 enum ProveedorOAuth {
   GOOGLE
@@ -73,55 +45,63 @@ enum ProveedorOAuth {
 }
 
 
+
 //////////////////////////////
 ///////////CuentaOAuth/////////// check
 //////////////////////////////
 
-
 model CuentaOAuth {
-
-  id Int @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   proveedor ProveedorOAuth
-  oauthId String       // Este es el ID que te da Google, Facebook, etc. para identificar al usuario en su sistema.
-                       // No es unico porque dos proveedores distintos podrian dar el mismo ID por coincidencia.
-  email String         //este email viene del proveedor y se usara para buscar coincidencias en la tabla usuario
-  usuario Usuario  @relation(fields: [usuarioId], references: [id])
-  usuarioId    Int 
+  oauthId   String // Este es el ID que te da Google, Facebook, etc. para identificar al usuario en su sistema.
+  // No es unico porque dos proveedores distintos podrian dar el mismo ID por coincidencia.
+  email     String //este email viene del proveedor y se usara para buscar coincidencias en la tabla usuario
+  usuario   Usuario        @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
 
   @@unique([proveedor, oauthId]) // evita que se repita el mismo oauth id con el mismo proveedor
-
-
 }
-
 
 //////////////////////////////
 ///////////USUARIO/////////// check
 //////////////////////////////
 
 model Usuario {
-  id        Int      @id @default(autoincrement())
-  nombre_completo    String //incluye apellidos
-  username    String?   @unique // opcional para CLIENTE, requerido para VENDEDOR
-  email     String   @unique
-  dni         String    @unique
-  telefono  String
-  direccion String?
-  contraseña  String
-  rol       Rol      @default(CLIENTE)
-  creadoEn  DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  nombre_completo String //incluye apellidos
+  username        String?  @unique // opcional para CLIENTE, requerido para VENDEDOR
+  email           String   @unique
+  dni             String   @unique
+  telefono        String
+  direccion       String?
+  contraseña     String
+  rol             Rol      @default(CLIENTE)
+  creadoEn        DateTime @default(now())
 
-  tiendaPropia Tienda?   @relation("DueñoTienda")     // solo si es VENDEDOR
-  trabajaEn    Tienda?   @relation("TrabajadoresTienda", fields: [tiendaId], references: [id]) // si es TRABAJADOR
-  tiendaId      Int?
+  tiendaPropia Tienda? @relation("DueñoTienda") // solo si es VENDEDOR
+  trabajaEn    Tienda? @relation("TrabajadoresTienda", fields: [tiendaId], references: [id]) // si es TRABAJADOR
+  tiendaId     Int?
 
-  pedidos        Pedido[]           // 1:N → un usuario puede hacer muchos pedidos
-  favoritos      Favorito[]         // 1:N → un usuario puede marcar muchos productos como favoritos
-  carrito        CarritoProducto[]  // 1:N → un usuario puede tener muchos productos en el carrito
-  comparaciones  Comparacion[]      // 1:N → un usuario puede comparar varios productos
-  calificaciones Calificacion[]     // 1:N → un usuario puede calificar muchos productos
-  cotizaciones   SolicitudCotizacion[]       // 1:N → un usuario puede solicitar varias cotizaciones
-  movimientoInventario MovimientoInventario[] 
-  cuentasOAuth  CuentaOAuth[] //1:N
+  pedidos              Pedido[] // 1:N → un usuario puede hacer muchos pedidos
+  favoritos            Favorito[] // 1:N → un usuario puede marcar muchos productos como favoritos
+  carrito              CarritoProducto[] // 1:N → un usuario puede tener muchos productos en el carrito
+  comparaciones        Comparacion[] // 1:N → un usuario puede comparar varios productos
+  calificaciones       Calificacion[] // 1:N → un usuario puede calificar muchos productos
+  cotizaciones         SolicitudCotizacion[] // 1:N → un usuario puede solicitar varias cotizaciones
+  movimientoInventario MovimientoInventario[]
+  cuentasOAuth         CuentaOAuth[] //1:N
+
+  recuperacionContraseña RecuperacionContraseña?  @relation("UsuarioRecuperacion")  // 1:1 relación opcional
+
+}
+model RecuperacionContraseña {
+  id           Int      @id @default(autoincrement())
+  usuario    Usuario  @relation("UsuarioRecuperacion", fields: [usuarioId], references: [id])
+  usuarioId    Int  @unique
+  token        String   @unique
+  creadoEn     DateTime @default(now())
+  expiracion   DateTime
+  usado        Boolean  @default(false)
 }
 
 //////////////////////////////
@@ -129,26 +109,25 @@ model Usuario {
 //////////////////////////////
 
 model Tienda {
-  id            Int       @id @default(autoincrement())
-  usuario        Usuario   @relation("DueñoTienda", fields: [usuarioId], references: [id])
-  usuarioId       Int       @unique
-  nombre        String
-  direccion     String
-  telefono      String
-  pais          String
-  ciudad        String
-  provincia     String
-  codigoPostal  String
-  logo          String?  //es una imgaen 
-  logoPublicId  String? //id que da cloudinary
-  ruc           String?
+  id           Int     @id @default(autoincrement())
+  usuario      Usuario @relation("DueñoTienda", fields: [usuarioId], references: [id])
+  usuarioId    Int     @unique
+  nombre       String
+  direccion    String
+  telefono     String
+  pais         String
+  ciudad       String
+  provincia    String
+  codigoPostal String
+  logo         String? //es una imgaen 
+  logoPublicId String? //id que da cloudinary
+  ruc          String?
 
-
-  productos     Producto[]
-  cupones       Cupon[]
-  propuestas    PropuestaCotizacion[]
-  trabajadores  Usuario[] @relation("TrabajadoresTienda") // varios usuarios con rol TRABAJADOR
-  suscripcion   Suscripcion?
+  productos    Producto[]
+  cupones      Cupon[]
+  propuestas   PropuestaCotizacion[]
+  trabajadores Usuario[]             @relation("TrabajadoresTienda") // varios usuarios con rol TRABAJADOR
+  suscripcion  Suscripcion?
 }
 
 //////////////////////////////
@@ -156,23 +135,22 @@ model Tienda {
 //////////////////////////////
 
 model Suscripcion {
-  id         Int      @id @default(autoincrement())
-  tienda     Tienda   @relation(fields: [tiendaId], references: [id])
-  tiendaId   Int      @unique
-  tipo       String   // mensual o anual
-  inicio     DateTime @default(now())
-  fin        DateTime
-  activa     Boolean  @default(true)
+  id       Int      @id @default(autoincrement())
+  tienda   Tienda   @relation(fields: [tiendaId], references: [id])
+  tiendaId Int      @unique
+  tipo     String // mensual o anual
+  inicio   DateTime @default(now())
+  fin      DateTime
+  activa   Boolean  @default(true)
 }
-
 
 //////////////////////////////
 ///////////CATEGORIA//////////
 //////////////////////////////
 
 model Categoria {
-  id        Int       @id @default(autoincrement())
-  nombre    String    @unique
+  id        Int        @id @default(autoincrement())
+  nombre    String     @unique
   productos Producto[] // 1:N → una categoría puede tener muchos productos
 }
 
@@ -181,40 +159,70 @@ model Categoria {
 //////////////////////////////
 
 model Producto {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   nombre      String
   descripcion String?
-  precio      Decimal   @db.Decimal(10,2)
-  enStock     Int       @default(0)
-  creadoEn    DateTime  @default(now())
-  habilitado Boolean @default(true) // lo he añadido para soft delete, para mantener trazabilidad.
+  precio      Decimal  @db.Decimal(10, 2)
+  enStock     Int      @default(0)
+  creadoEn    DateTime @default(now())
+  habilitado  Boolean  @default(true) // lo he añadido para soft delete, para mantener trazabilidad.
 
-
-  imagen       String?   
-  tienda       Tienda    @relation(fields: [tiendaId], references: [id])
-  tiendaId     Int
-
-  material    Material?
-  gema        Gema?
-  estilo      Estilo?
-  ocasion     Ocasion?
+  imagen   String?
+  tienda   Tienda  @relation(fields: [tiendaId], references: [id])
+  tiendaId Int
 
   categoria   Categoria? @relation(fields: [categoriaId], references: [id]) // N:1 opcional → un producto puede pertenecer a una categoría
   categoriaId Int?
 
-  cupones        Cupon[]            // 1:N → un producto puede tener varios cupones asignados
-  pedidos        PedidoDetalle[]   // N:M → relación con Pedido a través de PedidoProducto
-  calificaciones Calificacion[]     // 1:N → un producto puede recibir muchas calificaciones
-  favoritos      Favorito[]         // N:M → relación con Usuario
-  carrito        CarritoProducto[]  // N:M → relación con Usuario
-  comparaciones  Comparacion[]      // N:M → relación con Usuario
+  gemaId Int?
+  gema   Gema? @relation(fields: [gemaId], references: [id])
+
+  materialId Int?
+  material   Material? @relation(fields: [materialId], references: [id])
+
+  estiloId Int?
+  estilo   Estilo? @relation(fields: [estiloId], references: [id])
+
+  ocasionId Int?
+  ocasion   Ocasion? @relation(fields: [ocasionId], references: [id])
+
+  cupones        Cupon[] // 1:N → un producto puede tener varios cupones asignados
+  pedidos        PedidoDetalle[] // N:M → relación con Pedido a través de PedidoProducto
+  calificaciones Calificacion[] // 1:N → un producto puede recibir muchas calificaciones
+  favoritos      Favorito[] // N:M → relación con Usuario
+  carrito        CarritoProducto[] // N:M → relación con Usuario
+  comparaciones  Comparacion[] // N:M → relación con Usuario
 
   ofertaGlobal   OfertaGlobal? @relation(fields: [ofertaGlobalId], references: [id]) // N:1 → un producto puede tener como máximo UNA oferta global activa
   ofertaGlobalId Int?
 
   movimientoInventario MovimientoInventario[]
 
-  imagenes    ImagenProducto[] // Relación 1:N
+  imagenes ImagenProducto[] // Relación 1:N
+}
+
+model Ocasion {
+  id        Int        @id @default(autoincrement())
+  nombre    String     @unique
+  productos Producto[]
+}
+
+model Estilo {
+  id        Int        @id @default(autoincrement())
+  nombre    String     @unique
+  productos Producto[]
+}
+
+model Gema {
+  id        Int        @id @default(autoincrement())
+  nombre    String     @unique
+  productos Producto[]
+}
+
+model Material {
+  id        Int        @id @default(autoincrement())
+  nombre    String     @unique
+  productos Producto[]
 }
 
 //////////////////////////////
@@ -223,12 +231,11 @@ model Producto {
 
 model ImagenProducto {
   id         Int      @id @default(autoincrement())
-  url        String   
+  url        String
   public_id  String? // para imagenes cloudinary
   producto   Producto @relation(fields: [productoId], references: [id])
   productoId Int
 }
-
 
 //////////////////////////////
 ///////////MOVIMIENTO INVENTARIO///////////
@@ -238,16 +245,16 @@ model ImagenProducto {
 //CUANDO UN CLIENTE COMPRE O UN VENDEDOR/TRABAJADOR ELIMINE/AÑADA PRODUCTOS QUEDARA REGISTRADO AQUI
 
 model MovimientoInventario {
-  id         Int      @id @default(autoincrement())
-  tipo       tipoMovimiento @default(ENTRADA)   // "ENTRADA" o "SALIDA"
-  cantidad   Int
-  fecha      DateTime @default(now())
+  id       Int            @id @default(autoincrement())
+  tipo     tipoMovimiento @default(ENTRADA) // "ENTRADA" o "SALIDA"
+  cantidad Int
+  fecha    DateTime       @default(now())
 
   producto   Producto @relation(fields: [productoId], references: [id])
   productoId Int
 
-  usuario    Usuario  @relation(fields: [usuarioId], references: [id])
-  usuarioId  Int
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
 }
 
 //////////////////////////////
@@ -255,14 +262,14 @@ model MovimientoInventario {
 //////////////////////////////
 
 model Pedido {
-  id               Int       @id @default(autoincrement())
-  usuario          Usuario   @relation(fields: [usuarioId], references: [id]) // N:1 → cada pedido pertenece a un usuario
-  usuarioId        Int
-  fecha            DateTime  @default(now())
-  estado           EstadoPedido @default(EMPAQUETADO)
-  codigoSeguimiento String   @unique
-  productos        PedidoDetalle[] // N:M → relación con Producto
-  pago             Pago?  //1:1
+  id                Int             @id @default(autoincrement())
+  usuario           Usuario         @relation(fields: [usuarioId], references: [id]) // N:1 → cada pedido pertenece a un usuario
+  usuarioId         Int
+  fecha             DateTime        @default(now())
+  estado            EstadoPedido    @default(EMPAQUETADO)
+  codigoSeguimiento String          @unique
+  productos         PedidoDetalle[] // N:M → relación con Producto
+  pago              Pago? //1:1
 }
 
 ////////////////////////////////
@@ -270,46 +277,52 @@ model Pedido {
 ////////////////////////////////
 
 model PedidoDetalle {
-  id          Int      @id @default(autoincrement())
-  pedido      Pedido   @relation(fields: [pedidoId], references: [id])  // N:1 → pertenece a un pedido
-  pedidoId    Int
-  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → pertenece a un producto
-  productoId  Int
-  cantidad    Int
+  id         Int      @id @default(autoincrement())
+  pedido     Pedido   @relation(fields: [pedidoId], references: [id]) // N:1 → pertenece a un pedido
+  pedidoId   Int
+  producto   Producto @relation(fields: [productoId], references: [id]) // N:1 → pertenece a un producto
+  productoId Int
+  cantidad   Int
 }
 
 ////////////////////////////////
 ///////////PAGO TRANSACCIONES/////// check
 ////////////////////////////////
 
+enum ProveedorPago {
+  MERCADOPAGO
+  IZIPAY
+  OTRO
+}
+
 model Pago {
-  id                 Int       @id @default(autoincrement())
-  pedido             Pedido    @relation(fields: [pedidoId], references: [id])
-  pedidoId           Int       @unique
-  mercadoPagoId      String    @unique  // ID de la transacción en Mercado Pago
-  estado             String    // approved, Pending, rejected, etc.
-  metodoPago         String?   // credit_card, debit_card, ticket, etc.
-  monto              Decimal   @db.Decimal(10,2)
-  fechaPago          DateTime
-  datosAdicionales   Json?     // para guardar info extra 
-} //TODOS LOS DATOS SON PROPORCIONADOS POR MERCADO PAGO MENOS ID Y PEDIDO ID 
+  id               Int           @id @default(autoincrement())
+  pedido           Pedido        @relation(fields: [pedidoId], references: [id])
+  pedidoId         Int           @unique
+  proveedorPago    ProveedorPago
+  transaccionId    String        @unique // ID de la transacción en el proveedor (Mercado Pago, Izipay, etc.)
+  estado           String        // approved, pending, rejected, etc.
+  metodoPago       String?       // credit_card, debit_card, ticket, etc.
+  monto            Decimal       @db.Decimal(10, 2)
+  fechaPago        DateTime
+  datosAdicionales  Json?        // para info extra específica de cada proveedor
+}
 
-
-
+//TODOS LOS DATOS SON PROPORCIONADOS POR MERCADO PAGO MENOS ID Y PEDIDO ID 
 
 ////////////////////////////////
 ///////////CALIFICACION///////// check
 ////////////////////////////////
 
 model Calificacion {
-  id          Int      @id @default(autoincrement())
-  usuario     Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una calificación pertenece a un usuario
-  usuarioId   Int
-  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → una calificación pertenece a un producto
-  productoId  Int
-  estrellas   Int      
-  comentario  String?
-  fecha       DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una calificación pertenece a un usuario
+  usuarioId  Int
+  producto   Producto @relation(fields: [productoId], references: [id]) // N:1 → una calificación pertenece a un producto
+  productoId Int
+  estrellas  Int
+  comentario String?
+  fecha      DateTime @default(now())
 }
 
 ////////////////////////////////
@@ -317,15 +330,15 @@ model Calificacion {
 ////////////////////////////////
 
 model Cupon {
-  id           Int      @id @default(autoincrement())
-  codigo       String   @unique
-  descuento    Float
-  tienda       Tienda    @relation(fields: [tiendaId], references: [id]) // N:1 → un cupón pertenece a una tienda
-  tiendaId     Int
-  producto     Producto? @relation(fields: [productoId], references: [id]) // N:1 opcional → un cupón puede aplicarse a un producto específico
-  productoId   Int?
-  validoHasta  DateTime
-  usado       Boolean  @default(false) // para ver si ya ha sido usado
+  id          Int       @id @default(autoincrement())
+  codigo      String    @unique
+  descuento   Float
+  tienda      Tienda    @relation(fields: [tiendaId], references: [id]) // N:1 → un cupón pertenece a una tienda
+  tiendaId    Int
+  producto    Producto? @relation(fields: [productoId], references: [id]) // N:1 opcional → un cupón puede aplicarse a un producto específico
+  productoId  Int?
+  validoHasta DateTime
+  usado       Boolean   @default(false) // para ver si ya ha sido usado
 }
 
 ////////////////////////////////
@@ -333,13 +346,13 @@ model Cupon {
 ////////////////////////////////
 
 model SolicitudCotizacion {
-  id           Int      @id @default(autoincrement())
-  usuario      Usuario? @relation(fields: [usuarioId], references: [id]) // N:1 → una cotización pertenece a un usuario
-  usuarioId    Int?
-  imagenUrl    String
-  descripcion  String
-  estado       EstadoCotizacion @default(PENDIENTE)
-  propuestas   PropuestaCotizacion[] // 1:N → una cotización puede recibir muchas propuestas de vendedores
+  id          Int                   @id @default(autoincrement())
+  usuario     Usuario?              @relation(fields: [usuarioId], references: [id]) // N:1 → una cotización pertenece a un usuario
+  usuarioId   Int?
+  imagenUrl   String
+  descripcion String
+  estado      EstadoCotizacion      @default(PENDIENTE)
+  propuestas  PropuestaCotizacion[] // 1:N → una cotización puede recibir muchas propuestas de vendedores
 }
 
 ////////////////////////////////
@@ -347,14 +360,14 @@ model SolicitudCotizacion {
 //////////////////////////////
 
 model PropuestaCotizacion {
-  id           Int       @id @default(autoincrement())
+  id           Int                 @id @default(autoincrement())
   cotizacion   SolicitudCotizacion @relation(fields: [cotizacionId], references: [id]) // N:1 → pertenece a una cotización
   cotizacionId Int
-  tienda       Tienda    @relation(fields: [tiendaId], references: [id]) // N:1 → un cupón pertenece a una tienda
+  tienda       Tienda              @relation(fields: [tiendaId], references: [id]) // N:1 → un cupón pertenece a una tienda
   tiendaId     Int
   precio       Float
   descripcion  String?
-  fecha        DateTime @default(now())
+  fecha        DateTime            @default(now())
 }
 
 ////////////////////////////////
@@ -362,12 +375,13 @@ model PropuestaCotizacion {
 ////////////////////////////////
 
 model Favorito {
-  id          Int      @id @default(autoincrement())
-  usuario     Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → un favorito pertenece a un usuario
-  usuarioId   Int
-  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → un favorito pertenece a un producto
-  productoId  Int
-   @@unique([usuarioId, productoId]) // un usuario no puede tener el mismo favorito dos veces, no duplicados
+  id         Int      @id @default(autoincrement())
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → un favorito pertenece a un usuario
+  usuarioId  Int
+  producto   Producto @relation(fields: [productoId], references: [id]) // N:1 → un favorito pertenece a un producto
+  productoId Int
+
+  @@unique([usuarioId, productoId]) // un usuario no puede tener el mismo favorito dos veces, no duplicados
 }
 
 //////////////////////////////
@@ -375,12 +389,13 @@ model Favorito {
 ////////////////////////////////
 
 model CarritoProducto {
-  id          Int      @id @default(autoincrement())
-  usuario     Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → un ítem de carrito pertenece a un usuario
-  usuarioId   Int
-  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → un ítem de carrito pertenece a un producto
-  productoId  Int
-  cantidad    Int
+  id         Int      @id @default(autoincrement())
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → un ítem de carrito pertenece a un usuario
+  usuarioId  Int
+  producto   Producto @relation(fields: [productoId], references: [id]) // N:1 → un ítem de carrito pertenece a un producto
+  productoId Int
+  cantidad   Int
+
   @@unique([usuarioId, productoId]) //Evito duplicados igual que en favoritos
 }
 
@@ -389,14 +404,13 @@ model CarritoProducto {
 ////////////////////////////////
 
 model Comparacion {
-  id          Int      @id @default(autoincrement())
-  usuario     Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una comparación pertenece a un usuario
-  usuarioId   Int
-  producto    Producto @relation(fields: [productoId], references: [id]) // N:1 → una comparación pertenece a un producto
-  productoId  Int
+  id         Int      @id @default(autoincrement())
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una comparación pertenece a un usuario
+  usuarioId  Int
+  producto   Producto @relation(fields: [productoId], references: [id]) // N:1 → una comparación pertenece a un producto
+  productoId Int
 
   @@unique([usuarioId, productoId]) //Evito duplicados igual que en favoritos y carrito
-
 }
 
 ////////////////////////////////
@@ -404,16 +418,15 @@ model Comparacion {
 ///////////////////////////////
 
 model OfertaGlobal {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   titulo      String
   descripcion String?
   descuento   Float
   validoHasta DateTime
-  activo Boolean @default(true) //para no estar eliminando ofertas globales
+  activo      Boolean  @default(true) //para no estar eliminando ofertas globales
 
-  productos   Producto[] // 1:N → una oferta global puede aplicarse a varios productos
+  productos Producto[] // 1:N → una oferta global puede aplicarse a varios productos
 }
-
 
 ////////////////////////////// 
 /////// RESUMEN RELACIONES ///
@@ -446,4 +459,3 @@ model OfertaGlobal {
 // OfertaGlobal - Producto → 1:N (una oferta global aplica a muchos productos)
 
 // Cotizacion - PropuestaCotizacion → 1:N
-

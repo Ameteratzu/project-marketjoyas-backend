@@ -484,46 +484,46 @@
         "operationId": "ProductosController_filtrarProductos",
         "parameters": [
           {
-            "name": "material",
+            "name": "materialIds",
             "required": false,
             "in": "query",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/components/schemas/Object"
+                "type": "number"
               }
             }
           },
           {
-            "name": "gema",
+            "name": "gemaIds",
             "required": false,
             "in": "query",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/components/schemas/Object"
+                "type": "number"
               }
             }
           },
           {
-            "name": "estilo",
+            "name": "estiloIds",
             "required": false,
             "in": "query",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/components/schemas/Object"
+                "type": "number"
               }
             }
           },
           {
-            "name": "ocasion",
+            "name": "ocasionIds",
             "required": false,
             "in": "query",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/components/schemas/Object"
+                "type": "number"
               }
             }
           },
@@ -1456,17 +1456,17 @@
               "type": "string"
             }
           },
-          "material": {
-            "type": "object"
+          "materialId": {
+            "type": "number"
           },
-          "ocasion": {
-            "type": "object"
+          "ocasionId": {
+            "type": "number"
           },
-          "gema": {
-            "type": "object"
+          "gemaId": {
+            "type": "number"
           },
-          "estilo": {
-            "type": "object"
+          "estiloId": {
+            "type": "number"
           }
         },
         "required": [

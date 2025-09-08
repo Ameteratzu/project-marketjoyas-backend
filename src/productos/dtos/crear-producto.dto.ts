@@ -42,18 +42,22 @@ export class CrearProductoDto {
   imagenes?: string[];
 
   @IsOptional()
-  @IsEnum(Material)
-  material?: Material;
+  @Type(() => Number)
+  @IsNumber()
+  materialId?: number;
 
   @IsOptional()
-  @IsEnum(Ocasion)
-  ocasion?: Ocasion;
+  @Type(() => Number)
+  @IsNumber()
+  ocasionId?: number;
 
   @IsOptional()
-  @IsEnum(Gema)
-  gema?: Gema;
+  @Type(() => Number)
+  @IsNumber()
+  gemaId?: number;
 
   @IsOptional()
-  @IsEnum(Estilo)
-  estilo?: Estilo;
+  @Type(() => Number)
+  @IsNumber()
+  estiloId?: number;
 }

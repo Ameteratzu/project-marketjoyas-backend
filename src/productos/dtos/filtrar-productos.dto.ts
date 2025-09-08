@@ -1,10 +1,9 @@
-import { IsOptional, IsEnum, IsNumberString } from 'class-validator';
-import { Material, Gema, Estilo, Ocasion } from '@prisma/client';
 import { Transform } from 'class-transformer';
+import { IsOptional, IsNumber, IsNumberString } from 'class-validator';
 
 function transformArray(value: any) {
   if (typeof value === 'string') {
-    return value.split(',').map((v) => v.trim());
+    return value.split(',').map((v) => parseInt(v.trim(), 10));
   }
   return value;
 }
@@ -12,23 +11,23 @@ function transformArray(value: any) {
 export class FiltrarProductosDto {
   @IsOptional()
   @Transform(({ value }) => transformArray(value))
-  @IsEnum(Material, { each: true })
-  material?: Material[];
+  @IsNumber({}, { each: true })
+  materialIds?: number[];
 
   @IsOptional()
   @Transform(({ value }) => transformArray(value))
-  @IsEnum(Gema, { each: true })
-  gema?: Gema[];
+  @IsNumber({}, { each: true })
+  gemaIds?: number[];
 
   @IsOptional()
   @Transform(({ value }) => transformArray(value))
-  @IsEnum(Estilo, { each: true })
-  estilo?: Estilo[];
+  @IsNumber({}, { each: true })
+  estiloIds?: number[];
 
   @IsOptional()
   @Transform(({ value }) => transformArray(value))
-  @IsEnum(Ocasion, { each: true })
-  ocasion?: Ocasion[];
+  @IsNumber({}, { each: true })
+  ocasionIds?: number[];
 
   @IsOptional()
   @IsNumberString()
