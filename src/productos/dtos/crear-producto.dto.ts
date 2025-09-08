@@ -7,7 +7,7 @@ import {
   Min,
   IsEnum,
 } from 'class-validator';
-import { Estilo, Gema, Material, Ocasion } from '@prisma/client';
+
 
 export class CrearProductoDto {
   @IsNotEmpty()
