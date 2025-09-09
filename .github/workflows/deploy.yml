@@ -44,7 +44,14 @@ jobs:
         host: ${{ secrets.LIGHTSAIL_HOST }}
         username: ${{ secrets.LIGHTSAIL_USER }}
         key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+        # AGREGA ESTAS 2 LÍNEAS:
+        key_path: /tmp/ssh_key
         script: |
+          cat > /tmp/ssh_key << 'EOF'
+          ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          EOF
+          chmod 600 /tmp/ssh_key
+          
           cd ~/backend/project-marketjoyas-backend
           
           echo "📥 Actualizando código..."
