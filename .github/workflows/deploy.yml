@@ -19,7 +19,7 @@ jobs:
         node-version: '20.x'
         cache: 'npm'
 
-    - name: 📦 Install dependencies (INCLUYENDO devDependencies)
+    - name: 📦 Install dependencies
       run: npm ci --include=dev  
 
     - name: 🗄️ Generate Prisma
@@ -36,7 +36,32 @@ jobs:
         CLOUDINARY_API_SECRET: test_secret_abc
 
     - name: 🏗️ Build application
-      run: NODE_OPTIONS="--max-old-space-size=4096" npm run build  
+      run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
+
+    # 🔍 DEBUG CORREGIDO - SIN el operador | que da error
+    - name: 🔍 Debug Secrets
+      run: |
+        echo "LIGHTSAIL_HOST: '${{ secrets.LIGHTSAIL_HOST }}'"
+        echo "LIGHTSAIL_USER: '${{ secrets.LIGHTSAIL_USER }}'"
+        echo "SSH_KEY presente: ${{ secrets.LIGHTSAIL_SSH_KEY != '' }}"
+        
+        # Verifica que los secrets no estén vacíos
+        if [ -z "${{ secrets.LIGHTSAIL_HOST }}" ]; then
+          echo "❌ ERROR: LIGHTSAIL_HOST está vacío!"
+          exit 1
+        fi
+
+        if [ -z "${{ secrets.LIGHTSAIL_USER }}" ]; then
+          echo "❌ ERROR: LIGHTSAIL_USER está vacío!"
+          exit 1
+        fi
+
+        if [ -z "${{ secrets.LIGHTSAIL_SSH_KEY }}" ]; then
+          echo "❌ ERROR: LIGHTSAIL_SSH_KEY está vacío!"
+          exit 1
+        fi
+
+        echo "✅ Todos los secrets están presentes"
 
     - name: 🚀 Deploy to Lightsail
       uses: appleboy/ssh-action@v1.0.0
@@ -44,14 +69,20 @@ jobs:
         host: ${{ secrets.LIGHTSAIL_HOST }}
         username: ${{ secrets.LIGHTSAIL_USER }}
         key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
-        # AGREGA ESTAS 2 LÍNEAS:
         key_path: /tmp/ssh_key
         script: |
+          # Primero guarda la clave
           cat > /tmp/ssh_key << 'EOF'
           ${{ secrets.LIGHTSAIL_SSH_KEY }}
           EOF
           chmod 600 /tmp/ssh_key
           
+          # Configura SSH
+          mkdir -p ~/.ssh
+          echo "IdentityFile /tmp/ssh_key" >> ~/.ssh/config
+          ssh-keyscan -H ${{ secrets.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          
+          # Ahora el script principal
           cd ~/backend/project-marketjoyas-backend
           
           echo "📥 Actualizando código..."
