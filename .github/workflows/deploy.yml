@@ -36,7 +36,7 @@ jobs:
         CLOUDINARY_API_SECRET: test_secret_abc
 
     - name: 🏗️ Build application
-      run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
+      run: NODE_OPTIONS="--max-old-space-size=4096" npx nest build 
 
     - name: 🚀 Deploy to Lightsail
       uses: appleboy/ssh-action@v1.0.0
@@ -61,7 +61,7 @@ jobs:
           npx prisma migrate deploy
           
           echo "🏗️ Building proyecto..."
-          NODE_OPTIONS="--max-old-space-size-4096" npm run build
+          NODE_OPTIONS="--max-old-space-size=4096" npx nest build
           
           echo "📝 Configurando environment variables..."
           echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
