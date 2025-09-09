@@ -4,18 +4,11 @@ name: 🚀 Deploy MarketJoyas API
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
-# 🔥 AGREGA ESTO - Variables de entorno globales
-env:
-  LIGHTSAIL_HOST: ${{ secrets.LIGHTSAIL_HOST }}
-  LIGHTSAIL_USER: ${{ secrets.LIGHTSAIL_USER }}
-  LIGHTSAIL_SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-  JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
-  CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-  CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-  CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+permissions:
+  contents: read
+
 
 jobs:
   test-and-deploy:
@@ -57,23 +50,23 @@ jobs:
         echo "Repo: ${{ github.repository }}"
         echo "Ref: ${{ github.ref }}"
         
-        echo "=== SECRETS (usando env) ==="
-        echo "LIGHTSAIL_HOST: '$LIGHTSAIL_HOST'"
-        echo "LIGHTSAIL_USER: '$LIGHTSAIL_USER'"
-        echo "SSH_KEY length: ${#LIGHTSAIL_SSH_KEY}"
+        echo "=== SECRETS DIRECTOS ==="
+        echo "LIGHTSAIL_HOST: '${{ secrets.LIGHTSAIL_HOST }}'"
+        echo "LIGHTSAIL_USER: '${{ secrets.LIGHTSAIL_USER }}'"
+        echo "SSH_KEY presente: ${{ secrets.LIGHTSAIL_SSH_KEY != '' }}"
         
         # Verifica que los secrets no estén vacíos
-        if [ -z "$LIGHTSAIL_HOST" ]; then
+        if [ -z "${{ secrets.LIGHTSAIL_HOST }}" ]; then
           echo "❌ ERROR: LIGHTSAIL_HOST está vacío!"
           exit 1
         fi
 
-        if [ -z "$LIGHTSAIL_USER" ]; then
+        if [ -z "${{ secrets.LIGHTSAIL_USER }}" ]; then
           echo "❌ ERROR: LIGHTSAIL_USER está vacío!"
           exit 1
         fi
 
-        if [ -z "$LIGHTSAIL_SSH_KEY" ]; then
+        if [ -z "${{ secrets.LIGHTSAIL_SSH_KEY }}" ]; then
           echo "❌ ERROR: LIGHTSAIL_SSH_KEY está vacío!"
           exit 1
         fi
@@ -83,21 +76,13 @@ jobs:
     - name: 🚀 Deploy to Lightsail
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: ${{ env.LIGHTSAIL_HOST }}  # ← Usa env en lugar de secrets
-        username: ${{ env.LIGHTSAIL_USER }}  # ← Usa env
-        key: ${{ env.LIGHTSAIL_SSH_KEY }}  # ← Usa env
-        key_path: /tmp/ssh_key
+        host: ${{ secrets.LIGHTSAIL_HOST }}  # ← Usa secrets DIRECTAMENTE
+        username: ${{ secrets.LIGHTSAIL_USER }}  # ← Usa secrets DIRECTAMENTE
+        key: ${{ secrets.LIGHTSAIL_SSH_KEY }}  # ← Usa secrets DIRECTAMENTE
         script: |
-          # Primero guarda la clave
-          cat > /tmp/ssh_key << 'EOF'
-          ${{ env.LIGHTSAIL_SSH_KEY }}  # ← Usa env
-          EOF
-          chmod 600 /tmp/ssh_key
-          
           # Configura SSH
           mkdir -p ~/.ssh
-          echo "IdentityFile /tmp/ssh_key" >> ~/.ssh/config
-          ssh-keyscan -H ${{ env.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts 2>/dev/null  # ← Usa env
+          ssh-keyscan -H ${{ secrets.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
           
           # Ahora el script principal
           cd ~/backend/project-marketjoyas-backend
@@ -119,12 +104,12 @@ jobs:
           NODE_OPTIONS="--max-old-space-size=4096" npm run build
           
           echo "📝 Configurando environment variables..."
-          echo "DATABASE_URL=\"${{ env.DATABASE_URL }}\"" > .env  # ← Usa env
-          echo "JWT_SECRET=\"${{ env.JWT_SECRET }}\"" >> .env  # ← Usa env
-          echo "JWT_EXPIRES_IN=\"${{ env.JWT_EXPIRES_IN }}\"" >> .env  # ← Usa env
-          echo "CLOUDINARY_CLOUD_NAME=\"${{ env.CLOUDINARY_CLOUD_NAME }}\"" >> .env  # ← Usa env
-          echo "CLOUDINARY_API_KEY=\"${{ env.CLOUDINARY_API_KEY }}\"" >> .env  # ← Usa env
-          echo "CLOUDINARY_API_SECRET=\"${{ env.CLOUDINARY_API_SECRET }}\"" >> .env  # ← Usa env
+          echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
+          echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
+          echo "JWT_EXPIRES_IN=\"${{ secrets.JWT_EXPIRES_IN }}\"" >> .env
+          echo "CLOUDINARY_CLOUD_NAME=\"${{ secrets.CLOUDINARY_CLOUD_NAME }}\"" >> .env
+          echo "CLOUDINARY_API_KEY=\"${{ secrets.CLOUDINARY_API_KEY }}\"" >> .env
+          echo "CLOUDINARY_API_SECRET=\"${{ secrets.CLOUDINARY_API_SECRET }}\"" >> .env
           echo "NODE_ENV=production" >> .env
           echo "PORT=3000" >> .env
           
