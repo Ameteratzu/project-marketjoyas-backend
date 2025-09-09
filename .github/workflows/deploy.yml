@@ -1,0 +1,80 @@
+# .github/workflows/deploy.yml
+name: 🚀 Deploy MarketJoyas API
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: ⚙️ Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: 📦 Install dependencies
+      run: npm ci
+
+    - name: 🗄️ Generate Prisma
+      run: npx prisma generate
+
+    - name: 🧪 Run tests
+      run: npm test
+      env:
+        DATABASE_URL: mysql://root:test@localhost:3306/test_db
+        JWT_SECRET: test_jwt_secret_for_tests
+        JWT_EXPIRES_IN: 1d
+        CLOUDINARY_CLOUD_NAME: test_cloud
+        CLOUDINARY_API_KEY: test_key_123
+        CLOUDINARY_API_SECRET: test_secret_abc
+
+    - name: 🏗️ Build application
+      run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
+
+    - name: 🚀 Deploy to Lightsail
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.LIGHTSAIL_HOST }}
+        username: ${{ secrets.LIGHTSAIL_USER }}
+        key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+        script: |
+          cd ~/backend/project-marketjoyas-backend
+          
+          echo "📥 Actualizando código..."
+          git fetch --all
+          git reset --hard origin/main
+          
+          echo "📦 Instalando dependencias..."
+          npm install --production
+          
+          echo "🗄️ Generando Prisma..."
+          npx prisma generate
+          
+          echo "🔄 Aplicando migraciones..."
+          npx prisma migrate deploy
+          
+          echo "🏗️ Building proyecto..."
+          NODE_OPTIONS="--max-old-space-size-4096" npm run build
+          
+          echo "📝 Configurando environment variables..."
+          echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
+          echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
+          echo "JWT_EXPIRES_IN=\"${{ secrets.JWT_EXPIRES_IN }}\"" >> .env
+          echo "CLOUDINARY_CLOUD_NAME=\"${{ secrets.CLOUDINARY_CLOUD_NAME }}\"" >> .env
+          echo "CLOUDINARY_API_KEY=\"${{ secrets.CLOUDINARY_API_KEY }}\"" >> .env
+          echo "CLOUDINARY_API_SECRET=\"${{ secrets.CLOUDINARY_API_SECRET }}\"" >> .env
+          echo "NODE_ENV=production" >> .env
+          echo "PORT=3000" >> .env
+          
+          echo "🔄 Reiniciando API..."
+          pm2 restart marketjoyas-api || pm2 start dist/main.js --name marketjoyas-api
+          
+          echo "✅ Deploy completado!"
+          pm2 status
