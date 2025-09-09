@@ -12,13 +12,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // ✅ PROTEGER /api Y /api-json CON USUARIO Y CONTRASEÑA
-  app.use(
-    ['/api'],
-    basicAuth({
-      users: { admin: 'marketjoyitas909' }, // 👈 Cambia esto por un usuario/contraseña seguros
-      challenge: true,
-    }),
-  );
+ app.use(
+  ['/api', '/api-json'],
+  basicAuth({
+    users: { admin: 'marketjoyitas909' }, 
+    challenge: true,
+  }),
+);
+
 
   // ✅ CORS HABILITADO
   app.enableCors({
