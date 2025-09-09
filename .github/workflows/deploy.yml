@@ -98,8 +98,10 @@ jobs:
           echo "NODE_ENV=production" >> .env
           echo "PORT=3000" >> .env
           
-          echo "🔄 Reiniciando API..."
-          pm2 restart marketjoyas-api || pm2 start dist/main.js --name marketjoyas-api
+          echo "🔄 Reiniciando API (borrando y arrancando limpio)..."
+          pm2 delete marketjoyas-api || true
+          pm2 start dist/main.js --name marketjoyas-api
+
           
           echo "✅ Deploy completado!"
           pm2 status
