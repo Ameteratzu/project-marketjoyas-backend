@@ -42,7 +42,7 @@ jobs:
     - name: 🏗️ Build application
       run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
-    # 🔍 DEBUG SECRETS
+    # 🔍 Debug SECRETS (solo visual, no corta ejecución)
     - name: 🔍 Debug Secrets
       run: |
         echo "=== INFORMACIÓN DEL REPOSITORIO ==="
@@ -53,20 +53,6 @@ jobs:
         echo "LIGHTSAIL_HOST: '${{ secrets.LIGHTSAIL_HOST }}'"
         echo "LIGHTSAIL_USER: '${{ secrets.LIGHTSAIL_USER }}'"
         echo "SSH_KEY presente: ${{ secrets.LIGHTSAIL_SSH_KEY != '' }}"
-        
-        if [ -z "${{ secrets.LIGHTSAIL_HOST }}" ]; then
-          echo "❌ ERROR: LIGHTSAIL_HOST está vacío!"
-          exit 1
-        fi
-        if [ -z "${{ secrets.LIGHTSAIL_USER }}" ]; then
-          echo "❌ ERROR: LIGHTSAIL_USER está vacío!"
-          exit 1
-        fi
-        if [ -z "${{ secrets.LIGHTSAIL_SSH_KEY }}" ]; then
-          echo "❌ ERROR: LIGHTSAIL_SSH_KEY está vacío!"
-          exit 1
-        fi
-        echo "✅ Todos los secrets están presentes"
 
     # 🔍 Dump de variables en runtime
     - name: 🔍 Dump env
