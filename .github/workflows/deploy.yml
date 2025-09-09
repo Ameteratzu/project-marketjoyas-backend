@@ -19,8 +19,8 @@ jobs:
         node-version: '20.x'
         cache: 'npm'
 
-    - name: 📦 Install dependencies
-      run: npm ci
+    - name: 📦 Install dependencies (INCLUYENDO devDependencies)
+      run: npm ci --include=dev  
 
     - name: 🗄️ Generate Prisma
       run: npx prisma generate
@@ -36,7 +36,7 @@ jobs:
         CLOUDINARY_API_SECRET: test_secret_abc
 
     - name: 🏗️ Build application
-      run: NODE_OPTIONS="--max-old-space-size=4096" npx nest build 
+      run: NODE_OPTIONS="--max-old-space-size=4096" npm run build  
 
     - name: 🚀 Deploy to Lightsail
       uses: appleboy/ssh-action@v1.0.0
@@ -52,7 +52,7 @@ jobs:
           git reset --hard origin/main
           
           echo "📦 Instalando dependencias..."
-          npm install --production
+          npm install --production  # ← Aquí SÍ solo production
           
           echo "🗄️ Generando Prisma..."
           npx prisma generate
@@ -61,7 +61,7 @@ jobs:
           npx prisma migrate deploy
           
           echo "🏗️ Building proyecto..."
-          NODE_OPTIONS="--max-old-space-size=4096" npx nest build
+          NODE_OPTIONS="--max-old-space-size=4096" npm run build
           
           echo "📝 Configurando environment variables..."
           echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
