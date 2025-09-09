@@ -1246,6 +1246,147 @@
           "Tienda"
         ]
       }
+    },
+    "/carrito": {
+      "post": {
+        "operationId": "CarritoController_agregarProducto",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgregarCarritoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Agregar un producto al carrito o aumentar su cantidad",
+        "tags": [
+          "Carrito"
+        ]
+      },
+      "get": {
+        "operationId": "CarritoController_obtenerCarrito",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener todos los productos del carrito del usuario",
+        "tags": [
+          "Carrito"
+        ]
+      },
+      "delete": {
+        "operationId": "CarritoController_vaciarCarrito",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Vaciar todo el carrito del usuario",
+        "tags": [
+          "Carrito"
+        ]
+      }
+    },
+    "/carrito/{productoId}/quitar-uno": {
+      "patch": {
+        "operationId": "CarritoController_quitarUnaUnidad",
+        "parameters": [
+          {
+            "name": "productoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Disminuir en una unidad la cantidad de un producto en el carrito",
+        "tags": [
+          "Carrito"
+        ]
+      }
+    },
+    "/carrito/{productoId}": {
+      "delete": {
+        "operationId": "CarritoController_eliminarProducto",
+        "parameters": [
+          {
+            "name": "productoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar completamente un producto del carrito",
+        "tags": [
+          "Carrito"
+        ]
+      }
     }
   },
   "info": {
@@ -1623,6 +1764,22 @@
             "type": "string"
           }
         }
+      },
+      "AgregarCarritoDto": {
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "number"
+          },
+          "cantidad": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "productoId",
+          "cantidad"
+        ]
       }
     }
   }
