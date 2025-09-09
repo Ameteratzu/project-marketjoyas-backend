@@ -9,7 +9,6 @@ on:
 permissions:
   contents: read
 
-
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
@@ -43,7 +42,7 @@ jobs:
     - name: 🏗️ Build application
       run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
-    # 🔍 DEBUG MEJORADO
+    # 🔍 DEBUG SECRETS
     - name: 🔍 Debug Secrets
       run: |
         echo "=== INFORMACIÓN DEL REPOSITORIO ==="
@@ -55,36 +54,36 @@ jobs:
         echo "LIGHTSAIL_USER: '${{ secrets.LIGHTSAIL_USER }}'"
         echo "SSH_KEY presente: ${{ secrets.LIGHTSAIL_SSH_KEY != '' }}"
         
-        # Verifica que los secrets no estén vacíos
         if [ -z "${{ secrets.LIGHTSAIL_HOST }}" ]; then
           echo "❌ ERROR: LIGHTSAIL_HOST está vacío!"
           exit 1
         fi
-
         if [ -z "${{ secrets.LIGHTSAIL_USER }}" ]; then
           echo "❌ ERROR: LIGHTSAIL_USER está vacío!"
           exit 1
         fi
-
         if [ -z "${{ secrets.LIGHTSAIL_SSH_KEY }}" ]; then
           echo "❌ ERROR: LIGHTSAIL_SSH_KEY está vacío!"
           exit 1
         fi
-
         echo "✅ Todos los secrets están presentes"
+
+    # 🔍 Dump de variables en runtime
+    - name: 🔍 Dump env
+      run: |
+        echo "Lista de variables en runtime:"
+        env | grep LIGHTSAIL || true
 
     - name: 🚀 Deploy to Lightsail
       uses: appleboy/ssh-action@v1.0.0
       with:
-        host: ${{ secrets.LIGHTSAIL_HOST }}  # ← Usa secrets DIRECTAMENTE
-        username: ${{ secrets.LIGHTSAIL_USER }}  # ← Usa secrets DIRECTAMENTE
-        key: ${{ secrets.LIGHTSAIL_SSH_KEY }}  # ← Usa secrets DIRECTAMENTE
+        host: ${{ secrets.LIGHTSAIL_HOST }}
+        username: ${{ secrets.LIGHTSAIL_USER }}
+        key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
         script: |
-          # Configura SSH
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
           
-          # Ahora el script principal
           cd ~/backend/project-marketjoyas-backend
           
           echo "📥 Actualizando código..."
