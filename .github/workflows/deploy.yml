@@ -52,7 +52,7 @@ jobs:
           git reset --hard origin/main
           
           echo "📦 Instalando dependencias..."
-          npm install --production  # ← Aquí SÍ solo production
+          npm install --production
           
           echo "🗄️ Generando Prisma..."
           npx prisma generate
