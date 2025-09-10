@@ -100,7 +100,7 @@ jobs:
           
           echo "🔄 Reiniciando API (borrando y arrancando limpio)..."
           pm2 delete marketjoyas-api || true
-          pm2 start dist/main.js --name marketjoyas-api
+          pm2 start dist/src/main.js --name marketjoyas-api
 
           
           echo "✅ Deploy completado!"
