@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CrearProductoDto } from './dtos/crear-producto.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { Prisma } from '@prisma/client';
 import { FiltrarProductosDto } from './dtos/filtrar-productos.dto';
 import { UpdateProductoDto } from './dtos/actualizar-producto.dto';

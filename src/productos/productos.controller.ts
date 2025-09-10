@@ -14,12 +14,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { ProductosService } from './productos.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/auth/roles.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 import { CrearProductoDto } from './dtos/crear-producto.dto';
-import { GetUser } from 'src/common/decorators/get-user.decorator';
-import type { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { UpdateProductoDto } from './dtos/actualizar-producto.dto';
 import { BuscarProductoDto } from './dtos/buscar-producto.dto';

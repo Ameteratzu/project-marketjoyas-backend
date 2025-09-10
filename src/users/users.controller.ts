@@ -10,11 +10,11 @@ import { UsersService } from './users.service';
 import { CrearClienteDto } from './dtos/crear-cliente.dto';
 import { CrearVendedorDto } from './dtos/crear-vendedor.dto';
 import { GetUserOptional } from './decorators/get-user-optional.decorator';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Roles } from 'src/auth/roles.decorator';
-import { GetUser } from 'src/common/decorators/get-user.decorator';
-import type { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { CrearTrabajadorDto } from './dtos/crear-trabajador.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 

@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CrearCategoriaDto } from './dtos/crear-categoria.dto';
 import { ActualizarCategoriaDto } from './dtos/actualizar-categoria.dto';
 

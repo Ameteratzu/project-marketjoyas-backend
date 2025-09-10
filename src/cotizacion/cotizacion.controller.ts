@@ -9,12 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/auth/roles.decorator';
+import { Roles } from '../auth/roles.decorator';
 import { CotizacionService } from './cotizacion.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/roles.guard';
-import type { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
-import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
+import { GetUser } from '../common/decorators/get-user.decorator';
 import { CrearCotizacionDto } from './dtos/crear-cotizacion.dto';
 
 @ApiTags('Cotizacion')

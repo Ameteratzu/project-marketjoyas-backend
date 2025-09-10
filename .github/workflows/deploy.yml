@@ -77,7 +77,7 @@ jobs:
           git reset --hard origin/main
           
           echo "📦 Instalando dependencias..."
-          npm install --production
+          npm ci --production
           
           echo "🗄️ Generando Prisma..."
           npx prisma generate
@@ -100,7 +100,7 @@ jobs:
           
           echo "🔄 Reiniciando API (borrando y arrancando limpio)..."
           pm2 delete marketjoyas-api || true
-          pm2 start dist/src/main.js --name marketjoyas-api
+          pm2 start npm --name marketjoyas-api -- run start:prod
 
           
           echo "✅ Deploy completado!"

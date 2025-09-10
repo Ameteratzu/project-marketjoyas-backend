@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CrearVendedorDto } from './dtos/crear-vendedor.dto';
 import { Prisma, Usuario } from '@prisma/client';
 import { CrearTrabajadorDto } from './dtos/crear-trabajador.dto';
-import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 
 ///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE USUARIOS/////////////////////////
 

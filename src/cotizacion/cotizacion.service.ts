@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CrearCotizacionDto } from './dtos/crear-cotizacion.dto';
-import type { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { EstadoCotizacion } from '@prisma/client';
 
 @Injectable()
