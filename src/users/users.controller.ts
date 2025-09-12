@@ -5,6 +5,7 @@ import {
   Body,
   ValidationPipe,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CrearClienteDto } from './dtos/crear-cliente.dto';
@@ -18,6 +19,9 @@ import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { CrearTrabajadorDto } from './dtos/crear-trabajador.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CrearDemoVendedorDto } from './dtos/crear-demo-vendedor.dto';
+import { ActualizarFotoDto } from './dtos/actualizar-foto.dto';
+import { ActualizarDireccionDto } from './dtos/actualizar-direccion.dto';
+import { ActualizarInfoDto } from './dtos/actualizar-info.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -58,5 +62,50 @@ export class UsuariosController {
     @Body() dto: CrearTrabajadorDto,
   ) {
     return this.usuariosService.crearTrabajador(dto, user);
+  }
+
+  @Patch('actualizar/info')
+  @ApiBearerAuth()
+   @ApiOperation({
+    summary:
+      'Actualiza toda la info de un cliente',
+  })
+
+  @UseGuards(JwtAuthGuard)
+  actualizarInfo(
+    @GetUser() user: JwtPayload,
+    @Body(new ValidationPipe()) dto: ActualizarInfoDto,
+  ) {
+    return this.usuariosService.actualizarInfo(user.sub, dto);
+  }
+
+  @Patch('actualizar/direccion')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary:
+      'Actualiza especificamente la direccion de un usuario',
+  })
+
+  @UseGuards(JwtAuthGuard)
+  actualizarDireccion(
+    @GetUser() user: JwtPayload,
+    @Body(new ValidationPipe()) dto: ActualizarDireccionDto,
+  ) {
+    return this.usuariosService.actualizarDireccion(user.sub, dto);
+  }
+
+  @Patch('actualizar/foto')
+  @ApiBearerAuth()
+   @ApiOperation({
+    summary:
+      'Actualiza especificamente la foto de un usuario',
+  })
+
+  @UseGuards(JwtAuthGuard)
+  actualizarFotoPerfil(
+    @GetUser() user: JwtPayload,
+    @Body(new ValidationPipe()) dto: ActualizarFotoDto,
+  ) {
+    return this.usuariosService.actualizarFotoPerfil(user.sub, dto);
   }
 }

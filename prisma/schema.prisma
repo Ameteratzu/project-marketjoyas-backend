@@ -82,6 +82,9 @@ model Usuario {
   contraseña      String
   rol             Rol      @default(CLIENTE)
   creadoEn        DateTime @default(now())
+  
+  fotoPerfilUrl      String? 
+  fotoPerfilPublicId String?
 
   tiendaPropia Tienda? @relation("DueñoTienda") // solo si es VENDEDOR
   trabajaEn    Tienda? @relation("TrabajadoresTienda", fields: [tiendaId], references: [id]) // si es TRABAJADOR
@@ -137,7 +140,7 @@ model Tienda {
   departamento String?
   distrito     String?
   codigoPostal String?
-  logo         String? //es una imgaen 
+  logo         String? //url es una imgaen 
   logoPublicId String? //id que da cloudinary
   ruc          String?
   emailTienda  String? //email para la tienda
@@ -151,9 +154,6 @@ model Tienda {
   documento    Documento []
   certificado  CertificadoDigital? //1:1
   serieCorrelativo SerieCorrelativo[]
-
-
-
 }
 
 //////////////////////////////

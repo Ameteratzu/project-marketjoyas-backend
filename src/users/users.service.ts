@@ -8,6 +8,9 @@ import { Prisma, Usuario } from '@prisma/client';
 import { CrearTrabajadorDto } from './dtos/crear-trabajador.dto';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { CrearDemoVendedorDto } from './dtos/crear-demo-vendedor.dto';
+import { ActualizarFotoDto } from './dtos/actualizar-foto.dto';
+import { ActualizarDireccionDto } from './dtos/actualizar-direccion.dto';
+import { ActualizarInfoDto } from './dtos/actualizar-info.dto';
 
 ///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE USUARIOS/////////////////////////
 
@@ -202,6 +205,53 @@ export class UsersService {
       message: 'Trabajador registrado correctamente',
       trabajador,
     };
+  }
+
+  async actualizarInfo(userId: number, dto: ActualizarInfoDto) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id: userId },
+    });
+    if (!usuario) throw new ForbiddenException('Usuario no encontrado');
+
+    const updateData: any = {
+      nombre_completo: dto.nombre_completo,
+      dni: dto.dni,
+      telefono: dto.telefono,
+      email: dto.email,
+    };
+
+    // Validar y actualizar contraseña si se desea cambiar
+    if (dto.contraseña_actual && dto.nueva_contraseña) {
+      const match = await bcrypt.compare(
+        dto.contraseña_actual,
+        usuario.contraseña,
+      );
+      if (!match)
+        throw new ForbiddenException('La contraseña actual es incorrecta');
+      updateData.contraseña = await this.hashPassword(dto.nueva_contraseña);
+    }
+
+    return this.prisma.usuario.update({
+      where: { id: userId },
+      data: updateData,
+    });
+  }
+
+  async actualizarDireccion(userId: number, dto: ActualizarDireccionDto) {
+    return this.prisma.usuario.update({
+      where: { id: userId },
+      data: { direccion: dto.direccion },
+    });
+  }
+
+  async actualizarFotoPerfil(userId: number, dto: ActualizarFotoDto) {
+    return this.prisma.usuario.update({
+      where: { id: userId },
+      data: {
+        fotoPerfilUrl: dto.fotoPerfilUrl,
+        fotoPerfilPublicId: dto.fotoPerfilPublicId,
+      },
+    });
   }
 
   //Funcion para buscar por email.
