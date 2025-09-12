@@ -2179,31 +2179,43 @@
         "type": "object",
         "properties": {
           "nombre_completo": {
-            "type": "string"
+            "type": "string",
+            "description": "Nombre completo del cliente",
+            "example": "María García López"
           },
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Email del cliente",
+            "example": "maria.garcia@email.com"
           },
           "direccion": {
-            "type": "string"
+            "type": "string",
+            "description": "Dirección del cliente (opcional)",
+            "example": "Av. Principal 123, Lima, Perú (opcional)"
           },
           "dni": {
             "type": "string",
             "minLength": 8,
-            "maxLength": 8
+            "maxLength": 8,
+            "description": "DNI del cliente (8 caracteres)",
+            "example": "71234567"
           },
           "telefono": {
-            "type": "string"
+            "type": "string",
+            "description": "Número de teléfono del cliente",
+            "example": "+51987654321"
           },
           "contraseña": {
-            "type": "string"
+            "type": "string",
+            "description": "Contraseña del cliente",
+            "example": "ClaveSegura123",
+            "minLength": 6
           }
         },
         "required": [
           "nombre_completo",
           "email",
-          "direccion",
           "dni",
           "telefono",
           "contraseña"
@@ -2387,7 +2399,9 @@
         "type": "object",
         "properties": {
           "productoId": {
-            "type": "number"
+            "type": "number",
+            "description": "ID del producto a agregar a favoritos",
+            "example": 12
           }
         },
         "required": [
@@ -2398,7 +2412,9 @@
         "type": "object",
         "properties": {
           "productoId": {
-            "type": "number"
+            "type": "number",
+            "description": "ID del producto a agregar a comparación",
+            "example": 8
           }
         },
         "required": [
@@ -2560,11 +2576,15 @@
         "type": "object",
         "properties": {
           "productoId": {
-            "type": "number"
+            "type": "number",
+            "description": "ID del producto a agregar al carrito",
+            "example": 5
           },
           "cantidad": {
             "type": "number",
-            "minimum": 1
+            "minimum": 1,
+            "description": "Cantidad del producto (mínimo 1)",
+            "example": 2
           }
         },
         "required": [
