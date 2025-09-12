@@ -861,45 +861,6 @@
         ]
       }
     },
-    "/admin/cotizaciones/{id}/estado": {
-      "patch": {
-        "operationId": "AdminController_cambiarEstadoCotizacion",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CambiarEstadoCotizacionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Un admin cambia el estado de cotizacion, la aprueba o deniega",
-        "tags": [
-          "Admin"
-        ]
-      }
-    },
     "/admin/tiendas": {
       "get": {
         "operationId": "AdminController_getAllTiendas",
@@ -1655,7 +1616,46 @@
         ]
       }
     },
-    "/cotizacion/cotizaciones": {
+    "/cotizaciones/{id}/estado": {
+      "patch": {
+        "operationId": "CotizacionController_cambiarEstadoCotizacion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CambiarEstadoCotizacionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin aprueba o deniega una cotización",
+        "tags": [
+          "Cotizaciones"
+        ]
+      }
+    },
+    "/cotizaciones": {
       "get": {
         "operationId": "CotizacionController_getAllSolicitudesCotizacion",
         "parameters": [],
@@ -1679,13 +1679,41 @@
             "bearer": []
           }
         ],
-        "summary": "Un admin ve todas las solicitudes de cotizacion",
+        "summary": "Un admin ve todas las solicitudes de cotización",
         "tags": [
-          "Cotizacion"
+          "Cotizaciones"
+        ]
+      },
+      "post": {
+        "operationId": "CotizacionController_crearCotizacion",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearCotizacionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear solicitud de cotización (público o usuario autenticado(toma datos del token si no llena por completo el formulario))",
+        "tags": [
+          "Cotizaciones"
         ]
       }
     },
-    "/cotizacion/aprobadas": {
+    "/cotizaciones/aprobadas": {
       "get": {
         "operationId": "CotizacionController_getSolicitudesAprobadas",
         "parameters": [],
@@ -1711,36 +1739,11 @@
         ],
         "summary": "Vendedores y trabajadores ven solicitudes aprobadas",
         "tags": [
-          "Cotizacion"
+          "Cotizaciones"
         ]
       }
     },
-    "/cotizacion": {
-      "post": {
-        "operationId": "CotizacionController_crearCotizacion",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CrearCotizacionDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "summary": "Crear solicitud de cotizacion publica",
-        "tags": [
-          "Cotizacion"
-        ]
-      }
-    },
-    "/cotizacion/mias": {
+    "/cotizaciones/mias": {
       "get": {
         "operationId": "CotizacionController_getMisSolicitudes",
         "parameters": [],
@@ -1754,13 +1757,13 @@
             "bearer": []
           }
         ],
-        "summary": "para que los clientes vean sus solicitudes de cotizacion",
+        "summary": "Cliente autenticado ve sus propias solicitudes",
         "tags": [
-          "Cotizacion"
+          "Cotizaciones"
         ]
       }
     },
-    "/cotizacion/{id}": {
+    "/cotizaciones/{id}": {
       "delete": {
         "operationId": "CotizacionController_eliminarSolicitud",
         "parameters": [
@@ -1783,9 +1786,9 @@
             "bearer": []
           }
         ],
-        "summary": "Eliminar solicitudes solo si le pertenece",
+        "summary": "Cliente autenticado elimina su propia solicitud",
         "tags": [
-          "Cotizacion"
+          "Cotizaciones"
         ]
       }
     },
@@ -2461,17 +2464,6 @@
           "rol"
         ]
       },
-      "CambiarEstadoCotizacionDto": {
-        "type": "object",
-        "properties": {
-          "estado": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "estado"
-        ]
-      },
       "CrearGenericoDto": {
         "type": "object",
         "properties": {
@@ -2521,15 +2513,54 @@
           "nombre"
         ]
       },
+      "CambiarEstadoCotizacionDto": {
+        "type": "object",
+        "properties": {
+          "estado": {
+            "type": "string",
+            "description": "Estado de la cotización, debe ser APROBADA o DENEGADA",
+            "enum": [
+              "PENDIENTE",
+              "APROBADA",
+              "DENEGADA"
+            ],
+            "example": "APROBADA"
+          }
+        },
+        "required": [
+          "estado"
+        ]
+      },
       "CrearCotizacionDto": {
         "type": "object",
         "properties": {
           "imagenUrl": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "description": "URL de la imagen para la cotización",
+            "example": "https://example.com/imagen.jpg"
           },
           "descripcion": {
-            "type": "string"
+            "type": "string",
+            "description": "Descripción u observaciones para la cotización",
+            "example": "Necesito un presupuesto para 100 unidades"
+          },
+          "contactoEmail": {
+            "type": "string",
+            "format": "email",
+            "description": "Email de contacto (opcional, para usuarios no autenticados)",
+            "example": " Si no esta autenticado: contacto@correo.com"
+          },
+          "contactoTelefono": {
+            "type": "string",
+            "pattern": "/^[0-9+\\-\\s]{7,15}$/",
+            "description": "Teléfono de contacto (opcional, para usuarios no autenticados)",
+            "example": "Si no esta autenticado: +51987654321"
+          },
+          "contactoNombre": {
+            "type": "string",
+            "description": "Nombre completo de contacto (opcional, para usuarios no autenticados)",
+            "example": "Si no esta autenticado: Juan Pérez"
           }
         },
         "required": [

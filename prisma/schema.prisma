@@ -540,10 +540,16 @@ model SolicitudCotizacion {
   id          Int                   @id @default(autoincrement())
   usuario     Usuario?              @relation(fields: [usuarioId], references: [id]) // N:1 → una cotización pertenece a un usuario
   usuarioId   Int?
-  imagenUrl   String
-  descripcion String
+  imagenUrl   String?
+  descripcion String?
   estado      EstadoCotizacion      @default(PENDIENTE)
   propuestas  PropuestaCotizacion[] // 1:N → una cotización puede recibir muchas propuestas de vendedores
+
+//para usuarios no autenticados
+  contactoEmail    String?
+  contactoTelefono String?
+  contactoNombre   String? // nuevo campo
+
 }
 
 ////////////////////////////////

@@ -82,35 +82,7 @@ export class AdminService {
     return { message: 'Rol actualizado correctamente', updatedUser };
   }
 
-  //Funcion para que un admin pueda aprobar o denegar una publicacion
-
-  async cambiarEstadoCotizacion(id: number, estado: EstadoCotizacion) {
-    const solicitud = await this.prisma.solicitudCotizacion.findUnique({
-      where: { id },
-    });
-
-    if (!solicitud) {
-      throw new NotFoundException('Solicitud de cotización no encontrada');
-    }
-
-    if (solicitud.estado !== 'PENDIENTE') {
-      throw new BadRequestException('La solicitud ya fue procesada');
-    }
-
-    if (!['APROBADA', 'DENEGADA'].includes(estado)) {
-      throw new BadRequestException('Estado inválido para esta operación');
-    }
-
-    const actualizada = await this.prisma.solicitudCotizacion.update({
-      where: { id },
-      data: { estado },
-    });
-
-    return {
-      message: `Solicitud ${estado.toLowerCase()}`,
-      solicitud: actualizada,
-    };
-  }
+ 
 
   //Funcion para ver las tiendas y sus subscripciones
 

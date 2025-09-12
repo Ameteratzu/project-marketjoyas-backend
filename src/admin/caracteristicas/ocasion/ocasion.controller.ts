@@ -22,7 +22,7 @@ import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 @ApiTags('Ocasiones')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
+@Roles('ADMIN', 'VENDEDOR')
 @Controller('ocasiones')
 export class OcasionController {
   constructor(private readonly ocasionService: OcasionService) {}

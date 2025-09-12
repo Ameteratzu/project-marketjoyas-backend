@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -16,31 +17,41 @@ import { RolesGuard } from '../auth/roles.guard';
 import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { CrearCotizacionDto } from './dtos/crear-cotizacion.dto';
+import { CambiarEstadoCotizacionDto } from './dtos/cambiar-estado-cotizacion.dto';
 
-@ApiTags('Cotizacion')
-@Controller('cotizacion')
+@ApiTags('Cotizaciones')
+@Controller('cotizaciones')
 export class CotizacionController {
   constructor(private readonly cotizacionService: CotizacionService) {}
 
-  //Para ver TODAS las cotizaciones
-
+  // ADMIN: Cambiar estado
+  @Patch(':id/estado')
+  @Roles('ADMIN')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'Un admin aprueba o deniega una cotización' })
+  async cambiarEstadoCotizacion(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: CambiarEstadoCotizacionDto,
+  ) {
+    return this.cotizacionService.cambiarEstadoCotizacion(id, dto.estado);
+  }
+
+  // ADMIN: Ver todas las solicitudes
+  @Get()
   @Roles('ADMIN')
-  @Get('cotizaciones')
-  @ApiOperation({
-    summary: 'Un admin ve todas las solicitudes de cotizacion',
-  })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'Un admin ve todas las solicitudes de cotización' })
   async getAllSolicitudesCotizacion() {
     return this.cotizacionService.getAllSolicitudesCotizacion();
   }
 
-  //Ver solicitudes aprobadas
-
+  // VENDEDOR/TRABAJADOR/ADMIN: Ver solicitudes aprobadas
+  @Get('aprobadas')
+  @Roles('VENDEDOR', 'TRABAJADOR', 'ADMIN')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('aprobadas')
-  @Roles('VENDEDOR', 'TRABAJADOR')
   @ApiOperation({
     summary: 'Vendedores y trabajadores ven solicitudes aprobadas',
   })
@@ -48,10 +59,13 @@ export class CotizacionController {
     return this.cotizacionService.getSolicitudesAprobadas();
   }
 
-  // Crear una solicitud
-
+  // PUBLICO o CLIENTE: Crear una solicitud
   @Post()
-  @ApiOperation({ summary: 'Crear solicitud de cotizacion publica' })
+  @ApiBearerAuth() // Para que Swagger muestre la opción del token
+  @UseGuards(JwtAuthGuard) 
+  @ApiOperation({
+    summary: 'Crear solicitud de cotización (público o usuario autenticado(toma datos del token si no llena por completo el formulario))',
+  })
   async crearCotizacion(
     @Body() dto: CrearCotizacionDto,
     @GetUser() user?: JwtPayload,
@@ -59,27 +73,28 @@ export class CotizacionController {
     return this.cotizacionService.crearSolicitudCotizacion(dto, user);
   }
 
-  // Ver solicitudes
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiBearerAuth()
+  // CLIENTE: Ver mis solicitudes
   @Get('mias')
   @Roles('CLIENTE')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({
-    summary: 'para que los clientes vean sus solicitudes de cotizacion',
+    summary: 'Cliente autenticado ve sus propias solicitudes',
   })
   async getMisSolicitudes(@GetUser() user: JwtPayload) {
     return this.cotizacionService.getSolicitudesPorUsuario(user);
   }
 
-  // Eliminar solicitud
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiBearerAuth()
+  //CLIENTE: Eliminar solicitud propia
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar solicitudes solo si le pertenece' })
+  @Roles('CLIENTE')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({
+    summary: 'Cliente autenticado elimina su propia solicitud',
+  })
   async eliminarSolicitud(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @GetUser() user: JwtPayload,
   ) {
     return this.cotizacionService.eliminarSolicitud(id, user);

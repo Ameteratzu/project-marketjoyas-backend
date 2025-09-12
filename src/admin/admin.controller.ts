@@ -17,7 +17,6 @@ import { AdminService } from './admin.service';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { CambiarRol } from './dtos/cambiar-rol.dto';
 import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
-import { CambiarEstadoCotizacionDto } from './dtos/cambiar-estado-cotizacion.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -61,18 +60,7 @@ export class AdminController {
     return this.adminService.changeUserRole(id, dto.rol, user);
   }
 
-  @Roles('ADMIN')
-  @Patch('cotizaciones/:id/estado')
-  @ApiOperation({
-    summary: 'Un admin cambia el estado de cotizacion, la aprueba o deniega',
-  })
-  async cambiarEstadoCotizacion(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: CambiarEstadoCotizacionDto,
-  ) {
-    return this.adminService.cambiarEstadoCotizacion(id, dto.estado);
-  }
-
+  
   @Roles('ADMIN')
   @Get('tiendas')
   @ApiOperation({

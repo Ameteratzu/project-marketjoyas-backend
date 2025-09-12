@@ -21,7 +21,7 @@ import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 @ApiTags('Materiales')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
+@Roles('ADMIN', 'VENDEDOR')
 @Controller('materiales')
 export class MaterialController {
   constructor(private readonly materialService: MaterialService) {}

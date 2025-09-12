@@ -21,7 +21,7 @@ import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 @ApiTags('Gemas')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
+@Roles('ADMIN', 'VENDEDOR')
 @Controller('gemas')
 export class GemaController {
   constructor(private readonly gemaService: GemaService) {}

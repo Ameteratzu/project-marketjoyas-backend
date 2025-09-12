@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: 🚀 Deploy MarketJoyas API
 
 on:
@@ -42,7 +41,6 @@ jobs:
     - name: 🏗️ Build application
       run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
-    # 🔍 Debug SECRETS (solo visual, no corta ejecución)
     - name: 🔍 Debug Secrets
       run: |
         echo "=== INFORMACIÓN DEL REPOSITORIO ==="
@@ -54,7 +52,6 @@ jobs:
         echo "LIGHTSAIL_USER: '${{ secrets.LIGHTSAIL_USER }}'"
         echo "SSH_KEY presente: ${{ secrets.LIGHTSAIL_SSH_KEY != '' }}"
 
-    # 🔍 Dump de variables en runtime
     - name: 🔍 Dump env
       run: |
         echo "Lista de variables en runtime:"
@@ -71,6 +68,16 @@ jobs:
           ssh-keyscan -H ${{ secrets.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
           
           cd ~/backend/project-marketjoyas-backend
+
+          echo "📝 Configurando environment variables..."
+          echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
+          echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
+          echo "JWT_EXPIRES_IN=\"${{ secrets.JWT_EXPIRES_IN }}\"" >> .env
+          echo "CLOUDINARY_CLOUD_NAME=\"${{ secrets.CLOUDINARY_CLOUD_NAME }}\"" >> .env
+          echo "CLOUDINARY_API_KEY=\"${{ secrets.CLOUDINARY_API_KEY }}\"" >> .env
+          echo "CLOUDINARY_API_SECRET=\"${{ secrets.CLOUDINARY_API_SECRET }}\"" >> .env
+          echo "NODE_ENV=production" >> .env
+          echo "PORT=3000" >> .env
           
           echo "📥 Actualizando código..."
           git fetch --all
@@ -88,20 +95,10 @@ jobs:
           echo "🏗️ Building proyecto..."
           NODE_OPTIONS="--max-old-space-size=4096" npm run build
           
-          echo "📝 Configurando environment variables..."
-          echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
-          echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
-          echo "JWT_EXPIRES_IN=\"${{ secrets.JWT_EXPIRES_IN }}\"" >> .env
-          echo "CLOUDINARY_CLOUD_NAME=\"${{ secrets.CLOUDINARY_CLOUD_NAME }}\"" >> .env
-          echo "CLOUDINARY_API_KEY=\"${{ secrets.CLOUDINARY_API_KEY }}\"" >> .env
-          echo "CLOUDINARY_API_SECRET=\"${{ secrets.CLOUDINARY_API_SECRET }}\"" >> .env
-          echo "NODE_ENV=production" >> .env
-          echo "PORT=3000" >> .env
-          
           echo "🔄 Reiniciando API (borrando y arrancando limpio)..."
           pm2 delete marketjoyas-api || true
           pm2 start npm --name marketjoyas-api -- run start:prod
 
-          
           echo "✅ Deploy completado!"
           pm2 status
+          pm2 logs marketjoyas-api
