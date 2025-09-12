@@ -9,12 +9,21 @@ export class TiendaService {
     constructor(private readonly prisma: PrismaService, private readonly cloudinary: CloudinaryService){}
 
 //datos de todas las tiendas
- async findAllPublic() {
+async findAllPublic(nombre?: string) {
+  const where = nombre
+    ? {
+        nombre: {
+          contains: nombre,
+        },
+      }
+    : undefined;
+
   return this.prisma.tienda.findMany({
+    where,
     select: {
       id: true,
       nombre: true,
-      logo: true, 
+      logo: true,
     },
   });
 }

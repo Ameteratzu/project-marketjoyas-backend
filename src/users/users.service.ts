@@ -7,6 +7,7 @@ import { CrearVendedorDto } from './dtos/crear-vendedor.dto';
 import { Prisma, Usuario } from '@prisma/client';
 import { CrearTrabajadorDto } from './dtos/crear-trabajador.dto';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
+import { CrearDemoVendedorDto } from './dtos/crear-demo-vendedor.dto';
 
 ///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE USUARIOS/////////////////////////
 
@@ -95,6 +96,66 @@ export class UsersService {
             ciudad: dto.tienda.ciudad,
             provincia: dto.tienda.provincia,
             codigoPostal: dto.tienda.codigoPostal,
+          },
+        },
+      },
+      include: { tiendaPropia: true },
+    });
+  }
+
+  async crearDemoVendedor(dto: CrearDemoVendedorDto, userId?: number) {
+    const hashedPassword = await this.hashPassword(dto.contraseña);
+
+    if (userId) {
+      const user = await this.prisma.usuario.findUnique({
+        where: { id: userId },
+      });
+
+      if (user?.rol !== 'CLIENTE') {
+        throw new ForbiddenException(
+          'Solo los usuarios CLIENTE pueden registrarse como DEMOVENDEDOR',
+        );
+      }
+
+      return this.prisma.usuario.update({
+        where: { id: userId },
+        data: {
+          rol: 'DEMOVENDEDOR',
+          nombre_completo: dto.nombre_completo,
+          email: dto.email,
+          telefono: dto.telefono,
+          contraseña: hashedPassword,
+          direccion: dto.direccion,
+          tiendaPropia: {
+            create: {
+              nombre: dto.nombre_tienda,
+              direccion: dto.direccion_tienda,
+              departamento: dto.departamento,
+              provincia: dto.provincia,
+              distrito: dto.distrito,
+            },
+          },
+        },
+        include: { tiendaPropia: true },
+      });
+    }
+
+    // Usuario nuevo
+    return this.prisma.usuario.create({
+      data: {
+        nombre_completo: dto.nombre_completo,
+        email: dto.email,
+        telefono: dto.telefono,
+        contraseña: hashedPassword,
+        direccion: dto.direccion,
+        rol: 'DEMOVENDEDOR',
+        tiendaPropia: {
+          create: {
+            nombre: dto.nombre_tienda,
+            direccion: dto.direccion_tienda,
+            departamento: dto.departamento,
+            provincia: dto.provincia,
+            distrito: dto.distrito,
           },
         },
       },

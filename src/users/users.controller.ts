@@ -16,7 +16,8 @@ import { Roles } from '../auth/roles.decorator';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { CrearTrabajadorDto } from './dtos/crear-trabajador.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { CrearDemoVendedorDto } from './dtos/crear-demo-vendedor.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -35,6 +36,18 @@ export class UsuariosController {
     return this.usuariosService.crearVendedor(dto, user?.sub);
   }
 
+  // Para formulario unete a nosotros DEMOVENDEDOR
+  @Post('registro/demovendedor')
+  @ApiOperation({
+    summary:
+      'Para crear usuario de DEMOVENDEDOR, se usa en formulario de UNETE A NOSOTROS',
+  })
+  async crearDemoVendedor(
+    @GetUserOptional() user: JwtPayload, // puede ser null si no hay sesión
+    @Body(new ValidationPipe()) dto: CrearDemoVendedorDto,
+  ) {
+    return this.usuariosService.crearDemoVendedor(dto, user?.sub);
+  }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)

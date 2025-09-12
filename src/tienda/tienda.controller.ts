@@ -5,13 +5,11 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  UploadedFile,
+  Query,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { TiendaService } from './tienda.service';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -21,35 +19,31 @@ import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 
 @Controller('tiendas')
 export class TiendaController {
-  constructor(
-    private readonly tiendaService: TiendaService,
-    private readonly cloudinary: CloudinaryService,
-  ) {}
+  constructor(private readonly tiendaService: TiendaService) {}
 
-  // Para ver todas las tienda
+  // Para ver todas las tiendas, con filtro opcional por nombre
   @Get()
   @ApiOperation({
-    summary: 'Un usuario publico puede ver todas las tiendas',
+    summary: 'Listar todos los estilos con filtro opcional por nombre, se puede consultar asi tambien para todas las caracteristicas /tiendas?nombre=mo',
   })
-  async getAllPublicas() {
-    return this.tiendaService.findAllPublic();
+  async getAllPublicas(@Query('nombre') nombre?: string) {
+    return this.tiendaService.findAllPublic(nombre);
   }
 
-  // Para ver info de tienda especifica
+  // Para ver info de tienda específica
   @Get(':id')
   @ApiOperation({
-    summary: 'Un usuario publico puede ver toda la informacion de las tiendas',
+    summary: 'Un usuario público puede ver toda la información de una tienda',
   })
-  async getUnaPublica(@Param('id') id: number) {
+  async getUnaPublica(@Param('id', ParseIntPipe) id: number) {
     return this.tiendaService.findOnePublic(id);
   }
 
-
-  //actualizar datos de la tienda
+  // Actualizar datos de la tienda
   @Patch('mi-tienda')
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'vendedor actualiza su tienda',
+    summary: 'Vendedor actualiza su tienda',
   })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR')
@@ -57,6 +51,6 @@ export class TiendaController {
     @Body() dto: ActualizarTiendaDto,
     @GetUser() user: JwtPayload,
   ) {
-    return this.tiendaService.updateTienda(user.sub, dto); // solo espera la URL
+    return this.tiendaService.updateTienda(user.sub, dto);
   }
 }

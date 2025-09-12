@@ -1,0 +1,13 @@
+-- AlterTable
+ALTER TABLE `tienda` ADD COLUMN `departamento` VARCHAR(191) NULL,
+    ADD COLUMN `distrito` VARCHAR(191) NULL,
+    MODIFY `nombre` VARCHAR(191) NULL,
+    MODIFY `direccion` VARCHAR(191) NULL,
+    MODIFY `telefono` VARCHAR(191) NULL,
+    MODIFY `pais` VARCHAR(191) NULL,
+    MODIFY `ciudad` VARCHAR(191) NULL,
+    MODIFY `provincia` VARCHAR(191) NULL,
+    MODIFY `codigoPostal` VARCHAR(191) NULL;
+
+-- AlterTable
+ALTER TABLE `usuario` MODIFY `rol` ENUM('ADMIN', 'CLIENTE', 'DEMOVENDEDOR', 'VENDEDOR', 'TRABAJADOR') NOT NULL DEFAULT 'CLIENTE';

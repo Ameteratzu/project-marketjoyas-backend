@@ -17,6 +17,7 @@ datasource db {
 enum Rol {
   ADMIN
   CLIENTE
+  DEMOVENDEDOR
   VENDEDOR
   TRABAJADOR
 }
@@ -74,11 +75,11 @@ model Usuario {
   username        String?  @unique // opcional para CLIENTE, requerido para VENDEDOR
   email           String   @unique
   tipoDocumento   TipoDocumentoIdentidad? @default(DNI) // Nuevo
-  dni             String   @unique //LO HE DEJADO COMO DNI PARA QUE NO SE ROMPA NADA PERO PUEDE SER RUC10, O CE
+  dni             String?   @unique //LO HE DEJADO COMO DNI PARA QUE NO SE ROMPA NADA PERO PUEDE SER RUC10, O CE
   razonSocial     String?  // Nuevo: solo si el cliente tiene RUC
   telefono        String
   direccion       String?
-  contraseña     String
+  contraseña      String
   rol             Rol      @default(CLIENTE)
   creadoEn        DateTime @default(now())
 
@@ -127,13 +128,15 @@ model Tienda {
   id           Int     @id @default(autoincrement())
   usuario      Usuario @relation("DueñoTienda", fields: [usuarioId], references: [id])
   usuarioId    Int     @unique
-  nombre       String //razon social
-  direccion    String //direccion fiscal
-  telefono     String  //numero de wsp
-  pais         String
-  ciudad       String
-  provincia    String
-  codigoPostal String
+  nombre       String? //razon social
+  direccion    String? //direccion fiscal
+  telefono     String?  //numero de wsp
+  pais         String?
+  ciudad       String?
+  provincia    String?
+  departamento String?
+  distrito     String?
+  codigoPostal String?
   logo         String? //es una imgaen 
   logoPublicId String? //id que da cloudinary
   ruc          String?

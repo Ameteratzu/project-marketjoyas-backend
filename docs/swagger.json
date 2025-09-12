@@ -56,6 +56,38 @@
         ]
       }
     },
+    "/usuarios/registro/demovendedor": {
+      "post": {
+        "operationId": "UsuariosController_crearDemoVendedor",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearDemoVendedorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Para crear usuario de DEMOVENDEDOR, se usa en formulario de UNETE A NOSOTROS",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
     "/usuarios/registro/trabajador": {
       "post": {
         "operationId": "UsuariosController_crearTrabajador",
@@ -1795,13 +1827,22 @@
     "/tiendas": {
       "get": {
         "operationId": "TiendaController_getAllPublicas",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Un usuario publico puede ver todas las tiendas",
+        "summary": "Un usuario público puede ver todas las tiendas, opcionalmente filtrando por nombre",
         "tags": [
           "Tienda"
         ]
@@ -1825,7 +1866,7 @@
             "description": ""
           }
         },
-        "summary": "Un usuario publico puede ver toda la informacion de las tiendas",
+        "summary": "Un usuario público puede ver toda la información de una tienda",
         "tags": [
           "Tienda"
         ]
@@ -1855,7 +1896,7 @@
             "bearer": []
           }
         ],
-        "summary": "vendedor actualiza su tienda",
+        "summary": "Vendedor actualiza su tienda",
         "tags": [
           "Tienda"
         ]
@@ -2301,6 +2342,70 @@
           "tienda"
         ]
       },
+      "CrearDemoVendedorDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string",
+            "description": "Nombre completo del usuario",
+            "example": "Juan Pérez García"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Correo electrónico del usuario",
+            "example": "juanperez@email.com"
+          },
+          "telefono": {
+            "type": "string",
+            "description": "Número de teléfono",
+            "example": "+51987654321"
+          },
+          "direccion": {
+            "type": "string",
+            "description": "Dirección del usuario (opcional)",
+            "example": "Av. Siempre Viva 742"
+          },
+          "nombre_tienda": {
+            "type": "string",
+            "description": "Nombre de la tienda",
+            "example": "Repuestos El Rápido"
+          },
+          "direccion_tienda": {
+            "type": "string",
+            "description": "Dirección fiscal de la tienda (opcional)",
+            "example": "Jr. Comercio 123, Cercado de Lima"
+          },
+          "departamento": {
+            "type": "string",
+            "description": "Departamento donde se ubica la tienda (opcional)",
+            "example": "Lima"
+          },
+          "provincia": {
+            "type": "string",
+            "description": "Provincia donde se ubica la tienda (opcional)",
+            "example": "Lima"
+          },
+          "distrito": {
+            "type": "string",
+            "description": "Distrito donde se ubica la tienda (opcional)",
+            "example": "San Isidro"
+          },
+          "contraseña": {
+            "type": "string",
+            "minLength": 6,
+            "description": "Contraseña del usuario (mínimo 6 caracteres)",
+            "example": "miSuperClave123"
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "email",
+          "telefono",
+          "nombre_tienda",
+          "contraseña"
+        ]
+      },
       "CrearTrabajadorDto": {
         "type": "object",
         "properties": {
@@ -2572,34 +2677,70 @@
         "type": "object",
         "properties": {
           "nombre": {
-            "type": "string"
+            "type": "string",
+            "description": "Nombre o razón social de la tienda",
+            "example": "Mi Tienda S.A.C."
           },
           "direccion": {
-            "type": "string"
+            "type": "string",
+            "description": "Dirección fiscal de la tienda",
+            "example": "Av. Principal 123, Lima"
           },
           "telefono": {
-            "type": "string"
+            "type": "string",
+            "description": "Teléfono de contacto de la tienda",
+            "example": "+51987654321"
           },
           "pais": {
-            "type": "string"
+            "type": "string",
+            "description": "País donde opera la tienda",
+            "example": "Perú"
           },
           "ciudad": {
-            "type": "string"
+            "type": "string",
+            "description": "Ciudad donde está ubicada la tienda",
+            "example": "Lima"
           },
           "provincia": {
-            "type": "string"
+            "type": "string",
+            "description": "Provincia de la tienda",
+            "example": "Lima"
+          },
+          "departamento": {
+            "type": "string",
+            "description": "Departamento de la tienda",
+            "example": "Lima"
+          },
+          "distrito": {
+            "type": "string",
+            "description": "Distrito de la tienda",
+            "example": "San Isidro"
           },
           "codigoPostal": {
-            "type": "string"
+            "type": "string",
+            "description": "Código postal",
+            "example": "15036"
           },
           "ruc": {
-            "type": "string"
+            "type": "string",
+            "description": "Número de RUC de la tienda",
+            "example": "20481234567"
+          },
+          "emailTienda": {
+            "type": "string",
+            "format": "email",
+            "description": "Correo electrónico de la tienda",
+            "example": "contacto@mitienda.com"
           },
           "logo": {
-            "type": "string"
+            "type": "string",
+            "description": "URL del logo de la tienda",
+            "example": "https://res.cloudinary.com/tuapp/image/upload/v123456/logo.png"
           },
           "logoPublicId": {
-            "type": "string"
+            "type": "string",
+            "description": "ID público del logo en Cloudinary",
+            "example": "tienda/logo123"
           }
         }
       },
