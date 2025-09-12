@@ -930,10 +930,47 @@
         ]
       }
     },
-    "/categoria": {
-      "get": {
-        "operationId": "CategoriaController_getAllPublic",
+    "/gemas": {
+      "post": {
+        "operationId": "GemaController_create",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearGenericoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin crea una gema",
+        "tags": [
+          "Gemas"
+        ]
+      },
+      "get": {
+        "operationId": "GemaController_findAll",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
@@ -944,7 +981,581 @@
             "bearer": []
           }
         ],
-        "summary": "Obtener todas las categorias, endpoint publico, para que llenes tu combo box",
+        "summary": "Listar todos las gemas con filtro opcional por nombre",
+        "tags": [
+          "Gemas"
+        ]
+      }
+    },
+    "/gemas/{id}": {
+      "get": {
+        "operationId": "GemaController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener una gema por ID",
+        "tags": [
+          "Gemas"
+        ]
+      },
+      "patch": {
+        "operationId": "GemaController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarGenericoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar una gema por ID",
+        "tags": [
+          "Gemas"
+        ]
+      },
+      "delete": {
+        "operationId": "GemaController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una gema por ID",
+        "tags": [
+          "Gemas"
+        ]
+      }
+    },
+    "/materiales": {
+      "post": {
+        "operationId": "MaterialController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearGenericoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin crea un material",
+        "tags": [
+          "Materiales"
+        ]
+      },
+      "get": {
+        "operationId": "MaterialController_findAll",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar todos los materiales con filtro opcional por nombre",
+        "tags": [
+          "Materiales"
+        ]
+      }
+    },
+    "/materiales/{id}": {
+      "get": {
+        "operationId": "MaterialController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener un material por ID",
+        "tags": [
+          "Materiales"
+        ]
+      },
+      "patch": {
+        "operationId": "MaterialController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarGenericoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar un material por ID",
+        "tags": [
+          "Materiales"
+        ]
+      },
+      "delete": {
+        "operationId": "MaterialController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un material por ID",
+        "tags": [
+          "Materiales"
+        ]
+      }
+    },
+    "/ocasiones": {
+      "post": {
+        "operationId": "OcasionController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearGenericoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin crea una ocasión",
+        "tags": [
+          "Ocasiones"
+        ]
+      },
+      "get": {
+        "operationId": "OcasionController_findAll",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar todo ocasion con filtro opcional por nombre",
+        "tags": [
+          "Ocasiones"
+        ]
+      }
+    },
+    "/ocasiones/{id}": {
+      "get": {
+        "operationId": "OcasionController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener una ocasión por ID",
+        "tags": [
+          "Ocasiones"
+        ]
+      },
+      "patch": {
+        "operationId": "OcasionController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarGenericoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar una ocasión por ID",
+        "tags": [
+          "Ocasiones"
+        ]
+      },
+      "delete": {
+        "operationId": "OcasionController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una ocasión por ID",
+        "tags": [
+          "Ocasiones"
+        ]
+      }
+    },
+    "/estilos": {
+      "post": {
+        "operationId": "EstiloController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearGenericoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un admin crea un estilo",
+        "tags": [
+          "Estilos"
+        ]
+      },
+      "get": {
+        "operationId": "EstiloController_findAll",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar todos los estilos con filtro opcional por nombre, se puede consultar asi tambien para todas las caracteristicas /estilos?nombre=mo",
+        "tags": [
+          "Estilos"
+        ]
+      }
+    },
+    "/estilos/{id}": {
+      "get": {
+        "operationId": "EstiloController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener un estilo por ID",
+        "tags": [
+          "Estilos"
+        ]
+      },
+      "patch": {
+        "operationId": "EstiloController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarGenericoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar un estilo por ID",
+        "tags": [
+          "Estilos"
+        ]
+      },
+      "delete": {
+        "operationId": "EstiloController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un estilo por ID",
+        "tags": [
+          "Estilos"
+        ]
+      }
+    },
+    "/categoria": {
+      "get": {
+        "operationId": "CategoriaController_getAllPublic",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": false,
+            "in": "query",
+            "description": "Filtrar las categorías por nombre (opcional)",
+            "schema": {
+              "example": "anillos",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar todas las categorías con filtro opcional por nombre",
         "tags": [
           "Categoria"
         ]
@@ -1387,6 +1998,159 @@
           "Carrito"
         ]
       }
+    },
+    "/certificados-joyas": {
+      "post": {
+        "operationId": "CertificadoJoyaController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearCertificadoJoyaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Certificados de joyas"
+        ]
+      },
+      "get": {
+        "operationId": "CertificadoJoyaController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Certificados de joyas"
+        ]
+      }
+    },
+    "/certificados-joyas/{id}": {
+      "get": {
+        "operationId": "CertificadoJoyaController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Certificados de joyas"
+        ]
+      },
+      "patch": {
+        "operationId": "CertificadoJoyaController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarCertificadoJoyaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Certificados de joyas"
+        ]
+      },
+      "delete": {
+        "operationId": "CertificadoJoyaController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Certificados de joyas"
+        ]
+      }
     }
   },
   "info": {
@@ -1692,11 +2456,36 @@
           "estado"
         ]
       },
+      "CrearGenericoDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "description": "Nombre de la entidad (unico)",
+            "example": "x"
+          }
+        },
+        "required": [
+          "nombre"
+        ]
+      },
+      "ActualizarGenericoDto": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "description": "Nombre de la entidad (unico)",
+            "example": "Moderno"
+          }
+        }
+      },
       "CrearCategoriaDto": {
         "type": "object",
         "properties": {
           "nombre": {
-            "type": "string"
+            "type": "string",
+            "description": "Nombre de la entidad (único)",
+            "example": "x"
           }
         },
         "required": [
@@ -1707,7 +2496,9 @@
         "type": "object",
         "properties": {
           "nombre": {
-            "type": "string"
+            "type": "string",
+            "description": "Nombre de la entidad (único)",
+            "example": "x"
           }
         },
         "required": [
@@ -1780,6 +2571,124 @@
           "productoId",
           "cantidad"
         ]
+      },
+      "CrearCertificadoJoyaDto": {
+        "type": "object",
+        "properties": {
+          "tiendaNombre": {
+            "type": "string",
+            "example": "Joyería El Dorado"
+          },
+          "tiendaDireccion": {
+            "type": "string",
+            "example": "Av. Siempre Viva 123"
+          },
+          "clienteNombre": {
+            "type": "string",
+            "example": "Juan Pérez"
+          },
+          "clienteDnioRUC": {
+            "type": "string",
+            "example": "12345678"
+          },
+          "productoNombre": {
+            "type": "string",
+            "description": "Nombre del producto joya",
+            "example": "Anillo de compromiso oro 18k"
+          },
+          "gemaId": {
+            "type": "number",
+            "description": "ID de la gema principal",
+            "example": 3
+          },
+          "materialId": {
+            "type": "number",
+            "description": "ID del material de la joya",
+            "example": 2
+          },
+          "precio": {
+            "type": "number",
+            "description": "Precio de la joya",
+            "example": 1500.99
+          },
+          "imagenUrl": {
+            "type": "string",
+            "description": "URL de la imagen de la joya (opcional)",
+            "example": "https://misimagenes.com/anillo-oro.jpg (opcional)"
+          },
+          "pais": {
+            "type": "string",
+            "example": "Perú (opcional)"
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Un anillo fino de oro 18k (opcional)"
+          }
+        },
+        "required": [
+          "tiendaNombre",
+          "tiendaDireccion",
+          "clienteNombre",
+          "clienteDnioRUC",
+          "productoNombre",
+          "gemaId",
+          "materialId",
+          "precio"
+        ]
+      },
+      "ActualizarCertificadoJoyaDto": {
+        "type": "object",
+        "properties": {
+          "tiendaNombre": {
+            "type": "string",
+            "example": "Joyería El Dorado"
+          },
+          "tiendaDireccion": {
+            "type": "string",
+            "example": "Av. Siempre Viva 123"
+          },
+          "clienteNombre": {
+            "type": "string",
+            "example": "Juan Pérez"
+          },
+          "clienteDnioRUC": {
+            "type": "string",
+            "example": "12345678"
+          },
+          "productoNombre": {
+            "type": "string",
+            "description": "Nombre del producto joya",
+            "example": "Anillo de compromiso oro 18k"
+          },
+          "gemaId": {
+            "type": "number",
+            "description": "ID de la gema principal",
+            "example": 3
+          },
+          "materialId": {
+            "type": "number",
+            "description": "ID del material de la joya",
+            "example": 2
+          },
+          "precio": {
+            "type": "number",
+            "description": "Precio de la joya",
+            "example": 1500.99
+          },
+          "imagenUrl": {
+            "type": "string",
+            "description": "URL de la imagen de la joya (opcional)",
+            "example": "https://misimagenes.com/anillo-oro.jpg (opcional)"
+          },
+          "pais": {
+            "type": "string",
+            "example": "Perú (opcional)"
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Un anillo fino de oro 18k (opcional)"
+          }
+        }
       }
     }
   }

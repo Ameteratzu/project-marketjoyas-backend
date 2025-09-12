@@ -13,6 +13,7 @@ import { CategoriaModule } from './admin/categoria/categoria.module';
 import { CotizacionModule } from './cotizacion/cotizacion.module';
 import { TiendaModule } from './tienda/tienda.module';
 import { CarritoModule } from './carrito/carrito.module';
+import { CertificadoJoyaModule } from './certificado-joya/certificado-joya.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CarritoModule } from './carrito/carrito.module';
     CotizacionModule,
     TiendaModule,
     CarritoModule,
+    CertificadoJoyaModule,
   ],
   providers: [CloudinaryService],
 })

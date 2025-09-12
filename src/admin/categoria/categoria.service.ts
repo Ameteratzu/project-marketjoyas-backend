@@ -60,13 +60,24 @@ export class CategoriaService {
     return this.prisma.categoria.delete({ where: { id } });
   }
 
-  // Obtener categorias
-  async getAllPublic() {
-    return this.prisma.categoria.findMany({
-      select: {
-        id: true,
-        nombre: true,
-      },
-    });
-  }
+// Obtener categorías con filtro opcional
+async getAllPublic(nombre?: string) {
+  const where = nombre
+    ? {
+        nombre: {
+          contains: nombre, // sin mode
+        },
+      }
+    : undefined;
+
+  return this.prisma.categoria.findMany({
+    where,
+    select: {
+      id: true,
+      nombre: true,
+    },
+  });
+}
+
+
 }

@@ -6,9 +6,10 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { Roles } from '../../auth/roles.decorator';
 import { RolesGuard } from '../../auth/roles.guard';
@@ -25,11 +26,19 @@ export class CategoriaController {
   constructor(private readonly categoriaService: CategoriaService) {}
 
   //Obtener todas las categorias
-  @Get()
-  @ApiOperation({ summary: 'Obtener todas las categorias, endpoint publico, para que llenes tu combo box' })
-  async getAllPublic() {
-    return this.categoriaService.getAllPublic();
-  }
+ @Get()
+@ApiOperation({
+  summary: 'Listar todas las categorías con filtro opcional por nombre',
+})
+@ApiQuery({
+  name: 'nombre',
+  required: false,
+  description: 'Filtrar las categorías por nombre (opcional)',
+  example: 'anillos',
+})
+async getAllPublic(@Query('nombre') nombre?: string) {
+  return this.categoriaService.getAllPublic(nombre);
+}
 
   // Crear categoria
   @Roles('ADMIN')

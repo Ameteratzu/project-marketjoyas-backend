@@ -21,12 +21,7 @@ enum Rol {
   TRABAJADOR
 }
 
-enum EstadoPedido {
-  EMPAQUETADO
-  DESPACHO
-  ENVIO
-  ENTREGA
-}
+
 
 enum EstadoCotizacion {
   PENDIENTE
@@ -66,12 +61,21 @@ model CuentaOAuth {
 ///////////USUARIO/////////// check
 //////////////////////////////
 
+enum TipoDocumentoIdentidad {
+  DNI  // 1
+  RUC  // 6
+  CE   // 4 - Carnet extranjería (opcional si vendes a extranjeros)
+  OTRO // 0
+}
+
 model Usuario {
   id              Int      @id @default(autoincrement())
   nombre_completo String //incluye apellidos
   username        String?  @unique // opcional para CLIENTE, requerido para VENDEDOR
   email           String   @unique
-  dni             String   @unique
+  tipoDocumento   TipoDocumentoIdentidad? @default(DNI) // Nuevo
+  dni             String   @unique //LO HE DEJADO COMO DNI PARA QUE NO SE ROMPA NADA PERO PUEDE SER RUC10, O CE
+  razonSocial     String?  // Nuevo: solo si el cliente tiene RUC
   telefono        String
   direccion       String?
   contraseña     String
@@ -93,6 +97,9 @@ model Usuario {
 
   recuperacionContraseña RecuperacionContraseña?  @relation("UsuarioRecuperacion")  // 1:1 relación opcional
 
+  documento         Documento []
+
+
 }
 model RecuperacionContraseña {
   id           Int      @id @default(autoincrement())
@@ -108,13 +115,21 @@ model RecuperacionContraseña {
 ///////////TIENDA///////////  check
 //////////////////////////////
 
+enum EstadoPedido {
+  PENDIENTE
+  EMPAQUETADO
+  DESPACHO
+  ENVIO
+  ENTREGA
+}
+
 model Tienda {
   id           Int     @id @default(autoincrement())
   usuario      Usuario @relation("DueñoTienda", fields: [usuarioId], references: [id])
   usuarioId    Int     @unique
-  nombre       String
-  direccion    String
-  telefono     String
+  nombre       String //razon social
+  direccion    String //direccion fiscal
+  telefono     String  //numero de wsp
   pais         String
   ciudad       String
   provincia    String
@@ -122,12 +137,20 @@ model Tienda {
   logo         String? //es una imgaen 
   logoPublicId String? //id que da cloudinary
   ruc          String?
+  emailTienda  String? //email para la tienda
 
   productos    Producto[]
   cupones      Cupon[]
   propuestas   PropuestaCotizacion[]
   trabajadores Usuario[]             @relation("TrabajadoresTienda") // varios usuarios con rol TRABAJADOR
   suscripcion  Suscripcion?
+  pedidos      Pedido[]  // relación inversa
+  documento    Documento []
+  certificado  CertificadoDigital? //1:1
+  serieCorrelativo SerieCorrelativo[]
+
+
+
 }
 
 //////////////////////////////
@@ -217,12 +240,16 @@ model Gema {
   id        Int        @id @default(autoincrement())
   nombre    String     @unique
   productos Producto[]
+   certificados CertificadoJoya[]  
+
 }
 
 model Material {
   id        Int        @id @default(autoincrement())
   nombre    String     @unique
   productos Producto[]
+  certificados CertificadoJoya[]  
+
 }
 
 //////////////////////////////
@@ -265,11 +292,14 @@ model Pedido {
   id                Int             @id @default(autoincrement())
   usuario           Usuario         @relation(fields: [usuarioId], references: [id]) // N:1 → cada pedido pertenece a un usuario
   usuarioId         Int
+  tienda            Tienda          @relation(fields: [tiendaId], references: [id]) // NUEVO
+  tiendaId          Int             // NUEVO
   fecha             DateTime        @default(now())
-  estado            EstadoPedido    @default(EMPAQUETADO)
-  codigoSeguimiento String          @unique
+  estado            EstadoPedido    @default(PENDIENTE)
+  codigoSeguimiento String?          @unique
   productos         PedidoDetalle[] // N:M → relación con Producto
   pago              Pago? //1:1
+  documento         Documento? 
 }
 
 ////////////////////////////////
@@ -284,6 +314,167 @@ model PedidoDetalle {
   productoId Int
   cantidad   Int
 }
+
+////////////////////////////////
+/////////// CERTIFICADO JOYAS/////// check
+////////////////////////////////
+
+
+model CertificadoJoya {
+  id              Int      @id @default(autoincrement())
+
+  tiendaNombre    String
+  tiendaDireccion String
+
+  clienteNombre String
+  clienteDnioRUC            String
+
+  productoNombre  String
+
+  gema          Gema     @relation(fields: [gemaId], references: [id])
+  gemaId        Int
+
+  material      Material @relation(fields: [materialId], references: [id])
+  materialId    Int
+  pais        String?
+  descripcion   String?
+  precio        Decimal  @db.Decimal(10, 2)
+  imagenUrl     String?  // URL de la imagen del certificado (subida a Cloudinary)
+
+  fechaEmision  DateTime @default(now())
+}
+
+
+
+
+
+
+
+
+
+////////////////////////////////
+/////////// EMISION ELECTRONICA SUNAT/////// AUN POR CONFIRMAR
+////////////////////////////////
+
+
+////////////////////////////////
+///////////  DOCUMENTO/////// AUN POR CONFIRMAR
+////////////////////////////////
+
+enum Moneda {
+  PEN
+  USD
+  EUR
+}
+model Documento {
+  id           Int      @id @default(autoincrement())
+  tipo         String   // "BOLETA", "FACTURA"
+  numero       String   @unique // número correlativo (serie + número)
+  serie        String
+  fechaEmision DateTime @default(now())
+
+  
+
+  moneda       Moneda   @default(PEN)
+  tipoCambio   Decimal? @db.Decimal(10, 4) // si moneda ≠ PEN
+  
+  subtotal     Decimal  @db.Decimal(10, 2)
+  opGravado    Decimal  @db.Decimal(10, 2)
+  igv          Decimal  @db.Decimal(10, 2)
+  total        Decimal  @db.Decimal(10, 2)
+  
+  formaPago    String
+  condVenta    String
+
+  // Relaciones
+  pedido       Pedido   @relation(fields: [pedidoId], references: [id])
+  pedidoId     Int      @unique
+
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId    Int
+
+  tienda       Tienda   @relation(fields: [tiendaId], references: [id])
+  tiendaId     Int
+  logEnvio     LogEnvioSunat[]
+
+  // Nuevos campos para emisión electrónica SUNAT
+  estadoSunat     String?   // "PENDIENTE", "ACEPTADO", "RECHAZADO", "OBSERVADO"
+  codigoSunat     String?   // Código de respuesta SUNAT (CDR)
+  descripcionSunat String?  // Mensaje o descripción de SUNAT (CDR)
+  hashDocumento   String?   // Hash o firma digital para integridad
+
+  xmlRuta         String?   // Ruta o URL al XML firmado
+  zipRuta         String?   // Ruta o URL al ZIP enviado a SUNAT
+  cdrRuta         String?   // Ruta o URL al CDR recibido (comprobante SUNAT)
+  pdfRuta         String?   // Ruta o URL al PDF generado para el cliente
+
+  modoEmision     String?   // "PRUEBAS" o "PRODUCCIÓN"
+  fechaEnvio      DateTime? // Fecha y hora cuando se envió el comprobante a SUNAT
+}
+
+
+////////////////////////////////
+///////////  CERTIFICADO/////// AUN POR CONFIRMAR
+////////////////////////////////
+model CertificadoDigital {
+  id            Int      @id @default(autoincrement())
+  tienda        Tienda   @relation(fields: [tiendaId], references: [id])
+  tiendaId      Int      @unique
+
+  certificado   Bytes    // Guardamos el archivo .pfx en binario (encriptado)
+  contraseña    String   // Contraseña para el certificado (guardarla cifrada en backend)
+
+  fechaInicio   DateTime
+  fechaExpiracion DateTime
+
+  estado        String   // "ACTIVO", "EXPIRADO", "REVOCADO"
+
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+}
+
+
+////////////////////////////////
+///////////  LOG ENVIO/////// AUN POR CONFIRMAR
+////////////////////////////////
+
+model LogEnvioSunat {
+  id            Int      @id @default(autoincrement())
+  documento     Documento @relation(fields: [documentoId], references: [id])
+  documentoId   Int
+
+  fechaEnvio    DateTime @default(now())
+  estadoEnvio   String   // "ENVIADO", "ERROR", "REINTENTO", etc.
+  mensaje       String?  // Mensaje o error recibido
+  intento       Int      @default(1) // número de intento
+
+  respuestaSunat Json?   // Datos crudos recibidos de SUNAT (opcional)
+}
+
+
+////////////////////////////////
+///////////  SERIE CORRELATIVO/////// AUN POR CONFIRMAR
+////////////////////////////////
+
+model SerieCorrelativo {
+  id           Int      @id @default(autoincrement())
+  tienda       Tienda   @relation(fields: [tiendaId], references: [id])
+  tiendaId     Int
+
+  tipoDocumento String  // "FACTURA", "BOLETA", etc.
+  serie         String  // "F001", "B001", etc.
+  ultimoNumero  Int     // último número usado (ej: 1234)
+
+  activo        Boolean  @default(true) // si quieres desactivar alguna serie
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@unique([tiendaId, tipoDocumento, serie]) // cada tienda tiene su serie única por tipo
+}
+
+
+
+
 
 ////////////////////////////////
 ///////////PAGO TRANSACCIONES/////// check

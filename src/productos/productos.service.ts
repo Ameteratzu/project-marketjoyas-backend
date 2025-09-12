@@ -11,7 +11,7 @@ import { Prisma } from '@prisma/client';
 import { FiltrarProductosDto } from './dtos/filtrar-productos.dto';
 import { UpdateProductoDto } from './dtos/actualizar-producto.dto';
 
-///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE PRODUCTOS/////////////////////////
+///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE PRODUCTOS////////////////////////////
 
 @Injectable()
 export class ProductosService {
@@ -209,35 +209,43 @@ export class ProductosService {
 
   // Listar todos los productos (para clientes o internautas no logueados)
   async findAll() {
-    return this.prisma.producto.findMany({
-      where: { habilitado: true },
-      include: {
-        imagenes: true,
-        categoria: true,
-        tienda: true,
-        calificaciones: true,
-      },
-    });
-  }
+  return this.prisma.producto.findMany({
+    where: { habilitado: true },
+    include: {
+      imagenes: true,
+      categoria: true,
+      tienda: true,
+      calificaciones: true,
+      material: true,
+      ocasion: true,
+      gema: true,
+      estilo: true,
+    },
+  });
+}
 
   // Obtener producto por id (para clientes o internautas no logueados)
   async findOne(id: number) {
-    const producto = await this.prisma.producto.findUnique({
-      where: { id },
-      include: {
-        imagenes: true,
-        categoria: true,
-        tienda: true,
-        calificaciones: true,
-      },
-    });
+  const producto = await this.prisma.producto.findUnique({
+    where: { id },
+    include: {
+      imagenes: true,
+      categoria: true,
+      tienda: true,
+      calificaciones: true,
+      material: true,
+      ocasion: true,
+      gema: true,
+      estilo: true,
+    },
+  });
 
-    if (!producto || !producto.habilitado) {
-      throw new NotFoundException('Producto no encontrado');
-    }
-
-    return producto;
+  if (!producto || !producto.habilitado) {
+    throw new NotFoundException('Producto no encontrado');
   }
+
+  return producto;
+}
 
   //Obtener productos por tienda (VENDEDOR SOLO PUEDE VER PRODUCTOS DE SU TIENDA)
 
@@ -397,4 +405,4 @@ export class ProductosService {
       },
     });
   }
-}
+}//

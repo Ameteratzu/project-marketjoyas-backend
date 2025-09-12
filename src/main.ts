@@ -13,12 +13,12 @@ async function bootstrap() {
 
   // ✅ PROTEGER /api Y /api-json CON USUARIO Y CONTRASEÑA
  app.use(
-  ['/api', '/api-json'],
+ ['/api', '/api-json'],
   basicAuth({
-    users: { admin: 'marketjoyitas909' }, 
-    challenge: true,
-  }),
+   users: { admin: 'marketjoyas909' }, 
+   challenge: true,}),
 );
+
 
 
   // ✅ CORS HABILITADO

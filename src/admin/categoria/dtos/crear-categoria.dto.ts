@@ -1,6 +1,11 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
 export class CrearCategoriaDto {
-  @IsString()
-  nombre: string;
+  @ApiProperty({
+      description: 'Nombre de la entidad (único)',
+      example: 'x',
+    })
+    @IsString()
+    nombre: string;
 }
