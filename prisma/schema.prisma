@@ -103,8 +103,23 @@ model Usuario {
 
   documento         Documento []
 
+  direccionesAdicionales DireccionAdicional[] // 1_N -> un usuario puede tener muchas direcciones
 
 }
+
+
+//Direcciones adicionales que un solo usuario puede tener para llevar su pedido de compra
+model DireccionAdicional{
+  id Int @id @default(autoincrement())
+  direccion String
+  departamento String
+  provincia String
+  distrito String
+  tipoDireccion String
+  usuarioId Int
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+}
+
 model RecuperacionContraseña {
   id           Int      @id @default(autoincrement())
   usuario    Usuario  @relation("UsuarioRecuperacion", fields: [usuarioId], references: [id])
