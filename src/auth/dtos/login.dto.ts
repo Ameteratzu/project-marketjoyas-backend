@@ -16,5 +16,5 @@ export class LoginDto {
   })
   @IsNotEmpty()
   @MinLength(6)
-  contraseña: string;
+  password: string;
 }
