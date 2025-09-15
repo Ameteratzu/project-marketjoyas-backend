@@ -14,6 +14,7 @@ import { CotizacionModule } from './cotizacion/cotizacion.module';
 import { TiendaModule } from './tienda/tienda.module';
 import { CarritoModule } from './carrito/carrito.module';
 import { CertificadoJoyaModule } from './certificado-joya/certificado-joya.module';
+import { CalificacionesModule } from './calificaciones/calificaciones.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CertificadoJoyaModule } from './certificado-joya/certificado-joya.modul
     TiendaModule,
     CarritoModule,
     CertificadoJoyaModule,
+    CalificacionesModule,
   ],
   providers: [CloudinaryService],
 })
