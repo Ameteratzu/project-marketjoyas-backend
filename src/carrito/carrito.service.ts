@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -6,7 +10,11 @@ export class CarritoService {
   constructor(private readonly prisma: PrismaService) {}
 
   // Funcion para agregar producto al carrito (sumar cantidad si ya existe)
-  async agregarProducto(usuarioId: number, productoId: number, cantidad: number) {
+  async agregarProducto(
+    usuarioId: number,
+    productoId: number,
+    cantidad: number,
+  ) {
     const producto = await this.prisma.producto.findUnique({
       where: { id: productoId },
     });
@@ -55,7 +63,17 @@ export class CarritoService {
     return this.prisma.carritoProducto.findMany({
       where: { usuarioId },
       include: {
-        producto: true,
+        producto: {
+          include: {
+            tienda: {
+              select: {
+                telefono: true,
+                emailTienda: true,
+                nombre: true,
+              },
+            },
+          },
+        },
       },
     });
   }

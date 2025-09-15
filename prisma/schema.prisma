@@ -140,6 +140,7 @@ enum EstadoPedido {
   DESPACHO
   ENVIO
   ENTREGA
+  BORRADO
 }
 
 model Tienda {

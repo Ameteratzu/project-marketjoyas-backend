@@ -34,10 +34,14 @@ export class CrearDireccion{
     @IsString()
     tipoDireccion: string;
 
+
+//
+    /*
     @ApiProperty({ example: 1 , description: 'ID del usuario dueño de esta dirección' })
     @IsNotEmpty()
     @Type(() => Number)
     @IsNumber()
     @Min(1)
     usuarioId: number;
+    */ //NO ES NECESARIO, VIENE EN EL PAYLOAD
 }

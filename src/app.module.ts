@@ -14,7 +14,12 @@ import { CotizacionModule } from './cotizacion/cotizacion.module';
 import { TiendaModule } from './tienda/tienda.module';
 import { CarritoModule } from './carrito/carrito.module';
 import { CertificadoJoyaModule } from './certificado-joya/certificado-joya.module';
+
 import { CalificacionesModule } from './calificaciones/calificaciones.module';
+
+import { DireccionesModule } from './direcciones/direcciones.module';
+import { PedidoModule } from './pedido/pedido.module';
+
 
 @Module({
   imports: [
@@ -34,7 +39,11 @@ import { CalificacionesModule } from './calificaciones/calificaciones.module';
     TiendaModule,
     CarritoModule,
     CertificadoJoyaModule,
+
     CalificacionesModule,
+    DireccionesModule,
+    PedidoModule
+
   ],
   providers: [CloudinaryService],
 })
