@@ -2312,6 +2312,172 @@
         ]
       }
     },
+    "/calificaciones": {
+      "post": {
+        "operationId": "CalificacionesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrarCalificacion"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un CLIENTE califica un producto",
+        "tags": [
+          "Calificaciones"
+        ]
+      },
+      "get": {
+        "description": "Permite a un CLIENTE visualizar todas sus calificaciones realizadas. Cada calificación incluye información del producto asociado. Puede paginarse usando parámetros page y limit en el servicio.",
+        "operationId": "CalificacionesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener todas las calificaciones de un CLIENTE",
+        "tags": [
+          "Calificaciones"
+        ]
+      }
+    },
+    "/calificaciones/{id}": {
+      "get": {
+        "operationId": "CalificacionesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un CLIENTE visualizara una calificacion por id",
+        "tags": [
+          "Calificaciones"
+        ]
+      },
+      "patch": {
+        "operationId": "CalificacionesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un CLIENTE podra actuzalizar sus calificaciones",
+        "tags": [
+          "Calificaciones"
+        ]
+      },
+      "delete": {
+        "operationId": "CalificacionesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un CLIENTE podra elimar una calificacion por su id de la calificacion",
+        "tags": [
+          "Calificaciones"
+        ]
+      }
+    },
     "/direcciones": {
       "post": {
         "operationId": "DireccionesController_create",
@@ -3371,6 +3537,29 @@
           "descripcion": {
             "type": "string",
             "example": "Un anillo fino de oro 18k (opcional)"
+          }
+        }
+      },
+      "RegistrarCalificacion": {
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "number",
+            "minimum": 1,
+            "example": 1,
+            "description": "ID del producto relacionado"
+          },
+          "estrellas": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 1,
+            "description": "Calificacion de estrellas 1 - 5"
+          },
+          "comentario": {
+            "type": "string",
+            "example": "Muy buen producto",
+            "description": "Comentario opcional del usuario"
           }
         }
       },
