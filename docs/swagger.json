@@ -2618,7 +2618,7 @@
             "example": "usuario@gmail.com",
             "description": "Correo electrónico del usuario"
           },
-          "contraseña": {
+          "password": {
             "type": "string",
             "minLength": 6,
             "example": "admin123",
@@ -2627,7 +2627,7 @@
         },
         "required": [
           "email",
-          "contraseña"
+          "password"
         ]
       },
       "CrearProductoDto": {

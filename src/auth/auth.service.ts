@@ -31,6 +31,7 @@ export class AuthService {
     // payload del JWT
     const payload: any = {
       sub: user.id,
+      fullName: user.nombre_completo,
       email: user.email,
       rol: user.rol,
     };
