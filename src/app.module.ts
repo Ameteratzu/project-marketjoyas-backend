@@ -19,6 +19,7 @@ import { CalificacionesModule } from './calificaciones/calificaciones.module';
 
 import { DireccionesModule } from './direcciones/direcciones.module';
 import { PedidoModule } from './pedido/pedido.module';
+import { CuponModule } from './cupon/cupon.module';
 
 
 @Module({
@@ -42,7 +43,8 @@ import { PedidoModule } from './pedido/pedido.module';
 
     CalificacionesModule,
     DireccionesModule,
-    PedidoModule
+    PedidoModule,
+    CuponModule
 
   ],
   providers: [CloudinaryService],

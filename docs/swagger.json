@@ -2770,6 +2770,209 @@
           "Pedidos"
         ]
       }
+    },
+    "/cupon": {
+      "post": {
+        "operationId": "CuponController_crear",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CuponDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear un nuevo cupón",
+        "tags": [
+          "Cupon"
+        ]
+      },
+      "get": {
+        "operationId": "CuponController_obtenerTodos",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener todos los cupones",
+        "tags": [
+          "Cupon"
+        ]
+      }
+    },
+    "/cupon/{id}": {
+      "get": {
+        "operationId": "CuponController_obtenerPorId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener un cupón por ID",
+        "tags": [
+          "Cupon"
+        ]
+      }
+    },
+    "/cupon/actualizar/{id}": {
+      "patch": {
+        "operationId": "CuponController_actualizar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CuponDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar un cupón por ID",
+        "tags": [
+          "Cupon"
+        ]
+      }
+    },
+    "/cupon/eliminar/{id}": {
+      "delete": {
+        "operationId": "CuponController_eliminar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un cupón por ID",
+        "tags": [
+          "Cupon"
+        ]
+      }
+    },
+    "/cupon/validar/{codigo}": {
+      "post": {
+        "operationId": "CuponController_validar",
+        "parameters": [
+          {
+            "name": "codigo",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validar un cupón por código",
+        "tags": [
+          "Cupon"
+        ]
+      }
+    },
+    "/cupon/usar/{codigo}": {
+      "patch": {
+        "operationId": "CuponController_usar",
+        "parameters": [
+          {
+            "name": "codigo",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Marcar un cupón como usado por código",
+        "tags": [
+          "Cupon"
+        ]
+      }
     }
   },
   "info": {
@@ -3629,6 +3832,39 @@
             "description": "Tipo de dirección (Casa, Oficina, Dpto, etc.)"
           }
         }
+      },
+      "CuponDto": {
+        "type": "object",
+        "properties": {
+          "descuento": {
+            "type": "number",
+            "minimum": 1,
+            "example": 20,
+            "description": "Porcentaje o monto de descuento"
+          },
+          "tiendaId": {
+            "type": "number",
+            "minimum": 1,
+            "example": 1,
+            "description": "ID de la tienda a la que pertenece el cupón"
+          },
+          "productoId": {
+            "type": "number",
+            "minimum": 1,
+            "example": 3,
+            "description": "ID del producto específico (opcional)"
+          },
+          "validoHasta": {
+            "type": "string",
+            "example": "2025-12-31T23:59:59Z",
+            "description": "Fecha de vencimiento del cupón en formato ISO"
+          }
+        },
+        "required": [
+          "descuento",
+          "tiendaId",
+          "validoHasta"
+        ]
       }
     }
   }
