@@ -3051,6 +3051,214 @@
           "RecuperacionPassword"
         ]
       }
+    },
+    "/oferta-global/create": {
+      "post": {
+        "description": "Permite a un ADMIN crear una oferta global y asociarla a productos.",
+        "operationId": "OfertaGlobalController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfertaGlobalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Crear una nueva oferta global por ADMIN",
+        "tags": [
+          "OfertaGlobal"
+        ]
+      }
+    },
+    "/oferta-global/listar": {
+      "get": {
+        "description": "Obtiene todas las ofertas globales junto con los productos asociados.",
+        "operationId": "OfertaGlobalController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Listar todas las ofertas globales por ADMIN",
+        "tags": [
+          "OfertaGlobal"
+        ]
+      }
+    },
+    "/oferta-global/listar/{id}": {
+      "get": {
+        "description": "Permite obtener los detalles de una oferta global específica por su ID.",
+        "operationId": "OfertaGlobalController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Obtener una oferta global por ID por ADMIN",
+        "tags": [
+          "OfertaGlobal"
+        ]
+      }
+    },
+    "/oferta-global/update/{id}": {
+      "patch": {
+        "description": "Permite actualizar los datos de una oferta global, incluyendo los productos asociados.",
+        "operationId": "OfertaGlobalController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfertaGlobalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Actualizar una oferta global por ADMIN",
+        "tags": [
+          "OfertaGlobal"
+        ]
+      }
+    },
+    "/oferta-global/desactivar/{id}": {
+      "patch": {
+        "description": "Marca la oferta global como inactiva sin eliminarla físicamente.",
+        "operationId": "OfertaGlobalController_desactivar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Desactivar una oferta global por ADMIN",
+        "tags": [
+          "OfertaGlobal"
+        ]
+      }
+    },
+    "/oferta-global/activar/{id}": {
+      "patch": {
+        "description": "Marca la oferta global como activa.",
+        "operationId": "OfertaGlobalController_activar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Activar una oferta global por ADMIN",
+        "tags": [
+          "OfertaGlobal"
+        ]
+      }
+    },
+    "/oferta-global/delete/{id}": {
+      "delete": {
+        "description": "Elimina físicamente la oferta global de la base de datos.",
+        "operationId": "OfertaGlobalController_eliminar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Eliminar una oferta global por ADMIN",
+        "tags": [
+          "OfertaGlobal"
+        ]
+      }
     }
   },
   "info": {
@@ -3989,6 +4197,49 @@
         "required": [
           "token",
           "nuevaContrasena"
+        ]
+      },
+      "OfertaGlobalDto": {
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "description": "Título de la oferta global",
+            "example": "Descuento de verano 2025"
+          },
+          "descripcion": {
+            "type": "string",
+            "description": "Descripción de la oferta",
+            "example": "Aplica en todos los productos de verano"
+          },
+          "descuento": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Descuento aplicado en la oferta (número decimal)",
+            "example": 15.5
+          },
+          "validoHasta": {
+            "type": "string",
+            "description": "Fecha de validez de la oferta en formato ISO",
+            "example": "2025-12-31T23:59:59Z"
+          },
+          "productos": {
+            "description": "IDs de los productos a los que se aplicará la oferta",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "titulo",
+          "descuento",
+          "validoHasta"
         ]
       }
     }

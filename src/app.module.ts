@@ -21,6 +21,8 @@ import { DireccionesModule } from './direcciones/direcciones.module';
 import { PedidoModule } from './pedido/pedido.module';
 import { CuponModule } from './cupon/cupon.module';
 import { RecuperacionPasswordModule } from './recuperacion-password/recuperacion-password.module';
+import { OfertaGlobalModule } from './oferta-global/oferta-global.module';
+
 
 
 @Module({
@@ -46,7 +48,8 @@ import { RecuperacionPasswordModule } from './recuperacion-password/recuperacion
     DireccionesModule,
     PedidoModule,
     CuponModule,
-    RecuperacionPasswordModule
+    RecuperacionPasswordModule,
+    OfertaGlobalModule,
 
   ],
   providers: [CloudinaryService],
