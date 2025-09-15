@@ -101,4 +101,5 @@ jobs:
 
           echo "✅ Deploy completado!"
           pm2 status
-          pm2 logs marketjoyas-api
+          pm2 logs marketjoyas-api --lines 100
+
