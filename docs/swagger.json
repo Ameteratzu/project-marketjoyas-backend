@@ -2311,6 +2311,147 @@
           "Certificados de joyas"
         ]
       }
+    },
+    "/direcciones": {
+      "post": {
+        "operationId": "DireccionesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearDireccion"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Añadir una nueva dirección adicional",
+        "tags": [
+          "Direcciones"
+        ]
+      },
+      "get": {
+        "operationId": "DireccionesController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener todas las direcciones del usuario autenticado",
+        "tags": [
+          "Direcciones"
+        ]
+      }
+    },
+    "/direcciones/{id}": {
+      "get": {
+        "operationId": "DireccionesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener una dirección por id (solo del usuario autenticado)",
+        "tags": [
+          "Direcciones"
+        ]
+      },
+      "patch": {
+        "operationId": "DireccionesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDireccion"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar una dirección por id (solo del usuario autenticado)",
+        "tags": [
+          "Direcciones"
+        ]
+      },
+      "delete": {
+        "operationId": "DireccionesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una dirección por id (solo del usuario autenticado)",
+        "tags": [
+          "Direcciones"
+        ]
+      }
     }
   },
   "info": {
@@ -3078,6 +3219,73 @@
           "descripcion": {
             "type": "string",
             "example": "Un anillo fino de oro 18k (opcional)"
+          }
+        }
+      },
+      "CrearDireccion": {
+        "type": "object",
+        "properties": {
+          "direccion": {
+            "type": "string",
+            "example": "Av. Siempre Viva 742",
+            "description": "Dirección completa"
+          },
+          "departamento": {
+            "type": "string",
+            "example": "Lima",
+            "description": "Departamento"
+          },
+          "provincia": {
+            "type": "string",
+            "example": "Lima",
+            "description": "Provincia"
+          },
+          "distrito": {
+            "type": "string",
+            "example": "Miraflores",
+            "description": "Distrito"
+          },
+          "tipoDireccion": {
+            "type": "string",
+            "example": "Casa",
+            "description": "Tipo de dirección (Casa, Oficina, Dpto, etc.)"
+          }
+        },
+        "required": [
+          "direccion",
+          "departamento",
+          "provincia",
+          "distrito",
+          "tipoDireccion"
+        ]
+      },
+      "UpdateDireccion": {
+        "type": "object",
+        "properties": {
+          "direccion": {
+            "type": "string",
+            "example": "Av. Siempre Viva 742",
+            "description": "Dirección completa"
+          },
+          "departamento": {
+            "type": "string",
+            "example": "Lima",
+            "description": "Departamento"
+          },
+          "provincia": {
+            "type": "string",
+            "example": "Lima",
+            "description": "Provincia"
+          },
+          "distrito": {
+            "type": "string",
+            "example": "Miraflores",
+            "description": "Distrito"
+          },
+          "tipoDireccion": {
+            "type": "string",
+            "example": "Casa",
+            "description": "Tipo de dirección (Casa, Oficina, Dpto, etc.)"
           }
         }
       }
