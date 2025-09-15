@@ -2973,6 +2973,84 @@
           "Cupon"
         ]
       }
+    },
+    "/recuperacion-password/generar-token": {
+      "post": {
+        "description": "Genera un token para restablecer la contraseña del usuario y lo muestra en consola (simula envío de correo).",
+        "operationId": "RecuperacionPasswordController_generarToken",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerarTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Generar token de recuperación",
+        "tags": [
+          "RecuperacionPassword"
+        ]
+      }
+    },
+    "/recuperacion-password/validar-token": {
+      "post": {
+        "description": "Valida que el token enviado por el usuario sea válido y no esté expirado o usado.",
+        "operationId": "RecuperacionPasswordController_validarToken",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidarTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Validar token de recuperación",
+        "tags": [
+          "RecuperacionPassword"
+        ]
+      }
+    },
+    "/recuperacion-password/cambiar-contrasena": {
+      "post": {
+        "description": "Cambia la contraseña del usuario usando el token de recuperación y marca el token como usado.",
+        "operationId": "RecuperacionPasswordController_cambiarContrasena",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CambiarContrasenaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Cambiar contraseña",
+        "tags": [
+          "RecuperacionPassword"
+        ]
+      }
     }
   },
   "info": {
@@ -3864,6 +3942,53 @@
           "descuento",
           "tiendaId",
           "validoHasta"
+        ]
+      },
+      "GenerarTokenDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Correo electrónico del usuario para generar el token de recuperación",
+            "example": "usuario@correo.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ValidarTokenDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Token recibido en el enlace de recuperación",
+            "example": "3f9a8b2c4d5e6f7g8h9i0j1k2l3m4n5o"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "CambiarContrasenaDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Token recibido en el enlace de recuperación",
+            "example": "3f9a8b2c4d5e6f7g8h9i0j1k2l3m4n5o"
+          },
+          "nuevaContrasena": {
+            "type": "string",
+            "minLength": 6,
+            "description": "Nueva contraseña del usuario (mínimo 6 caracteres)",
+            "example": "miNuevaClave123"
+          }
+        },
+        "required": [
+          "token",
+          "nuevaContrasena"
         ]
       }
     }

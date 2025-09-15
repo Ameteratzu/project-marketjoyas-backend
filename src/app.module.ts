@@ -20,6 +20,7 @@ import { CalificacionesModule } from './calificaciones/calificaciones.module';
 import { DireccionesModule } from './direcciones/direcciones.module';
 import { PedidoModule } from './pedido/pedido.module';
 import { CuponModule } from './cupon/cupon.module';
+import { RecuperacionPasswordModule } from './recuperacion-password/recuperacion-password.module';
 
 
 @Module({
@@ -44,7 +45,8 @@ import { CuponModule } from './cupon/cupon.module';
     CalificacionesModule,
     DireccionesModule,
     PedidoModule,
-    CuponModule
+    CuponModule,
+    RecuperacionPasswordModule
 
   ],
   providers: [CloudinaryService],
