@@ -2452,6 +2452,158 @@
           "Direcciones"
         ]
       }
+    },
+    "/pedidos/confirmar": {
+      "post": {
+        "operationId": "PedidoController_confirmarCompra",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Confirmar compra con los productos del carrito",
+        "tags": [
+          "Pedidos"
+        ]
+      }
+    },
+    "/pedidos": {
+      "get": {
+        "operationId": "PedidoController_obtenerPedidos",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener los pedidos del usuario",
+        "tags": [
+          "Pedidos"
+        ]
+      }
+    },
+    "/pedidos/tienda": {
+      "get": {
+        "operationId": "PedidoController_obtenerPedidosTienda",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener todos los pedidos de la tienda (solo vendedor/trabajador)",
+        "tags": [
+          "Pedidos"
+        ]
+      }
+    },
+    "/pedidos/{id}": {
+      "get": {
+        "operationId": "PedidoController_obtenerDetallePedido",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener detalle de un pedido específico del usuario",
+        "tags": [
+          "Pedidos"
+        ]
+      }
+    },
+    "/pedidos/{id}/estado": {
+      "patch": {
+        "operationId": "PedidoController_actualizarEstado",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar estado del pedido (VENDEDOR o TRABAJADOR). Si lo cambia a CANCELADO se borra el pedido",
+        "tags": [
+          "Pedidos"
+        ]
+      }
     }
   },
   "info": {

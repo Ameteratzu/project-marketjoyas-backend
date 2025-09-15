@@ -15,6 +15,7 @@ import { TiendaModule } from './tienda/tienda.module';
 import { CarritoModule } from './carrito/carrito.module';
 import { CertificadoJoyaModule } from './certificado-joya/certificado-joya.module';
 import { DireccionesModule } from './direcciones/direcciones.module';
+import { PedidoModule } from './pedido/pedido.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { DireccionesModule } from './direcciones/direcciones.module';
     TiendaModule,
     CarritoModule,
     CertificadoJoyaModule,
-    DireccionesModule
+    DireccionesModule,
+    PedidoModule
   ],
   providers: [CloudinaryService],
 })
