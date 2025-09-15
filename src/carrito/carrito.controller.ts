@@ -41,7 +41,7 @@ export class CarritoController {
   @ApiOperation({ summary: 'Obtener todos los productos del carrito del usuario' })
   async obtenerCarrito(@GetUser() user: JwtPayload) {
     return this.carritoService.obtenerCarrito(user.sub);
-  }
+  }//
 
   // Cambiamos DELETE por PATCH para quitar una unidad (modificación parcial)
   @Patch(':productoId/quitar-uno')
