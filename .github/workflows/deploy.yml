@@ -94,6 +94,10 @@ jobs:
             
             echo "🔄 Aplicando migraciones..."
             npx prisma migrate deploy
+
+            
+            echo "🌱 Ejecutando seed para crear admin...(QUITAR LUEGO)" 
+            npx prisma db seed
             
             echo "🏗️ Building proyecto..."
             NODE_OPTIONS="--max-old-space-size=4096" npm run build
