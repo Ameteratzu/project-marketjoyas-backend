@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: 🚀 Deploy MarketJoyas API
 
 on:
@@ -24,7 +23,7 @@ jobs:
           cache: 'npm'
 
       - name: 📦 Install dependencies
-        run: npm ci --include=dev  
+        run: npm ci --include=dev
 
       - name: 🗄️ Generate Prisma
         run: npx prisma generate
@@ -42,23 +41,14 @@ jobs:
       - name: 🏗️ Build application
         run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
-      # 🔍 Debug SECRETS (solo visual, no corta ejecución)
-      - name: 🔍 Debug Secrets
-        run: |
-          echo "=== INFORMACIÓN DEL REPOSITORIO ==="
-          echo "Repo: ${{ github.repository }}"
-          echo "Ref: ${{ github.ref }}"
-          
-          echo "=== SECRETS DIRECTOS ==="
-          echo "LIGHTSAIL_HOST: '${{ secrets.LIGHTSAIL_HOST }}'"
-          echo "LIGHTSAIL_USER: '${{ secrets.LIGHTSAIL_USER }}'"
-          echo "SSH_KEY presente: ${{ secrets.LIGHTSAIL_SSH_KEY != '' }}"
-
-      # 🔍 Dump de variables en runtime
-      - name: 🔍 Dump env
-        run: |
-          echo "Lista de variables en runtime:"
-          env | grep LIGHTSAIL || true
+      - name: 📦 Transfer build to Lightsail
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.LIGHTSAIL_HOST }}
+          username: ${{ secrets.LIGHTSAIL_USER }}
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          source: "dist/"
+          target: "~/backend/project-marketjoyas-backend/"
 
       - name: 🚀 Deploy to Lightsail
         uses: appleboy/ssh-action@v1.0.0
@@ -77,16 +67,18 @@ jobs:
             git reset --hard origin/main
             
             echo "📝 Configurando environment variables..."
-            echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
-            echo "JWT_SECRET=\"${{ secrets.JWT_SECRET }}\"" >> .env
-            echo "JWT_EXPIRES_IN=\"${{ secrets.JWT_EXPIRES_IN }}\"" >> .env
-            echo "CLOUDINARY_CLOUD_NAME=\"${{ secrets.CLOUDINARY_CLOUD_NAME }}\"" >> .env
-            echo "CLOUDINARY_API_KEY=\"${{ secrets.CLOUDINARY_API_KEY }}\"" >> .env
-            echo "CLOUDINARY_API_SECRET=\"${{ secrets.CLOUDINARY_API_SECRET }}\"" >> .env
-            echo "NODE_ENV=production" >> .env
-            echo "PORT=3000" >> .env
+            cat > .env << EOF
+            DATABASE_URL="${{ secrets.DATABASE_URL }}"
+            JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            JWT_EXPIRES_IN="${{ secrets.JWT_EXPIRES_IN }}"
+            CLOUDINARY_CLOUD_NAME="${{ secrets.CLOUDINARY_CLOUD_NAME }}"
+            CLOUDINARY_API_KEY="${{ secrets.CLOUDINARY_API_KEY }}"
+            CLOUDINARY_API_SECRET="${{ secrets.CLOUDINARY_API_SECRET }}"
+            NODE_ENV=production
+            PORT=3000
+            EOF
             
-            echo "📦 Instalando dependencias..."
+            echo "📦 Instalando dependencias de producción..."
             npm ci --production
             
             echo "🗄️ Generando Prisma..."
@@ -94,18 +86,15 @@ jobs:
             
             echo "🔄 Aplicando migraciones..."
             npx prisma migrate deploy
-
             
-            echo "🌱 Ejecutando seed para crear admin...(QUITAR LUEGO)" 
+            echo "🌱 Ejecutando seed..."
+            npm install -D ts-node @types/node
             npx prisma db seed
+            npm uninstall -D ts-node @types/node
             
-            echo "🏗️ Building proyecto..."
-            NODE_OPTIONS="--max-old-space-size=4096" npm run build
-            
-            echo "🔄 Reiniciando API (borrando y arrancando limpio)..."
+            echo "🔄 Reiniciando API..."
             pm2 delete marketjoyas-api || true
-            pm2 start node --name marketjoyas-api -- dist/src/main.js
-
+            pm2 start npm --name "marketjoyas-api" -- run start:prod
+            
             echo "✅ Deploy completado!"
             pm2 status
-            pm2 logs marketjoyas-api --lines 50
