@@ -36,7 +36,7 @@ export class AdminController {
     return this.adminService.createAdmin(dto);
   }
 
-  // Obtener lista de todos los usuarios
+  // Obtener lista de todos los usuarios//
   @Roles('ADMIN')
   @Get('usuarios')
   @ApiOperation({
