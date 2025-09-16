@@ -255,6 +255,34 @@
         ]
       }
     },
+    "/auth/oauth/google": {
+      "get": {
+        "operationId": "OAuthController_googleAuth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "OAuth"
+        ]
+      }
+    },
+    "/auth/oauth/google/redirect": {
+      "get": {
+        "operationId": "OAuthController_googleAuthRedirect",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "OAuth"
+        ]
+      }
+    },
     "/productos": {
       "post": {
         "operationId": "ProductosController_create",

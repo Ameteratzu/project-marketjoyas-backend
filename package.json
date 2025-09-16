@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "start:prod": "node dist/src/main.js",
-  "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -39,6 +39,7 @@
     "express-basic-auth": "^1.2.1",
     "multer": "^2.0.2",
     "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "prisma": "^6.15.0",
     "reflect-metadata": "^0.2.2",

@@ -207,35 +207,41 @@ export class UsersService {
     };
   }
 
+  ///////////////////////////////////////ACTUALIZAR INFORMACION///////////////////////////////////////////////////////////
+
   async actualizarInfo(userId: number, dto: ActualizarInfoDto) {
-    const usuario = await this.prisma.usuario.findUnique({
-      where: { id: userId },
-    });
-    if (!usuario) throw new ForbiddenException('Usuario no encontrado');
+  const usuario = await this.prisma.usuario.findUnique({
+    where: { id: userId },
+  });
+  if (!usuario) throw new ForbiddenException('Usuario no encontrado');
 
-    const updateData: any = {
-      nombre_completo: dto.nombre_completo,
-      dni: dto.dni,
-      telefono: dto.telefono,
-      email: dto.email,
-    };
+  const updateData: any = {
+    nombre_completo: dto.nombre_completo,
+    dni: dto.dni,
+    telefono: dto.telefono,
+    email: dto.email,
+  };
 
-    // Validar y actualizar contraseña si se desea cambiar
-    if (dto.contraseña_actual && dto.nueva_contraseña) {
-      const match = await bcrypt.compare(
-        dto.contraseña_actual,
-        usuario.contraseña,
-      );
-      if (!match)
-        throw new ForbiddenException('La contraseña actual es incorrecta');
-      updateData.contraseña = await this.hashPassword(dto.nueva_contraseña);
+  // Validar y actualizar contraseña si se desea cambiar
+  if (dto.nueva_contraseña) {
+    if (usuario.contraseña && usuario.contraseña.length > 0) {
+      // Usuario tiene contraseña, validar la actual
+      if (!dto.contraseña_actual) {
+        throw new ForbiddenException('Debe proporcionar la contraseña actual');
+      }
+      const match = await bcrypt.compare(dto.contraseña_actual, usuario.contraseña);
+      if (!match) throw new ForbiddenException('La contraseña actual es incorrecta');
     }
-
-    return this.prisma.usuario.update({
-      where: { id: userId },
-      data: updateData,
-    });
+    // Si no tiene contraseña, puede establecerla sin validar
+    updateData.contraseña = await this.hashPassword(dto.nueva_contraseña);
   }
+
+  return this.prisma.usuario.update({
+    where: { id: userId },
+    data: updateData,
+  });
+}
+
 
   async actualizarDireccion(userId: number, dto: ActualizarDireccionDto) {
     return this.prisma.usuario.update({
@@ -267,4 +273,44 @@ export class UsersService {
       },
     });
   }
+
+
+  ////////////////OAUTH////////////
+
+  
+async findOAuthAccount(oauthId: string, proveedor: 'GOOGLE') {
+  return this.prisma.cuentaOAuth.findUnique({
+    where: {
+      proveedor_oauthId: {
+        proveedor,
+        oauthId,
+      },
+    },
+    include: {
+      usuario: true,
+    },
+  });
+}
+
+async createOAuthAccount(data: {
+  oauthId: string;
+  email: string;
+  proveedor: 'GOOGLE';
+  usuarioId: number;
+}) {
+  return this.prisma.cuentaOAuth.create({ data });
+}
+
+async createOAuthUser(data: { email: string; nombre_completo: string }) {
+  return this.prisma.usuario.create({
+    data: {
+      email: data.email,
+      nombre_completo: data.nombre_completo,
+      contraseña: '',  //la podra cambiar en sus configuraciones
+      rol: 'CLIENTE', 
+      telefono: '0000000000', // luego lo cambia en sus configuraciones
+
+    },
+  });
+}
 }
