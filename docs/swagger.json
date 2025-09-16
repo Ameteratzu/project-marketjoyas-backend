@@ -56,6 +56,30 @@
         ]
       }
     },
+    "/usuarios/registro/admin": {
+      "post": {
+        "operationId": "UsuariosController_crearAdmin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
     "/usuarios/registro/demovendedor": {
       "post": {
         "operationId": "UsuariosController_crearDemoVendedor",
@@ -2435,6 +2459,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarCalificacion"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -2771,7 +2805,7 @@
         ]
       }
     },
-    "/cupon": {
+    "/cupon/create": {
       "post": {
         "operationId": "CuponController_crear",
         "parameters": [],
@@ -2795,11 +2829,13 @@
             "bearer": []
           }
         ],
-        "summary": "Crear un nuevo cupón",
+        "summary": "Crear un nuevo cupón por VENDEDOR",
         "tags": [
           "Cupon"
         ]
-      },
+      }
+    },
+    "/cupon": {
       "get": {
         "operationId": "CuponController_obtenerTodos",
         "parameters": [],
@@ -2813,7 +2849,7 @@
             "bearer": []
           }
         ],
-        "summary": "Obtener todos los cupones",
+        "summary": "Obtener todos los cupones por VENDEDOR",
         "tags": [
           "Cupon"
         ]
@@ -2842,7 +2878,7 @@
             "bearer": []
           }
         ],
-        "summary": "Obtener un cupón por ID",
+        "summary": "Obtener un cupón por ID por VENDEDOR",
         "tags": [
           "Cupon"
         ]
@@ -2881,36 +2917,7 @@
             "bearer": []
           }
         ],
-        "summary": "Actualizar un cupón por ID",
-        "tags": [
-          "Cupon"
-        ]
-      }
-    },
-    "/cupon/eliminar/{id}": {
-      "delete": {
-        "operationId": "CuponController_eliminar",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Eliminar un cupón por ID",
+        "summary": "Actualizar un cupón por ID por VENDEDOR",
         "tags": [
           "Cupon"
         ]
@@ -2939,7 +2946,7 @@
             "bearer": []
           }
         ],
-        "summary": "Validar un cupón por código",
+        "summary": "Validar un cupón por código por VENDEDOR",
         "tags": [
           "Cupon"
         ]
@@ -2968,7 +2975,36 @@
             "bearer": []
           }
         ],
-        "summary": "Marcar un cupón como usado por código",
+        "summary": "Marcar un cupón como usado por código por VENDEDOR",
+        "tags": [
+          "Cupon"
+        ]
+      }
+    },
+    "/cupon/eliminar/{id}": {
+      "delete": {
+        "operationId": "CuponController_eliminar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar un cupón por ID por VENDEDOR",
         "tags": [
           "Cupon"
         ]
@@ -3079,6 +3115,11 @@
             }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "summary": "Crear una nueva oferta global por ADMIN",
         "tags": [
           "OfertaGlobal"
@@ -3105,6 +3146,11 @@
             }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "summary": "Listar todas las ofertas globales por ADMIN",
         "tags": [
           "OfertaGlobal"
@@ -3137,6 +3183,11 @@
             }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "summary": "Obtener una oferta global por ID por ADMIN",
         "tags": [
           "OfertaGlobal"
@@ -3179,6 +3230,11 @@
             }
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "summary": "Actualizar una oferta global por ADMIN",
         "tags": [
           "OfertaGlobal"
@@ -3204,6 +3260,11 @@
             "description": ""
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "summary": "Desactivar una oferta global por ADMIN",
         "tags": [
           "OfertaGlobal"
@@ -3229,6 +3290,11 @@
             "description": ""
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "summary": "Activar una oferta global por ADMIN",
         "tags": [
           "OfertaGlobal"
@@ -3254,6 +3320,11 @@
             "description": ""
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "summary": "Eliminar una oferta global por ADMIN",
         "tags": [
           "OfertaGlobal"
@@ -3404,6 +3475,52 @@
           "telefono",
           "contraseña",
           "tienda"
+        ]
+      },
+      "AdminDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string",
+            "description": "Nombre completo des Admin",
+            "example": "María García López"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email del Admin",
+            "example": "maria.garcia@email.com"
+          },
+          "direccion": {
+            "type": "string",
+            "description": "Dirección del Admin (opcional)",
+            "example": "Av. Principal 123, Lima, Perú (opcional)"
+          },
+          "dni": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 8,
+            "description": "DNI del Admin (8 caracteres)",
+            "example": "71234567"
+          },
+          "telefono": {
+            "type": "string",
+            "description": "Número de teléfono del Admin",
+            "example": "+51987654321"
+          },
+          "contraseña": {
+            "type": "string",
+            "description": "Contraseña del Admin",
+            "example": "ClaveSegura123",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "email",
+          "dni",
+          "telefono",
+          "contraseña"
         ]
       },
       "CrearDemoVendedorDto": {
@@ -4030,6 +4147,29 @@
         }
       },
       "RegistrarCalificacion": {
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "number",
+            "minimum": 1,
+            "example": 1,
+            "description": "ID del producto relacionado"
+          },
+          "estrellas": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 1,
+            "description": "Calificacion de estrellas 1 - 5"
+          },
+          "comentario": {
+            "type": "string",
+            "example": "Muy buen producto",
+            "description": "Comentario opcional del usuario"
+          }
+        }
+      },
+      "ActualizarCalificacion": {
         "type": "object",
         "properties": {
           "productoId": {

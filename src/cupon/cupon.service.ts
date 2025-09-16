@@ -66,7 +66,7 @@ export class CuponService {
      * @throws NotFoundException si no existe
      */
     async obtenerPorId(id: number): Promise<Cupon> {
-        const cupon = await this.prisma.cupon.findUnique({ where: { id } });
+        const cupon = await this.prisma.cupon.findUnique({ where: { id: id } });
         if (!cupon) throw new NotFoundException('Cupón no encontrado');
         return cupon;
     }
@@ -80,7 +80,7 @@ export class CuponService {
     async actualizarCupon(id: number, dto: CuponDto): Promise<Cupon> {
         await this.obtenerPorId(id); // validar existencia
         return this.prisma.cupon.update({
-            where: { id },
+            where: { id: id },
             data: {
                 descuento: dto.descuento,
                 tiendaId: dto.tiendaId,

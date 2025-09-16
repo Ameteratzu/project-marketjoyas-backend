@@ -6,15 +6,16 @@ import { Roles } from '../auth/roles.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 
-//@ApiBearerAuth()
-//@UseGuards(JwtAuthGuard, RolesGuard)
-//@Roles('ADMIN')
+
 @Controller('oferta-global')
 export class OfertaGlobalController {
   constructor(private readonly ofertaGlobalService: OfertaGlobalService) { }
 
   // Crear una oferta global
   @Post('/create')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Crear una nueva oferta global por ADMIN', description: 'Permite a un ADMIN crear una oferta global y asociarla a productos.' })
 
   async create(@Body() dto: OfertaGlobalDto) {
@@ -23,6 +24,9 @@ export class OfertaGlobalController {
 
   // Obtener todas las ofertas
   @Get('/listar')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Listar todas las ofertas globales por ADMIN', description: 'Obtiene todas las ofertas globales junto con los productos asociados.' })
 
   async findAll() {
@@ -31,6 +35,9 @@ export class OfertaGlobalController {
 
   // Obtener una oferta por ID
   @Get('/listar/:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Obtener una oferta global por ID por ADMIN', description: 'Permite obtener los detalles de una oferta global específica por su ID.' })
 
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -39,6 +46,9 @@ export class OfertaGlobalController {
 
   // Actualizar una oferta global
   @Patch('/update/:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Actualizar una oferta global por ADMIN', description: 'Permite actualizar los datos de una oferta global, incluyendo los productos asociados.' })
 
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: OfertaGlobalDto) {
@@ -47,6 +57,9 @@ export class OfertaGlobalController {
 
   // Desactivar una oferta global
   @Patch('/desactivar/:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Desactivar una oferta global por ADMIN', description: 'Marca la oferta global como inactiva sin eliminarla físicamente.' })
 
   async desactivar(@Param('id', ParseIntPipe) id: number) {
@@ -55,6 +68,9 @@ export class OfertaGlobalController {
 
   // Activar una oferta global
   @Patch('/activar/:id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Activar una oferta global por ADMIN', description: 'Marca la oferta global como activa.' })
 
   async activar(@Param('id', ParseIntPipe) id: number) {
@@ -62,7 +78,9 @@ export class OfertaGlobalController {
   }
 
   // Eliminar una oferta global
-  @Delete('/delete/:id')
+  @Delete('/delete/:id') @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Eliminar una oferta global por ADMIN', description: 'Elimina físicamente la oferta global de la base de datos.' })
   async eliminar(@Param('id', ParseIntPipe) id: number) {
     return this.ofertaGlobalService.eliminar(id);

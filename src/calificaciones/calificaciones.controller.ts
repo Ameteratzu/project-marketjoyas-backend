@@ -7,14 +7,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ActualizarCalificacion } from './dtos/ActualizarCalificacion.dto';
 
-/**
- * Controlador para manejar rutas relacionadas con calificaciones.
- * Protegido por JWT y Roles, solo accesible para CLIENTES.
- */
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('CLIENTE')
-@ApiBearerAuth()
+
+
 @Controller('calificaciones')
 export class CalificacionesController {
     constructor(private readonly service: CalificacionesService) { }
@@ -26,6 +22,13 @@ export class CalificacionesController {
      * @returns La calificación creada
      */
     @Post()
+    /**
+ * Controlador para manejar rutas relacionadas con calificaciones.
+ * Protegido por JWT y Roles, solo accesible para CLIENTES.
+ */
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('CLIENTE')
     @ApiOperation({
         summary: 'Un CLIENTE califica un producto',
     })
@@ -38,6 +41,13 @@ export class CalificacionesController {
      * @returns Lista de calificaciones con información del producto
      */
     @Get()
+    /**
+ * Controlador para manejar rutas relacionadas con calificaciones.
+ * Protegido por JWT y Roles, solo accesible para CLIENTES.
+ */
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('CLIENTE')
     @ApiOperation({
         summary: 'Obtener todas las calificaciones de un CLIENTE',
         description: 'Permite a un CLIENTE visualizar todas sus calificaciones realizadas. Cada calificación incluye información del producto asociado. Puede paginarse usando parámetros page y limit en el servicio.',
@@ -55,6 +65,13 @@ export class CalificacionesController {
      * @returns La calificación encontrada
      */
     @Get(':id')
+    /**
+ * Controlador para manejar rutas relacionadas con calificaciones.
+ * Protegido por JWT y Roles, solo accesible para CLIENTES.
+ */
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('CLIENTE')
     @ApiOperation({
         summary: 'Un CLIENTE visualizara una calificacion por id',
     })
@@ -70,10 +87,17 @@ export class CalificacionesController {
      * @returns La calificación actualizada
      */
     @Patch(':id')
+    /**
+ * Controlador para manejar rutas relacionadas con calificaciones.
+ * Protegido por JWT y Roles, solo accesible para CLIENTES.
+ */
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('CLIENTE')
     @ApiOperation({
         summary: 'Un CLIENTE podra actuzalizar sus calificaciones',
     })
-    update(@Param('id') id: string, @Body() dto: Partial<RegistrarCalificacion>, @GetUser() user: JwtPayload) {
+    update(@Param('id') id: string, @Body() dto: ActualizarCalificacion, @GetUser() user: JwtPayload) {
         return this.service.update(+id, dto, user)
     }
 
@@ -84,6 +108,13 @@ export class CalificacionesController {
      * @returns La calificación eliminada
      */
     @Delete(':id')
+    /**
+ * Controlador para manejar rutas relacionadas con calificaciones.
+ * Protegido por JWT y Roles, solo accesible para CLIENTES.
+ */
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('CLIENTE')
     @ApiOperation({
         summary: 'Un CLIENTE podra elimar una calificacion por su id de la calificacion',
     })

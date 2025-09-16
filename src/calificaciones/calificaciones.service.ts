@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { RegistrarCalificacion } from './dtos/RegistrarCalificacion.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
+import { ActualizarCalificacion } from './dtos/ActualizarCalificacion.dto';
 
 /**
  * Servicio para manejar operaciones relacionadas con las calificaciones de productos.
@@ -75,7 +76,7 @@ export class CalificacionesService {
      * @throws ForbiddenException si el usuario no es el dueño de la calificación
      * @returns La calificación actualizada
      */
-    async update(id: number, dto: Partial<RegistrarCalificacion>, user: JwtPayload) {
+    async update(id: number, dto: ActualizarCalificacion, user: JwtPayload) {
         const calificacion = await this.prisma.calificacion.findUnique({ where: { id } });
         if (!calificacion) throw new NotFoundException('Calificación no encontrada');
         if (calificacion.usuarioId !== user.sub) throw new ForbiddenException('No tienes permisos para actualizar esta calificación');
