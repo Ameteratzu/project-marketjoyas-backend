@@ -77,7 +77,7 @@ model Usuario {
   tipoDocumento   TipoDocumentoIdentidad? @default(DNI) // Nuevo
   dni             String?   @unique //LO HE DEJADO COMO DNI PARA QUE NO SE ROMPA NADA PERO PUEDE SER RUC10, O CE
   razonSocial     String?  // Nuevo: solo si el cliente tiene RUC
-  telefono        String
+  telefono        String?
   direccion       String?
   contraseña      String
   rol             Rol      @default(CLIENTE)
@@ -201,47 +201,58 @@ model Categoria {
 //////////////////////////////
 
 model Producto {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   nombre      String
   descripcion String?
-  precio      Decimal  @db.Decimal(10, 2)
-  enStock     Int      @default(0)
-  creadoEn    DateTime @default(now())
-  habilitado  Boolean  @default(true) // lo he añadido para soft delete, para mantener trazabilidad.
+  precio      Decimal   @db.Decimal(10, 2)
+  enStock     Int       @default(0)
+  creadoEn    DateTime  @default(now())
+  habilitado  Boolean   @default(true)
 
-  imagen   String?
-  tienda   Tienda  @relation(fields: [tiendaId], references: [id])
-  tiendaId Int
+  imagen      String?
+  tienda      Tienda    @relation(fields: [tiendaId], references: [id])
+  tiendaId    Int
 
-  categoria   Categoria? @relation(fields: [categoriaId], references: [id]) // N:1 opcional → un producto puede pertenecer a una categoría
+  categoria   Categoria? @relation(fields: [categoriaId], references: [id])
   categoriaId Int?
 
-  gemaId Int?
-  gema   Gema? @relation(fields: [gemaId], references: [id])
+  gemaId      Int?
+  gema        Gema?      @relation(fields: [gemaId], references: [id])
 
-  materialId Int?
-  material   Material? @relation(fields: [materialId], references: [id])
+  materialId  Int?
+  material    Material?  @relation(fields: [materialId], references: [id])
 
-  estiloId Int?
-  estilo   Estilo? @relation(fields: [estiloId], references: [id])
+  estiloId    Int?
+  estilo      Estilo?    @relation(fields: [estiloId], references: [id])
 
-  ocasionId Int?
-  ocasion   Ocasion? @relation(fields: [ocasionId], references: [id])
+  ocasionId   Int?
+  ocasion     Ocasion?   @relation(fields: [ocasionId], references: [id])
 
-  cupones        Cupon[] // 1:N → un producto puede tener varios cupones asignados
-  pedidos        PedidoDetalle[] // N:M → relación con Pedido a través de PedidoProducto
-  calificaciones Calificacion[] // 1:N → un producto puede recibir muchas calificaciones
-  favoritos      Favorito[] // N:M → relación con Usuario
-  carrito        CarritoProducto[] // N:M → relación con Usuario
-  comparaciones  Comparacion[] // N:M → relación con Usuario
+  genero           String?  // nuevo: género del producto
+  condicion        String?  // nuevo: condición general (nuevo, usado, etc)
+  detalleCondicion String?  // nuevo: descripción específica del estado
+  paisOrigen       String?  // nuevo: país de origen
+  modelo           String?  // nuevo: modelo del producto
+  poseeNiquel      Boolean? // nuevo: si contiene níquel (true/false/indefinido)
+  garantia         String?  // nuevo: descripción de garantía
+  peso             Decimal? @db.Decimal(10, 3) // nuevo: peso en kg (o unidad que uses)
+  talla            String?  // nuevo: talla del producto
+  color            String?  // nuevo: color
 
-  ofertaGlobal   OfertaGlobal? @relation(fields: [ofertaGlobalId], references: [id]) // N:1 → un producto puede tener como máximo UNA oferta global activa
-  ofertaGlobalId Int?
+  cupones          Cupon[]
+  pedidos          PedidoDetalle[]
+  calificaciones   Calificacion[]
+  favoritos        Favorito[]
+  carrito          CarritoProducto[]
+  comparaciones    Comparacion[]
+
+  ofertaGlobal     OfertaGlobal? @relation(fields: [ofertaGlobalId], references: [id])
+  ofertaGlobalId   Int?
 
   movimientoInventario MovimientoInventario[]
-
-  imagenes ImagenProducto[] // Relación 1:N
+  imagenes        ImagenProducto[]
 }
+
 
 model Ocasion {
   id        Int        @id @default(autoincrement())
