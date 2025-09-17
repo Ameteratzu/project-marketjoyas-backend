@@ -21,7 +21,7 @@ import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 @ApiBearerAuth()
 @Controller('comparacion')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('CLIENTE')
+@Roles('CLIENTE', 'VENDEDOR', 'ADMIN') 
 export class ComparacionController {
   constructor(private readonly comparacionService: ComparacionService) {}
 
