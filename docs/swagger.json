@@ -56,30 +56,6 @@
         ]
       }
     },
-    "/usuarios/registro/admin": {
-      "post": {
-        "operationId": "UsuariosController_crearAdmin",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AdminDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "Usuarios"
-        ]
-      }
-    },
     "/usuarios/registro/demovendedor": {
       "post": {
         "operationId": "UsuariosController_crearDemoVendedor",
@@ -2104,17 +2080,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
+            "description": ""
           }
         },
         "security": [
@@ -2695,7 +2661,7 @@
             "bearer": []
           }
         ],
-        "summary": "Confirmar compra con los productos del carrito",
+        "summary": "Confirmar compra con todos los productos del carrito",
         "tags": [
           "Pedidos"
         ]
@@ -2707,17 +2673,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
+            "description": ""
           }
         },
         "security": [
@@ -2725,7 +2681,7 @@
             "bearer": []
           }
         ],
-        "summary": "Obtener los pedidos del usuario",
+        "summary": "Obtener los pedidos del usuario autenticado",
         "tags": [
           "Pedidos"
         ]
@@ -2761,6 +2717,42 @@
         ]
       }
     },
+    "/pedidos/confirmar/{tiendaId}": {
+      "post": {
+        "operationId": "PedidoController_confirmarCompraPorTienda",
+        "parameters": [
+          {
+            "name": "tiendaId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Confirmar productos del carrito por tienda",
+        "tags": [
+          "Pedidos"
+        ]
+      }
+    },
     "/pedidos/{id}": {
       "get": {
         "operationId": "PedidoController_obtenerDetallePedido",
@@ -2770,7 +2762,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2806,7 +2798,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "type": "string"
+              "type": "number"
             }
           }
         ],
@@ -2827,7 +2819,7 @@
             "bearer": []
           }
         ],
-        "summary": "Actualizar estado del pedido (VENDEDOR o TRABAJADOR). Si lo cambia a CANCELADO se borra el pedido",
+        "summary": "Actualizar estado del pedido. Si se cambia a BORRADO, se elimina el pedido y sus productos.",
         "tags": [
           "Pedidos"
         ]
@@ -3505,52 +3497,6 @@
           "tienda"
         ]
       },
-      "AdminDto": {
-        "type": "object",
-        "properties": {
-          "nombre_completo": {
-            "type": "string",
-            "description": "Nombre completo des Admin",
-            "example": "María García López"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Email del Admin",
-            "example": "maria.garcia@email.com"
-          },
-          "direccion": {
-            "type": "string",
-            "description": "Dirección del Admin (opcional)",
-            "example": "Av. Principal 123, Lima, Perú (opcional)"
-          },
-          "dni": {
-            "type": "string",
-            "minLength": 8,
-            "maxLength": 8,
-            "description": "DNI del Admin (8 caracteres)",
-            "example": "71234567"
-          },
-          "telefono": {
-            "type": "string",
-            "description": "Número de teléfono del Admin",
-            "example": "+51987654321"
-          },
-          "contraseña": {
-            "type": "string",
-            "description": "Contraseña del Admin",
-            "example": "ClaveSegura123",
-            "minLength": 6
-          }
-        },
-        "required": [
-          "nombre_completo",
-          "email",
-          "dni",
-          "telefono",
-          "contraseña"
-        ]
-      },
       "CrearDemoVendedorDto": {
         "type": "object",
         "properties": {
@@ -4073,7 +4019,11 @@
           },
           "clienteDnioRUC": {
             "type": "string",
-            "example": "12345678"
+            "pattern": "/^\\d{8,11}$/",
+            "example": "12345678901",
+            "description": "DNI (8 dígitos) o RUC (11 dígitos). Solo se permiten números.",
+            "maxLength": 11,
+            "minLength": 8
           },
           "productoNombre": {
             "type": "string",
@@ -4137,7 +4087,11 @@
           },
           "clienteDnioRUC": {
             "type": "string",
-            "example": "12345678"
+            "pattern": "/^\\d{8,11}$/",
+            "example": "12345678901",
+            "description": "DNI (8 dígitos) o RUC (11 dígitos). Solo se permiten números.",
+            "maxLength": 11,
+            "minLength": 8
           },
           "productoNombre": {
             "type": "string",

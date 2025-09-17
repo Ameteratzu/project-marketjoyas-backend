@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsNumber, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CrearCertificadoJoyaDto {
@@ -14,9 +14,16 @@ export class CrearCertificadoJoyaDto {
   @IsString()
   clienteNombre: string;
 
-  @ApiProperty({ example: '12345678' })
+    @ApiProperty({
+    example: '12345678901',
+    description: 'DNI (8 dígitos) o RUC (11 dígitos). Solo se permiten números.',
+    maxLength: 11,
+    minLength: 8,
+  })
   @IsString()
+  @Matches(/^\d{8,11}$/, { message: 'clienteDnioRUC debe tener entre 8 y 11 dígitos numéricos' })
   clienteDnioRUC: string;
+
 
   @ApiProperty({
     description: 'Nombre del producto joya',

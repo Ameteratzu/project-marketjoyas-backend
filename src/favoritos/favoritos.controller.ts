@@ -22,7 +22,7 @@ import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 @ApiBearerAuth()
 @Controller('favoritos')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('CLIENTE') 
+@Roles('CLIENTE', 'VENDEDOR', 'ADMIN') 
 export class FavoritosController {
   constructor(private readonly favoritoService: FavoritosService) {}
 

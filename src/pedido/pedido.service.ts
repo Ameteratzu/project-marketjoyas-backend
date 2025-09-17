@@ -10,6 +10,69 @@ import { EstadoPedido } from '@prisma/client';
 export class PedidoService {
   constructor(private readonly prisma: PrismaService) {}
 
+
+
+  //CONFIRMAR PEDIDO POR TIENDA
+  async confirmarPedidoPorTienda(usuarioId: number, tiendaId: number) {
+  // Traer todos los productos del carrito del usuario
+  const productosCarrito = await this.prisma.carritoProducto.findMany({
+    where: { usuarioId },
+    include: { producto: true },
+  });
+
+  // Filtrar los que pertenecen a la tienda específica
+  const productosTienda = productosCarrito.filter(
+    (item) => item.producto.tiendaId === tiendaId,
+  );
+
+  if (productosTienda.length === 0) {
+    throw new BadRequestException('No hay productos de esta tienda en el carrito.');
+  }
+
+  // Crear el pedido solo para esta tienda
+  const pedido = await this.prisma.pedido.create({
+    data: {
+      usuarioId,
+      tiendaId,
+      productos: {
+        create: productosTienda.map((item) => ({
+          productoId: item.productoId,
+          cantidad: item.cantidad,
+        })),
+      },
+    },
+    include: {
+      productos: {
+        include: {
+          producto: true,
+        },
+      },
+      tienda: {
+        select: {
+          nombre: true,
+          telefono: true,
+          emailTienda: true,
+        },
+      },
+    },
+  });
+
+  // Borrar del carrito solo los productos de esta tienda
+  await this.prisma.carritoProducto.deleteMany({
+    where: {
+      usuarioId,
+      productoId: {
+        in: productosTienda.map((item) => item.productoId),
+      },
+    },
+  });
+
+  return pedido;
+}
+
+
+//CONFIRMAR TODO EL PEDIDO
+
   async confirmarPedido(usuarioId: number) {
     const carrito = await this.prisma.carritoProducto.findMany({
       where: { usuarioId },
@@ -93,44 +156,82 @@ export class PedidoService {
     return pedidosCreados;
   }
 
-  async obtenerPedidos(usuarioId: number) {
-    const pedidos = await this.prisma.pedido.findMany({
-      where: { usuarioId },
-      include: {
-        productos: {
-          include: {
-            producto: {
-              include: {
-                tienda: {
-                  select: {
-                    nombre: true,
-                    telefono: true,
-                    emailTienda: true,
-                  },
+
+  //OBTENER PEDIDOS
+
+ async obtenerPedidos(usuarioId: number) {
+  const pedidos = await this.prisma.pedido.findMany({
+    where: { usuarioId },
+    include: {
+      productos: {
+        include: {
+          producto: {
+            include: {
+              tienda: {
+                select: {
+                  nombre: true,
+                  telefono: true,
+                  emailTienda: true,
                 },
               },
             },
           },
         },
-        tienda: {
-          select: {
-            nombre: true,
-            telefono: true,
-            emailTienda: true,
-          },
+      },
+      tienda: {
+        select: {
+          id: true,
+          nombre: true,
+          telefono: true,
+          emailTienda: true,
         },
       },
-      orderBy: {
-        fecha: 'desc',
-      },
+    },
+    orderBy: {
+      fecha: 'desc',
+    },
+  });
+
+  if (pedidos.length === 0) {
+    throw new NotFoundException('No tienes pedidos aún.');
+  }
+
+  const pedidosAgrupados = pedidos.map((pedido) => {
+    let subtotalTienda = 0;
+
+    const productos = pedido.productos.map((detalle) => {
+      const precio = Number(detalle.producto.precio);
+      const subtotalProducto = precio * detalle.cantidad;
+      subtotalTienda += subtotalProducto;
+
+      return {
+        productoId: detalle.productoId,
+        nombre: detalle.producto.nombre,
+        precio: Number(precio.toFixed(2)),
+        cantidad: detalle.cantidad,
+        subtotalProducto: Number(subtotalProducto.toFixed(2)),
+      };
     });
 
-    if (pedidos.length === 0) {
-      throw new NotFoundException('No tienes pedidos aún.');
-    }
+    return {
+      pedidoId: pedido.id,
+      tienda: pedido.tienda,
+      productos,
+      subtotalTienda: Number(subtotalTienda.toFixed(2)),
+      estado: pedido.estado,
+      fecha: pedido.fecha,
+    };
+  });
 
-    return pedidos;
-  }
+  const totalGeneral = Number(
+    pedidosAgrupados.reduce((acc, p) => acc + p.subtotalTienda, 0).toFixed(2)
+  );
+
+  return {
+    pedidos: pedidosAgrupados,
+    totalGeneral,
+  };
+}
 
 
 

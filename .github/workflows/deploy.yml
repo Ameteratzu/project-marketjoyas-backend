@@ -41,13 +41,13 @@ jobs:
       - name: 🏗️ Build application
         run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
-      - name: 📦 Transfer build to Lightsail
+      - name: 📦 Transfer build and dependencies
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ${{ secrets.LIGHTSAIL_USER }}
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
-          source: "dist/"
+          source: "dist/,package.json,package-lock.json,prisma/"
           target: "~/backend/project-marketjoyas-backend/"
 
       - name: 🚀 Deploy to Lightsail
@@ -61,10 +61,6 @@ jobs:
             ssh-keyscan -H ${{ secrets.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
             
             cd ~/backend/project-marketjoyas-backend
-            
-            echo "📥 Actualizando código..."
-            git fetch --all
-            git reset --hard origin/main
             
             echo "📝 Configurando environment variables..."
             cat > .env << EOF
@@ -86,11 +82,6 @@ jobs:
             
             echo "🔄 Aplicando migraciones..."
             npx prisma migrate deploy
-            
-            echo "🌱 Ejecutando seed..."
-            npm install -D ts-node @types/node
-            npx prisma db seed
-            npm uninstall -D ts-node @types/node
             
             echo "🔄 Reiniciando API..."
             pm2 delete marketjoyas-api || true
