@@ -3424,77 +3424,99 @@
         "type": "object",
         "properties": {
           "nombre_tienda": {
-            "type": "string"
+            "type": "string",
+            "description": "Nombre de la tienda",
+            "example": "Tienda Central"
           },
           "direccion_tienda": {
-            "type": "string"
+            "type": "string",
+            "description": "Dirección de la tienda",
+            "example": "Av. Comercio 456"
           },
           "telefono_tienda": {
-            "type": "string"
+            "type": "string",
+            "description": "Teléfono de la tienda",
+            "example": "+5112345678"
           },
           "pais": {
-            "type": "string"
+            "type": "string",
+            "description": "País donde se encuentra la tienda",
+            "example": "Perú"
           },
           "ciudad": {
-            "type": "string"
+            "type": "string",
+            "description": "Ciudad donde se encuentra la tienda",
+            "example": "Lima"
           },
           "provincia": {
-            "type": "string"
+            "type": "string",
+            "description": "Provincia donde se encuentra la tienda",
+            "example": "Lima"
           },
           "codigoPostal": {
-            "type": "string"
+            "type": "string",
+            "description": "Código postal de la tienda",
+            "example": "15001"
           }
         },
         "required": [
-          "nombre_tienda",
-          "direccion_tienda",
-          "telefono_tienda",
-          "pais",
-          "ciudad",
-          "provincia",
-          "codigoPostal"
+          "nombre_tienda"
         ]
       },
       "CrearVendedorDto": {
         "type": "object",
         "properties": {
           "nombre_completo": {
-            "type": "string"
+            "type": "string",
+            "description": "Nombre completo del vendedor",
+            "example": "Juan Pérez Gómez"
           },
           "username": {
-            "type": "string"
+            "type": "string",
+            "description": "Nombre de usuario para el vendedor",
+            "example": "juanperez123"
           },
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Email del vendedor",
+            "example": "juan.perez@email.com"
           },
           "direccion": {
-            "type": "string"
+            "type": "string",
+            "description": "Dirección del vendedor",
+            "example": "Calle Falsa 123, Ciudad"
           },
           "dni": {
             "type": "string",
             "minLength": 8,
-            "maxLength": 8
+            "maxLength": 8,
+            "description": "DNI del vendedor (8 caracteres)",
+            "example": "12345678"
           },
           "telefono": {
-            "type": "string"
+            "type": "string",
+            "description": "Número de teléfono del vendedor",
+            "example": "+51987654321"
           },
           "contraseña": {
-            "type": "string"
+            "type": "string",
+            "description": "Contraseña del vendedor",
+            "example": "admin123",
+            "minLength": 6
           },
           "tienda": {
-            "$ref": "#/components/schemas/TiendaDto"
+            "description": "Datos de la tienda asociada",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TiendaDto"
+              }
+            ]
           }
         },
         "required": [
-          "nombre_completo",
-          "username",
           "email",
-          "direccion",
-          "dni",
-          "telefono",
-          "contraseña",
-          "tienda"
+          "contraseña"
         ]
       },
       "CrearDemoVendedorDto": {
@@ -3896,6 +3918,7 @@
           },
           "contactoTelefono": {
             "type": "string",
+            "nullable": true,
             "pattern": "/^[0-9+\\-\\s]{7,15}$/",
             "description": "Teléfono de contacto (opcional, para usuarios no autenticados)",
             "example": "Si no esta autenticado: +51987654321"

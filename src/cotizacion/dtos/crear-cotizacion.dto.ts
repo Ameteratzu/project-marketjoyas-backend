@@ -35,16 +35,18 @@ export class CrearCotizacionDto {
   contactoEmail?: string;
 
   @ApiProperty({
-    description: 'Teléfono de contacto (opcional, para usuarios no autenticados)',
+    description:
+      'Teléfono de contacto (opcional, para usuarios no autenticados)',
     example: 'Si no esta autenticado: +51987654321',
     required: false,
   })
   @IsOptional()
   @Matches(/^[0-9+\-\s]{7,15}$/, { message: 'Teléfono inválido' })
-  contactoTelefono?: string;
+  contactoTelefono?: string | null;
 
   @ApiProperty({
-    description: 'Nombre completo de contacto (opcional, para usuarios no autenticados)',
+    description:
+      'Nombre completo de contacto (opcional, para usuarios no autenticados)',
     example: 'Si no esta autenticado: Juan Pérez',
     required: false,
   })

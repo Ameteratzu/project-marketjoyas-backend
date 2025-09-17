@@ -22,8 +22,9 @@ import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 @ApiTags('Carrito')
 @ApiBearerAuth()
 @Controller('carrito')
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('CLIENTE')
+
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CarritoController {
   constructor(private readonly carritoService: CarritoService) {}
 
