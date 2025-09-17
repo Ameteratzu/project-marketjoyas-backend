@@ -35,9 +35,21 @@ export class ProductosService {
           categoriaId: dto.categoriaId,
           tiendaId: tiendaId,
           materialId: dto.materialId ?? null,
-        gemaId: dto.gemaId ?? null,
-        estiloId: dto.estiloId ?? null,
-        ocasionId: dto.ocasionId ?? null,
+          gemaId: dto.gemaId ?? null,
+          estiloId: dto.estiloId ?? null,
+          ocasionId: dto.ocasionId ?? null,
+
+          genero: dto.genero,
+          condicion: dto.condicion,
+          detalleCondicion: dto.detalleCondicion,
+          paisOrigen: dto.paisOrigen,
+          modelo: dto.modelo,
+          poseeNiquel: dto.poseeNiquel,
+          garantia: dto.garantia,
+          peso: dto.peso ? new Prisma.Decimal(dto.peso) : null,
+          talla: dto.talla,
+          color: dto.color,
+
           imagenes: dto.imagenes
             ? {
                 create: dto.imagenes.map((url) => ({ url })),
@@ -68,94 +80,110 @@ export class ProductosService {
   //Funcion para actualizar productos, añadir stock
 
   async update(id: number, dto: UpdateProductoDto, user: JwtPayload) {
-  if (!user.tiendaId) {
-    throw new ForbiddenException('El usuario no pertenece a una tienda');
-  }
-
-  const producto = await this.prisma.producto.findUnique({
-    where: { id },
-    include: { imagenes: true },
-  });
-
-  if (!producto) {
-    throw new NotFoundException(`Producto con id ${id} no encontrado`);
-  }
-
-  if (producto.tiendaId !== user.tiendaId) {
-    throw new ForbiddenException(
-      'No puedes actualizar productos de otra tienda',
-    );
-  }
-
-  const nuevoStock = dto.enStock ?? producto.enStock;
-  const diferenciaStock = nuevoStock - producto.enStock;
-
-  // Manejo imágenes
-  const imagenesExistentes = producto.imagenes;
-  const imagenesAEliminarIds = dto.imagenesAEliminar ?? [];
-  const imagenesNuevas = dto.imagenesNuevas ?? [];
-
-  const cantidadDespues =
-    imagenesExistentes.length - imagenesAEliminarIds.length + imagenesNuevas.length;
-
-  if (cantidadDespues > 4) {
-    throw new BadRequestException('No puedes tener más de 4 imágenes por producto.');
-  }
-
-  const data: any = {
-    nombre: dto.nombre ?? producto.nombre,
-    descripcion: dto.descripcion ?? producto.descripcion,
-    precio:
-      dto.precio !== undefined
-        ? new Prisma.Decimal(dto.precio)
-        : producto.precio,
-    enStock: nuevoStock,
-    imagen: dto.imagen ?? producto.imagen,
-    categoriaId: dto.categoriaId ?? producto.categoriaId,
-    materialId: dto.materialId ?? producto.materialId,
-    gemaId: dto.gemaId ?? producto.gemaId,
-    estiloId: dto.estiloId ?? producto.estiloId,
-    ocasionId: dto.ocasionId ?? producto.ocasionId,
-  };
-
-  return await this.prisma.$transaction(async (prisma) => {
-    // Eliminar imágenes que indicó el usuario
-    if (imagenesAEliminarIds.length > 0) {
-      await prisma.imagenProducto.deleteMany({
-        where: { id: { in: imagenesAEliminarIds }, productoId: id },
-      });
+    if (!user.tiendaId) {
+      throw new ForbiddenException('El usuario no pertenece a una tienda');
     }
 
-    // Agregar imágenes nuevas
-    if (imagenesNuevas.length > 0) {
-      await prisma.imagenProducto.createMany({
-        data: imagenesNuevas.map((url) => ({ url, productoId: id })),
-      });
-    }
-
-    // Actualizar producto
-    const productoActualizado = await prisma.producto.update({
+    const producto = await this.prisma.producto.findUnique({
       where: { id },
-      data,
       include: { imagenes: true },
     });
 
-    // Registrar movimiento de inventario si cambió stock
-    if (diferenciaStock !== 0) {
-      await prisma.movimientoInventario.create({
-        data: {
-          tipo: diferenciaStock > 0 ? 'ENTRADA' : 'SALIDA',
-          cantidad: Math.abs(diferenciaStock),
-          productoId: id,
-          usuarioId: user.sub,
-        },
-      });
+    if (!producto) {
+      throw new NotFoundException(`Producto con id ${id} no encontrado`);
     }
 
-    return productoActualizado;
-  });
-}
+    if (producto.tiendaId !== user.tiendaId) {
+      throw new ForbiddenException(
+        'No puedes actualizar productos de otra tienda',
+      );
+    }
 
+    const nuevoStock = dto.enStock ?? producto.enStock;
+    const diferenciaStock = nuevoStock - producto.enStock;
+
+    // Manejo imágenes
+    const imagenesExistentes = producto.imagenes;
+    const imagenesAEliminarIds = dto.imagenesAEliminar ?? [];
+    const imagenesNuevas = dto.imagenesNuevas ?? [];
+
+    const cantidadDespues =
+      imagenesExistentes.length -
+      imagenesAEliminarIds.length +
+      imagenesNuevas.length;
+
+    if (cantidadDespues > 4) {
+      throw new BadRequestException(
+        'No puedes tener más de 4 imágenes por producto.',
+      );
+    }
+
+    const data: any = {
+      nombre: dto.nombre ?? producto.nombre,
+      descripcion: dto.descripcion ?? producto.descripcion,
+      precio:
+        dto.precio !== undefined
+          ? new Prisma.Decimal(dto.precio)
+          : producto.precio,
+      enStock: nuevoStock,
+      imagen: dto.imagen ?? producto.imagen,
+      categoriaId: dto.categoriaId ?? producto.categoriaId,
+      materialId: dto.materialId ?? producto.materialId,
+      gemaId: dto.gemaId ?? producto.gemaId,
+      estiloId: dto.estiloId ?? producto.estiloId,
+      ocasionId: dto.ocasionId ?? producto.ocasionId,
+
+      // NUEVOS CAMPOS
+      genero: dto.genero ?? producto.genero,
+      condicion: dto.condicion ?? producto.condicion,
+      detalleCondicion: dto.detalleCondicion ?? producto.detalleCondicion,
+      paisOrigen: dto.paisOrigen ?? producto.paisOrigen,
+      modelo: dto.modelo ?? producto.modelo,
+      poseeNiquel: dto.poseeNiquel ?? producto.poseeNiquel,
+      garantia: dto.garantia ?? producto.garantia,
+      peso:
+        dto.peso !== undefined ? new Prisma.Decimal(dto.peso) : producto.peso,
+      talla: dto.talla ?? producto.talla,
+      color: dto.color ?? producto.color,
+    };
+
+    return await this.prisma.$transaction(async (prisma) => {
+      // Eliminar imágenes que indicó el usuario
+      if (imagenesAEliminarIds.length > 0) {
+        await prisma.imagenProducto.deleteMany({
+          where: { id: { in: imagenesAEliminarIds }, productoId: id },
+        });
+      }
+
+      // Agregar imágenes nuevas
+      if (imagenesNuevas.length > 0) {
+        await prisma.imagenProducto.createMany({
+          data: imagenesNuevas.map((url) => ({ url, productoId: id })),
+        });
+      }
+
+      // Actualizar producto
+      const productoActualizado = await prisma.producto.update({
+        where: { id },
+        data,
+        include: { imagenes: true },
+      });
+
+      // Registrar movimiento de inventario si cambió stock
+      if (diferenciaStock !== 0) {
+        await prisma.movimientoInventario.create({
+          data: {
+            tipo: diferenciaStock > 0 ? 'ENTRADA' : 'SALIDA',
+            cantidad: Math.abs(diferenciaStock),
+            productoId: id,
+            usuarioId: user.sub,
+          },
+        });
+      }
+
+      return productoActualizado;
+    });
+  }
 
   // Eliminar producto //corregido
   async remove(id: number, user: JwtPayload) {
@@ -209,43 +237,43 @@ export class ProductosService {
 
   // Listar todos los productos (para clientes o internautas no logueados)
   async findAll() {
-  return this.prisma.producto.findMany({
-    where: { habilitado: true },
-    include: {
-      imagenes: true,
-      categoria: true,
-      tienda: true,
-      calificaciones: true,
-      material: true,
-      ocasion: true,
-      gema: true,
-      estilo: true,
-    },
-  });
-}
+    return this.prisma.producto.findMany({
+      where: { habilitado: true },
+      include: {
+        imagenes: true,
+        categoria: true,
+        tienda: true,
+        calificaciones: true,
+        material: true,
+        ocasion: true,
+        gema: true,
+        estilo: true,
+      },
+    });
+  }
 
   // Obtener producto por id (para clientes o internautas no logueados)
   async findOne(id: number) {
-  const producto = await this.prisma.producto.findUnique({
-    where: { id },
-    include: {
-      imagenes: true,
-      categoria: true,
-      tienda: true,
-      calificaciones: true,
-      material: true,
-      ocasion: true,
-      gema: true,
-      estilo: true,
-    },
-  });
+    const producto = await this.prisma.producto.findUnique({
+      where: { id },
+      include: {
+        imagenes: true,
+        categoria: true,
+        tienda: true,
+        calificaciones: true,
+        material: true,
+        ocasion: true,
+        gema: true,
+        estilo: true,
+      },
+    });
 
-  if (!producto || !producto.habilitado) {
-    throw new NotFoundException('Producto no encontrado');
+    if (!producto || !producto.habilitado) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+
+    return producto;
   }
-
-  return producto;
-}
 
   //Obtener productos por tienda (VENDEDOR SOLO PUEDE VER PRODUCTOS DE SU TIENDA)
 
@@ -340,8 +368,15 @@ export class ProductosService {
   //////////////////////////////////////FUNCION PARA FILTROS/////////////////////////////////////////////////////////////////////////////////////
 
   async filtrarProductos(query: FiltrarProductosDto) {
-    const { materialIds, gemaIds, estiloIds, ocasionIds, precioMin, precioMax, orden } = query;
-
+    const {
+      materialIds,
+      gemaIds,
+      estiloIds,
+      ocasionIds,
+      precioMin,
+      precioMax,
+      orden,
+    } = query;
 
     // Construir filtros dinámicos
     const filtros: any = {
@@ -401,8 +436,8 @@ export class ProductosService {
         imagenes: true,
         categoria: true,
         tienda: true,
-        calificaciones: true, 
+        calificaciones: true,
       },
     });
   }
-}//
+} //

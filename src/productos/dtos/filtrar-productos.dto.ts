@@ -14,6 +14,14 @@ function transformArray(value: any) {
   return value;
 }
 
+export enum OrdenEnum {
+  PRECIO_ASC = 'precio_asc',
+  PRECIO_DESC = 'precio_desc',
+  FECHA_ASC = 'fecha_asc',
+  FECHA_DESC = 'fecha_desc',
+}
+
+
 export class FiltrarProductosDto {
   @ApiPropertyOptional({
     description: 'IDs de materiales (puedes pasar múltiples separados por coma: 1,2,3)',
@@ -71,12 +79,13 @@ export class FiltrarProductosDto {
   @IsNumberString()
   precioMax?: string;
 
-  @ApiPropertyOptional({
-    description: 'Orden para los resultados',
-    example: 'precio_asc',
-    enum: ['precio_asc', 'precio_desc', 'fecha_asc', 'fecha_desc'],
-  })
-  @IsOptional()
-  @IsEnum(['precio_asc', 'precio_desc', 'fecha_asc', 'fecha_desc'])
-  orden?: 'precio_asc' | 'precio_desc' | 'fecha_asc' | 'fecha_desc';
+ @ApiPropertyOptional({
+  description: 'Orden para los resultados',
+  example: OrdenEnum.PRECIO_ASC,
+  enum: OrdenEnum,
+})
+@IsOptional()
+@IsEnum(OrdenEnum)
+orden?: OrdenEnum;
+
 }

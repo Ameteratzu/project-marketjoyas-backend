@@ -1,6 +1,12 @@
 import { PartialType, ApiPropertyOptional } from '@nestjs/swagger';
 import { CrearProductoDto } from './crear-producto.dto';
-import { IsOptional, IsArray, IsNumber, ArrayMaxSize } from 'class-validator';
+import {
+  IsOptional,
+  IsArray,
+  IsNumber,
+  ArrayMaxSize,
+  IsString,
+} from 'class-validator';
 
 export class UpdateProductoDto extends PartialType(CrearProductoDto) {
   @ApiPropertyOptional({

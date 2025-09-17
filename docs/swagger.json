@@ -313,168 +313,7 @@
             }
           }
         },
-        "summary": "Obtener todos lo productos, endpoint con acceso libre al publico",
-        "tags": [
-          "Productos"
-        ]
-      }
-    },
-    "/productos/{id}": {
-      "patch": {
-        "operationId": "ProductosController_update",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CrearProductoDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Un VENDEDOR o TRABAJADOR actualizan un producto",
-        "tags": [
-          "Productos"
-        ]
-      },
-      "delete": {
-        "operationId": "ProductosController_remove",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Deshabilita (soft delete) un producto de la tienda",
-        "tags": [
-          "Productos"
-        ]
-      },
-      "get": {
-        "operationId": "ProductosController_findOne",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Obtener todos lo productos por ID, endpoint para todo publico",
-        "tags": [
-          "Productos"
-        ]
-      }
-    },
-    "/productos/mis-productos": {
-      "get": {
-        "operationId": "ProductosController_findByTienda",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Un VENDEDOR o TRABAJADOR obtienen sus productos segun su tienda",
-        "tags": [
-          "Productos"
-        ]
-      }
-    },
-    "/productos/{id}/habilitar": {
-      "patch": {
-        "operationId": "ProductosController_habilitar",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Un VENDEDOR o TRABAJADOR habilitan un producto de su tienda",
+        "summary": "Obtener todos los productos (público)",
         "tags": [
           "Productos"
         ]
@@ -511,125 +350,7 @@
             }
           }
         },
-        "summary": "Obtener todos lo productos por nombre, endpoint con acceso libre al publicoo",
-        "tags": [
-          "Productos"
-        ]
-      }
-    },
-    "/productos/buscar/mis-productos": {
-      "get": {
-        "operationId": "ProductosController_buscarPorNombrePrivado",
-        "parameters": [
-          {
-            "name": "nombre",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Obtener todos lo productos por nombre, endpoint para VENDEDORES O TRABAJADORES, obtiene solo productos de su tienda",
-        "tags": [
-          "Productos"
-        ]
-      }
-    },
-    "/productos/categoria/{categoriaId}": {
-      "get": {
-        "operationId": "ProductosController_findByCategoryPublic",
-        "parameters": [
-          {
-            "name": "categoriaId",
-            "required": true,
-            "in": "path",
-            "description": "ID de la categoría (debe ser un número entero mayor a 0)",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Obtener productos por categoraiaId publico",
-        "tags": [
-          "Productos"
-        ]
-      }
-    },
-    "/productos/categoria/mis-productos/{categoriaId}": {
-      "get": {
-        "operationId": "ProductosController_findByCategoryPrivate",
-        "parameters": [
-          {
-            "name": "categoriaId",
-            "required": true,
-            "in": "path",
-            "description": "ID de la categoría (debe ser un número entero mayor a 0)",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Obtener productos por por categoriaId para trabajadores o vendedores",
+        "summary": "Buscar productos por nombre (público)",
         "tags": [
           "Productos"
         ]
@@ -743,7 +464,286 @@
             }
           }
         },
-        "summary": "Filtros manejados desde el backend",
+        "summary": "Filtrar productos (backend)",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/categoria/{categoriaId}": {
+      "get": {
+        "operationId": "ProductosController_findByCategoryPublic",
+        "parameters": [
+          {
+            "name": "categoriaId",
+            "required": true,
+            "in": "path",
+            "description": "ID de la categoría (debe ser un número entero mayor a 0)",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Obtener productos por categoría (público)",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/mis-productos": {
+      "get": {
+        "operationId": "ProductosController_findByTienda",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener productos de la tienda del VENDEDOR o TRABAJADOR",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/buscar/mis-productos": {
+      "get": {
+        "operationId": "ProductosController_buscarPorNombrePrivado",
+        "parameters": [
+          {
+            "name": "nombre",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Buscar productos por nombre (solo productos de su tienda)",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/categoria/mis-productos/{categoriaId}": {
+      "get": {
+        "operationId": "ProductosController_findByCategoryPrivate",
+        "parameters": [
+          {
+            "name": "categoriaId",
+            "required": true,
+            "in": "path",
+            "description": "ID de la categoría (debe ser un número entero mayor a 0)",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener productos por categoría (vendedor/trabajador)",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/{id}/habilitar": {
+      "patch": {
+        "operationId": "ProductosController_habilitar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un VENDEDOR o TRABAJADOR habilitan un producto de su tienda",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/productos/{id}": {
+      "patch": {
+        "operationId": "ProductosController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearProductoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un VENDEDOR o TRABAJADOR actualizan un producto",
+        "tags": [
+          "Productos"
+        ]
+      },
+      "delete": {
+        "operationId": "ProductosController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Deshabilita (soft delete) un producto de la tienda",
+        "tags": [
+          "Productos"
+        ]
+      },
+      "get": {
+        "operationId": "ProductosController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Obtener producto por ID (público)",
         "tags": [
           "Productos"
         ]
@@ -3756,6 +3756,56 @@
             "type": "number",
             "example": 2,
             "description": "ID del estilo OPCIONAL"
+          },
+          "genero": {
+            "type": "string",
+            "example": "Femenino",
+            "description": "Género del producto (opcional)"
+          },
+          "condicion": {
+            "type": "string",
+            "example": "Nuevo",
+            "description": "Condición general del producto (nuevo, usado, etc)"
+          },
+          "detalleCondicion": {
+            "type": "string",
+            "example": "Caja ligeramente dañada",
+            "description": "Detalle específico de la condición del producto"
+          },
+          "paisOrigen": {
+            "type": "string",
+            "example": "Italia",
+            "description": "País de origen del producto"
+          },
+          "modelo": {
+            "type": "string",
+            "example": "Modelo X23",
+            "description": "Modelo del producto"
+          },
+          "poseeNiquel": {
+            "type": "boolean",
+            "example": true,
+            "description": "Indica si el producto contiene níquel (true/false)"
+          },
+          "garantia": {
+            "type": "string",
+            "example": "2 años de garantía",
+            "description": "Descripción de la garantía del producto"
+          },
+          "peso": {
+            "type": "number",
+            "example": 0.25,
+            "description": "Peso del producto en kilogramos"
+          },
+          "talla": {
+            "type": "string",
+            "example": "M",
+            "description": "Talla del producto (S, M, L, etc)"
+          },
+          "color": {
+            "type": "string",
+            "example": "Plateado",
+            "description": "Color del producto"
           }
         },
         "required": [
