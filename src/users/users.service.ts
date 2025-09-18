@@ -11,6 +11,7 @@ import { CrearDemoVendedorDto } from './dtos/crear-demo-vendedor.dto';
 import { ActualizarFotoDto } from './dtos/actualizar-foto.dto';
 import { ActualizarDireccionDto } from './dtos/actualizar-direccion.dto';
 import { ActualizarInfoDto } from './dtos/actualizar-info.dto';
+import { CrearPrimerAdminDto } from './dtos/crear-admin.dto';
 
 ///////////////////////////////EN ESTE SERVICIO ESTA LA LOGICA DE NEGOCIO DE USUARIOS/////////////////////////
 
@@ -206,6 +207,33 @@ export class UsersService {
       trabajador,
     };
   }
+
+  ///CREAR ADMIN
+
+
+  async crearAdmin(dto: CrearPrimerAdminDto) {
+  const existe = await this.prisma.usuario.findUnique({
+    where: { email: dto.email },
+  });
+
+  if (existe) {
+    throw new ForbiddenException('Ya existe un usuario con este email');
+  }
+
+  const hashed = await this.hashPassword(dto.contraseña);
+
+  return this.prisma.usuario.create({
+    data: {
+      nombre_completo: dto.nombre_completo,
+      email: dto.email,
+      dni: dto.dni,
+      telefono: dto.telefono,
+      contraseña: hashed,
+      ...(dto.direccion && { direccion: dto.direccion }),
+      rol: 'ADMIN',
+    },
+  });
+}
 
   ///////////////////////////////////////ACTUALIZAR INFORMACION///////////////////////////////////////////////////////////
 

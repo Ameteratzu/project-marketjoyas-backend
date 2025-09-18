@@ -207,6 +207,31 @@
         ]
       }
     },
+    "/usuarios/registro/admin": {
+      "post": {
+        "operationId": "UsuariosController_crearAdmin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearPrimerAdminDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Crea un nuevo usuario ADMIN",
+        "tags": [
+          "Usuarios"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "AuthController_login",
@@ -3668,6 +3693,52 @@
         "required": [
           "fotoPerfilUrl",
           "fotoPerfilPublicId"
+        ]
+      },
+      "CrearPrimerAdminDto": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string",
+            "description": "Nombre completo del administrador",
+            "example": "Juan Pérez Torres"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email del administrador",
+            "example": "juan.perez@admin.com"
+          },
+          "direccion": {
+            "type": "string",
+            "description": "Dirección del administrador (opcional)",
+            "example": "Calle 45 #123, Bogotá, Colombia"
+          },
+          "dni": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 8,
+            "description": "DNI del administrador (8 caracteres)",
+            "example": "87654321"
+          },
+          "telefono": {
+            "type": "string",
+            "description": "Número de teléfono del administrador",
+            "example": "+573001112233"
+          },
+          "contraseña": {
+            "type": "string",
+            "description": "Contraseña del administrador (mínimo 6 caracteres)",
+            "example": "AdminFuerte2024",
+            "minLength": 6
+          }
+        },
+        "required": [
+          "nombre_completo",
+          "email",
+          "dni",
+          "telefono",
+          "contraseña"
         ]
       },
       "LoginDto": {

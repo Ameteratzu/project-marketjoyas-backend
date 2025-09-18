@@ -21,8 +21,8 @@ import { ApiBearerAuth, ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Estilos')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'VENDEDOR')
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('estilos')
 export class EstiloController {
   constructor(private readonly estiloService: EstiloService) {}

@@ -23,7 +23,6 @@ import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 @ApiBearerAuth()
 @Controller('carrito')
 @Roles('CLIENTE')
-
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class CarritoController {
   constructor(private readonly carritoService: CarritoService) {}

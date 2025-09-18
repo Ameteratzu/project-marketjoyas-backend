@@ -22,15 +22,21 @@ import { CrearDemoVendedorDto } from './dtos/crear-demo-vendedor.dto';
 import { ActualizarFotoDto } from './dtos/actualizar-foto.dto';
 import { ActualizarDireccionDto } from './dtos/actualizar-direccion.dto';
 import { ActualizarInfoDto } from './dtos/actualizar-info.dto';
+import { CrearPrimerAdminDto } from './dtos/crear-admin.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private usuariosService: UsersService) {}
 
+
+  //REGISTRO DE NUEVO USUARIO CLIENTE
+
   @Post('registro/cliente')
   crearCliente(@Body(new ValidationPipe()) dto: CrearClienteDto) {
     return this.usuariosService.crearCliente(dto);
   }
+
+  //REGISTROPARA VENDEDOR (DESAROLLO)
 
   @Post('registro/vendedor')
   async crearVendedor(
@@ -53,9 +59,12 @@ export class UsuariosController {
     return this.usuariosService.crearDemoVendedor(dto, user?.sub);
   }
 
+
+  //UN VENDEDOR REGISTRA UN NUEVO USUARIO
+
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('registro/trabajador')
   async crearTrabajador(
     @GetUser() user: JwtPayload,
@@ -64,14 +73,16 @@ export class UsuariosController {
     return this.usuariosService.crearTrabajador(dto, user);
   }
 
+
+  ///ACTUALIZAR INFORMACION DE USUARIO
+
   @Patch('actualizar/info')
   @ApiBearerAuth()
-   @ApiOperation({
-    summary:
-      'Actualiza toda la info de un cliente',
+  @Roles('CLIENTE','ADMIN','DEMOVENDEDOR','VENDEDOR')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({
+    summary: 'Actualiza toda la info de un cliente',
   })
-
-  @UseGuards(JwtAuthGuard)
   actualizarInfo(
     @GetUser() user: JwtPayload,
     @Body(new ValidationPipe()) dto: ActualizarInfoDto,
@@ -79,14 +90,15 @@ export class UsuariosController {
     return this.usuariosService.actualizarInfo(user.sub, dto);
   }
 
+  //UN USUARIO ACTUALIZA SU DIRECCION PRINCIPAL
+
   @Patch('actualizar/direccion')
   @ApiBearerAuth()
+  @Roles('CLIENTE','ADMIN','DEMOVENDEDOR','VENDEDOR')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({
-    summary:
-      'Actualiza especificamente la direccion de un usuario',
+    summary: 'Actualiza especificamente la direccion legal de un usuario',
   })
-
-  @UseGuards(JwtAuthGuard)
   actualizarDireccion(
     @GetUser() user: JwtPayload,
     @Body(new ValidationPipe()) dto: ActualizarDireccionDto,
@@ -94,18 +106,30 @@ export class UsuariosController {
     return this.usuariosService.actualizarDireccion(user.sub, dto);
   }
 
+
+
+  //ACTUALIZA LA FOTO DE UN USUARIO
+
   @Patch('actualizar/foto')
   @ApiBearerAuth()
-   @ApiOperation({
-    summary:
-      'Actualiza especificamente la foto de un usuario',
+  @Roles('CLIENTE','ADMIN','DEMOVENDEDOR','VENDEDOR')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({
+    summary: 'Actualiza especificamente la foto de un usuario',
   })
-
-  @UseGuards(JwtAuthGuard)
   actualizarFotoPerfil(
     @GetUser() user: JwtPayload,
     @Body(new ValidationPipe()) dto: ActualizarFotoDto,
   ) {
     return this.usuariosService.actualizarFotoPerfil(user.sub, dto);
+  }
+
+
+  //REGISTRA NUEVO ADMIN
+
+  @Post('registro/admin')
+  @ApiOperation({ summary: 'Crea un nuevo usuario ADMIN' })
+  crearAdmin(@Body(new ValidationPipe()) dto: CrearPrimerAdminDto) {
+    return this.usuariosService.crearAdmin(dto);
   }
 }

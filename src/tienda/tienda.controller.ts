@@ -24,7 +24,8 @@ export class TiendaController {
   // Para ver todas las tiendas, con filtro opcional por nombre
   @Get()
   @ApiOperation({
-    summary: 'Listar todos los estilos con filtro opcional por nombre, se puede consultar asi tambien para todas las caracteristicas /tiendas?nombre=mo',
+    summary:
+      'Listar todos los estilos con filtro opcional por nombre, se puede consultar asi tambien para todas las caracteristicas /tiendas?nombre=mo',
   })
   async getAllPublicas(@Query('nombre') nombre?: string) {
     return this.tiendaService.findAllPublic(nombre);
@@ -45,8 +46,8 @@ export class TiendaController {
   @ApiOperation({
     summary: 'Vendedor actualiza su tienda',
   })
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('VENDEDOR')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async actualizarTienda(
     @Body() dto: ActualizarTiendaDto,
     @GetUser() user: JwtPayload,

@@ -19,8 +19,8 @@ import { ActualizarCategoriaDto } from './dtos/actualizar-categoria.dto';
 
 @ApiTags('Categoria')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN')
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('categoria')
 export class CategoriaController {
   constructor(private readonly categoriaService: CategoriaService) {}
