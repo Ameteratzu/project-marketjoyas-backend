@@ -171,7 +171,7 @@
             "bearer": []
           }
         ],
-        "summary": "Actualiza especificamente la direccion de un usuario",
+        "summary": "Actualiza especificamente la direccion legal de un usuario",
         "tags": [
           "Usuarios"
         ]
@@ -3563,6 +3563,12 @@
             "description": "Número de teléfono",
             "example": "+51987654321"
           },
+          "dni": {
+            "type": "string",
+            "pattern": "/^(\\d{8}|\\d{11})$/",
+            "description": "DNI del usuario (8 dígitos) o RUC (11 dígitos)",
+            "example": "12345678"
+          },
           "direccion": {
             "type": "string",
             "description": "Dirección del usuario (opcional)",
@@ -3729,7 +3735,7 @@
           "contraseña": {
             "type": "string",
             "description": "Contraseña del administrador (mínimo 6 caracteres)",
-            "example": "AdminFuerte2024",
+            "example": "admin123",
             "minLength": 6
           }
         },

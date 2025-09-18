@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Matches,
   MinLength,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
@@ -32,6 +33,18 @@ export class CrearDemoVendedorDto {
   @IsNotEmpty()
   @IsString()
   telefono: string;
+
+  @ApiProperty({
+    description: 'DNI del usuario (8 dígitos) o RUC (11 dígitos)',
+    example: '12345678',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @Matches(/^(\d{8}|\d{11})$/, {
+    message: 'El documento debe ser un DNI de 8 dígitos o un RUC de 11 dígitos',
+  })
+  dni?: string;
 
   @ApiProperty({
     description: 'Dirección del usuario (opcional)',

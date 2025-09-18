@@ -150,6 +150,7 @@ export class UsersService {
         nombre_completo: dto.nombre_completo,
         email: dto.email,
         telefono: dto.telefono,
+        dni: dto.dni,
         contraseña: hashedPassword,
         direccion: dto.direccion,
         rol: 'DEMOVENDEDOR',

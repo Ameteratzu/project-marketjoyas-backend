@@ -13,7 +13,7 @@ async function bootstrap() {
 
   // ✅ PROTEGER /api Y /api-json CON USUARIO Y CONTRASEÑA
  app.use(
- ['/api', '/api-json'],
+   ['/docs', '/docs-json'],  
   basicAuth({
    users: { admin: 'marketjoyas909' }, 
    challenge: true,}),
