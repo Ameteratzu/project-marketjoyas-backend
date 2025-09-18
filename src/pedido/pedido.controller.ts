@@ -18,6 +18,7 @@ import { GetUser } from '../common/decorators/get-user.decorator';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { EstadoPedido } from '@prisma/client';
+import { ActualizarPedidoDto } from './actualizar-pedido.dto';
 
 @ApiTags('Pedidos')
 @ApiBearerAuth()
@@ -29,13 +30,13 @@ export class PedidoController {
   // Confirmar todos los productos del carrito agrupados por tienda
   @Post('confirmar')
   @Roles('CLIENTE')
-  @ApiOperation({ summary: 'Confirmar compra con todos los productos del carrito' })
+  @ApiOperation({
+    summary: 'Confirmar compra con todos los productos del carrito',
+  })
   @HttpCode(201)
   async confirmarCompra(@GetUser() user: JwtPayload) {
     return this.pedidoService.confirmarPedido(user.sub);
   }
-
-
 
   // Obtener pedidos del cliente autenticado
   @Get()
@@ -49,7 +50,8 @@ export class PedidoController {
   @Get('tienda')
   @Roles('VENDEDOR', 'TRABAJADOR')
   @ApiOperation({
-    summary: 'Obtener todos los pedidos de la tienda (solo vendedor/trabajador)',
+    summary:
+      'Obtener todos los pedidos de la tienda (solo vendedor/trabajador)',
   })
   async obtenerPedidosTienda(@GetUser() user: JwtPayload) {
     if (!user.tiendaId) {
@@ -58,9 +60,7 @@ export class PedidoController {
     return this.pedidoService.obtenerPedidosPorTienda(user.tiendaId);
   }
 
-
-
-    // Confirmar productos del carrito de una tienda específica
+  // Confirmar productos del carrito de una tienda específica
   @Post('confirmar/:tiendaId')
   @Roles('CLIENTE')
   @ApiOperation({ summary: 'Confirmar productos del carrito por tienda' })
@@ -107,6 +107,30 @@ export class PedidoController {
       pedidoId,
       nuevoEstado,
       user.tiendaId,
+    );
+  }
+
+  @Patch(':id')
+  @Roles('VENDEDOR', 'TRABAJADOR')
+  @ApiOperation({
+    summary:
+      'Actualizar datos completos del pedido (formaPago, moneda, productos, etc)',
+  })
+  async actualizarPedidoCompleto(
+    @Param('id', ParseIntPipe) pedidoId: number,
+    @Body() dto: ActualizarPedidoDto,
+    @GetUser() user: JwtPayload,
+  ) {
+    if (!user.tiendaId) {
+      throw new BadRequestException(
+        'El usuario no está asociado a ninguna tienda',
+      );
+    }
+
+    return this.pedidoService.actualizarPedidoCompleto(
+      pedidoId,
+      user.tiendaId,
+      dto,
     );
   }
 }

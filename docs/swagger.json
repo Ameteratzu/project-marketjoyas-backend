@@ -1068,17 +1068,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
+            "description": ""
           }
         },
         "security": [
@@ -2812,6 +2802,50 @@
         "tags": [
           "Pedidos"
         ]
+      },
+      "patch": {
+        "operationId": "PedidoController_actualizarPedidoCompleto",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarPedidoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar datos completos del pedido (formaPago, moneda, productos, etc)",
+        "tags": [
+          "Pedidos"
+        ]
       }
     },
     "/pedidos/{id}/estado": {
@@ -4388,6 +4422,47 @@
             "type": "string",
             "example": "Casa",
             "description": "Tipo de dirección (Casa, Oficina, Dpto, etc.)"
+          }
+        }
+      },
+      "ProductoActualizarDto": {
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "number"
+          },
+          "cantidad": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "productoId",
+          "cantidad"
+        ]
+      },
+      "ActualizarPedidoDto": {
+        "type": "object",
+        "properties": {
+          "formaPago": {
+            "type": "object"
+          },
+          "moneda": {
+            "type": "object"
+          },
+          "tipoCambio": {
+            "type": "number"
+          },
+          "condVenta": {
+            "type": "string"
+          },
+          "productos": {
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductoActualizarDto"
+            }
           }
         }
       },
