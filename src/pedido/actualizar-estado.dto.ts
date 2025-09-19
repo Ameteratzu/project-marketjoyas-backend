@@ -10,7 +10,7 @@ export enum EstadoPedido {
   BORRADO = 'BORRADO',
 }
 
-export class ActualizarEstadoDto {
+export class ActualizarEstadoPDto {
   @ApiProperty({
     description: 'Nuevo estado del pedido',
     enum: EstadoPedido,

@@ -2957,7 +2957,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ActualizarEstadoDto"
+                "$ref": "#/components/schemas/ActualizarEstadoPDto"
               }
             }
           }
@@ -4671,17 +4671,7 @@
         "type": "object",
         "properties": {
           "estado": {
-            "enum": [
-              "PENDIENTE",
-              "EMPAQUETADO",
-              "DESPACHO",
-              "ENVIO",
-              "ENTREGA",
-              "BORRADO"
-            ],
-            "type": "string",
-            "description": "Nuevo estado del pedido",
-            "example": "EMPAQUETADO"
+            "type": "object"
           }
         },
         "required": [
@@ -4754,6 +4744,27 @@
             "description": "Tipo de dirección (Casa, Oficina, Dpto, etc.)"
           }
         }
+      },
+      "ActualizarEstadoPDto": {
+        "type": "object",
+        "properties": {
+          "estado": {
+            "enum": [
+              "PENDIENTE",
+              "EMPAQUETADO",
+              "DESPACHO",
+              "ENVIO",
+              "ENTREGA",
+              "BORRADO"
+            ],
+            "type": "string",
+            "description": "Nuevo estado del pedido",
+            "example": "EMPAQUETADO"
+          }
+        },
+        "required": [
+          "estado"
+        ]
       },
       "ProductoActualizarDto": {
         "type": "object",
