@@ -97,6 +97,8 @@ model Usuario {
   comparaciones        Comparacion[] // 1:N → un usuario puede comparar varios productos
   calificaciones       Calificacion[] // 1:N → un usuario puede calificar muchos productos
   cotizaciones         SolicitudCotizacion[] // 1:N → un usuario puede solicitar varias cotizaciones
+
+  tickets              TicketSoporte[]
   movimientoInventario MovimientoInventario[]
   cuentasOAuth         CuentaOAuth[] //1:N
 
@@ -271,6 +273,10 @@ model Producto {
   peso             Decimal? @db.Decimal(10, 3) // nuevo: peso en kg (o unidad que uses)
   talla            String?  // nuevo: talla del producto
   color            String?  // nuevo: color
+
+
+  cantidadVisible Int? @default(1) // Cuantos productos vera visualmente el cliente
+
 
   cupones          Cupon[]
   pedidos          PedidoDetalle[]
@@ -673,8 +679,26 @@ model SolicitudCotizacion {
 }
 
 ////////////////////////////////
-//////PROPUESTACOTIZACION/////// check pero es opcional ya que los mensajes se manejaran por wsp
+//////TICKETS /////// 
 //////////////////////////////
+
+enum EstadoTicket {
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  CERRADO
+}
+
+model TicketSoporte {
+  id          Int         @id @default(autoincrement())
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id])
+  usuarioId   Int
+  titulo      String
+  descripcion String?
+  imagenUrl   String?     // opcional: para subir capturas de error o evidencia
+  creadoEn    DateTime    @default(now())
+  estado      EstadoTicket @default(PENDIENTE)
+}
 
 
 

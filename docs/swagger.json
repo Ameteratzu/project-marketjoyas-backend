@@ -774,6 +774,91 @@
         ]
       }
     },
+    "/api/productos/{id}/aumentar-stock": {
+      "patch": {
+        "operationId": "ProductosController_aumentarStock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AumentarStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Aumentar stock de un producto existente (solo su tienda)",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/api/productos/{id}/reducir-stock": {
+      "patch": {
+        "operationId": "ProductosController_reducirStock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AumentarStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reducir stock de un producto existente (solo su tienda)",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
     "/api/cloudinary/generate-signature": {
       "get": {
         "operationId": "CloudinaryController_generateSignature",
@@ -4231,6 +4316,18 @@
         "required": [
           "nombre",
           "precio"
+        ]
+      },
+      "AumentarStockDto": {
+        "type": "object",
+        "properties": {
+          "cantidad": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "cantidad"
         ]
       },
       "CreateFavoritoDto": {
