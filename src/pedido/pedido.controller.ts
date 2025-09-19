@@ -19,6 +19,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { EstadoPedido } from '@prisma/client';
 import { ActualizarPedidoDto } from './actualizar-pedido.dto';
+import { ActualizarEstadoDto } from './actualizar-estado.dto';
 
 @ApiTags('Pedidos')
 @ApiBearerAuth()
@@ -94,7 +95,7 @@ export class PedidoController {
   })
   async actualizarEstado(
     @Param('id', ParseIntPipe) pedidoId: number,
-    @Body('estado') nuevoEstado: EstadoPedido,
+    @Body() actualizarEstadoDto: ActualizarEstadoDto,
     @GetUser() user: JwtPayload,
   ) {
     if (!user.tiendaId) {
@@ -105,7 +106,7 @@ export class PedidoController {
 
     return this.pedidoService.actualizarEstadoPedido(
       pedidoId,
-      nuevoEstado,
+      actualizarEstadoDto.estado,
       user.tiendaId,
     );
   }

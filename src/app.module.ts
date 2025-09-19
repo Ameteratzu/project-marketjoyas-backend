@@ -23,6 +23,7 @@ import { CuponModule } from './cupon/cupon.module';
 import { RecuperacionPasswordModule } from './recuperacion-password/recuperacion-password.module';
 import { OfertaGlobalModule } from './oferta-global/oferta-global.module';
 import { DocumentoModule } from './documento/documento.module';
+import { SerieCorrelativoBModule } from './serie-correlativo-b/serie-correlativo-b.module';
 
 
 
@@ -52,6 +53,7 @@ import { DocumentoModule } from './documento/documento.module';
     RecuperacionPasswordModule,
     OfertaGlobalModule,
     DocumentoModule,
+    SerieCorrelativoBModule,
 
   ],
   providers: [CloudinaryService],
