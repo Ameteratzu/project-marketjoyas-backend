@@ -15,6 +15,7 @@ datasource db {
 //////////////////////////////
 
 enum Rol {
+  SUPERADMIN
   ADMIN
   CLIENTE
   DEMOVENDEDOR
@@ -96,6 +97,8 @@ model Usuario {
   comparaciones        Comparacion[] // 1:N → un usuario puede comparar varios productos
   calificaciones       Calificacion[] // 1:N → un usuario puede calificar muchos productos
   cotizaciones         SolicitudCotizacion[] // 1:N → un usuario puede solicitar varias cotizaciones
+
+  tickets              TicketSoporte[]
   movimientoInventario MovimientoInventario[]
   cuentasOAuth         CuentaOAuth[] //1:N
 
@@ -163,28 +166,60 @@ model Tienda {
 
   productos    Producto[]
   cupones      Cupon[]
-  propuestas   PropuestaCotizacion[]
   trabajadores Usuario[]             @relation("TrabajadoresTienda") // varios usuarios con rol TRABAJADOR
-  suscripcion  Suscripcion?
+  suscripciones Suscripcion[]  // Una tienda pudo haber tenido muchas suyscripciones a lo largo del tiempo
   pedidos      Pedido[]  // relación inversa
   documento    Documento []
   certificado  CertificadoDigital? //1:1
   serieCorrelativo SerieCorrelativo[]
+  pagoSuscripcion PagoSuscripcion[]
 }
 
 //////////////////////////////
-///////////SUSCRIPCION////////// check
+///////////SUCRIPCION////////// check
 //////////////////////////////
 
 model Suscripcion {
-  id       Int      @id @default(autoincrement())
-  tienda   Tienda   @relation(fields: [tiendaId], references: [id])
-  tiendaId Int      @unique
-  tipo     String // mensual o anual
-  inicio   DateTime @default(now())
-  fin      DateTime
-  activa   Boolean  @default(true)
+  id          Int              @id @default(autoincrement())
+  tienda      Tienda           @relation(fields: [tiendaId], references: [id])
+  tiendaId    Int              
+  plan        PlanSuscripcion  @relation(fields: [planId], references: [id])
+  planId      Int
+  inicio      DateTime         @default(now())
+  fin         DateTime
+  activa      Boolean          @default(true)
+  pagoS        PagoSuscripcion? @relation(fields: [pagoSId], references: [id])
+  pagoSId      Int?             @unique
 }
+
+
+/////PLAN SUSCIPCION/////////
+
+
+model PlanSuscripcion {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique  // Plata, Oro, Diamante
+  descripcion String?
+  precio      Decimal @db.Decimal(10, 2)
+  duracionDias Int    // 30 o 365, etc.
+
+  suscripciones Suscripcion[]
+}
+
+model PagoSuscripcion {
+  id              Int            @id @default(autoincrement())
+  tienda          Tienda         @relation(fields: [tiendaId], references: [id])
+  tiendaId        Int
+  proveedorPago   ProveedorPago
+  transaccionId   String         @unique
+  estado          String         // "approved", "pending", "rejected", etc.
+  metodoPago      String?        // "yape", "plin", "stripe_card", etc.
+  monto           Decimal        @db.Decimal(10, 2)
+  fechaPago       DateTime       @default(now())
+  datosAdicionales Json?         // info extra
+  suscripcion     Suscripcion?   // se crea la relación cuando se activa la suscripción
+}
+
 
 //////////////////////////////
 ///////////CATEGORIA//////////
@@ -238,6 +273,10 @@ model Producto {
   peso             Decimal? @db.Decimal(10, 3) // nuevo: peso en kg (o unidad que uses)
   talla            String?  // nuevo: talla del producto
   color            String?  // nuevo: color
+
+
+  cantidadVisible Int? @default(1) // Cuantos productos vera visualmente el cliente
+
 
   cupones          Cupon[]
   pedidos          PedidoDetalle[]
@@ -318,19 +357,37 @@ model MovimientoInventario {
 ///////////PEDIDO//////////// check
 //////////////////////////////
 
+enum Moneda {
+  PEN
+  USD
+  EUR
+}
+
+enum FormaPago {
+  CONTADO
+  CREDITO
+}
+
 model Pedido {
   id                Int             @id @default(autoincrement())
-  usuario           Usuario         @relation(fields: [usuarioId], references: [id]) // N:1 → cada pedido pertenece a un usuario
+  usuario           Usuario         @relation(fields: [usuarioId], references: [id])
   usuarioId         Int
-  tienda            Tienda          @relation(fields: [tiendaId], references: [id]) // NUEVO
-  tiendaId          Int             // NUEVO
+  tienda            Tienda          @relation(fields: [tiendaId], references: [id])
+  tiendaId          Int
   fecha             DateTime        @default(now())
   estado            EstadoPedido    @default(PENDIENTE)
-  codigoSeguimiento String?          @unique
-  productos         PedidoDetalle[] // N:M → relación con Producto
-  pago              Pago? //1:1
+  codigoSeguimiento String?         @unique
+  productos         PedidoDetalle[] 
+  pago              Pago?           // 1:1
   documento         Documento? 
+
+  // NUEVOS CAMPOS PARA DOCUMENTO
+  formaPago         FormaPago?     @default(CONTADO)
+  moneda            Moneda?        @default(PEN)
+  tipoCambio        Decimal?        @db.Decimal(10, 4) // solo si moneda ≠ PEN
+  condVenta         String?         // opcional: condiciones de venta
 }
+
 
 ////////////////////////////////
 ///////////PEDIDO DETALLE/////// check
@@ -391,30 +448,44 @@ model CertificadoJoya {
 ///////////  DOCUMENTO/////// AUN POR CONFIRMAR
 ////////////////////////////////
 
-enum Moneda {
-  PEN
-  USD
-  EUR
+
+
+enum TipoDocumento {
+  BOLETA
+  FACTURA
 }
+
+
 model Documento {
-  id           Int      @id @default(autoincrement())
-  tipo         String   // "BOLETA", "FACTURA"
-  numero       String   @unique // número correlativo (serie + número)
-  serie        String
-  fechaEmision DateTime @default(now())
+  id           Int        @id @default(autoincrement())
+  tipo         TipoDocumento
+  numero       String     @unique       // Ejemplo: B001-1234
+  serie        String                   // Ejemplo: B001
+  fechaEmision DateTime   @default(now())
 
+  moneda       Moneda     @default(PEN)
+  tipoCambio   Decimal?   @db.Decimal(10, 4)  // Si moneda != PEN
   
+  subtotal     Decimal?    @db.Decimal(10, 2)
+  opGravado    Decimal?   @db.Decimal(10, 2)
+  igv          Decimal?   @db.Decimal(10, 2)
+  total        Decimal?   @db.Decimal(10, 2)
+  
+  formaPago    String?
+  condVenta    String?     // Texto libre o enum si quieres
 
-  moneda       Moneda   @default(PEN)
-  tipoCambio   Decimal? @db.Decimal(10, 4) // si moneda ≠ PEN
-  
-  subtotal     Decimal  @db.Decimal(10, 2)
-  opGravado    Decimal  @db.Decimal(10, 2)
-  igv          Decimal  @db.Decimal(10, 2)
-  total        Decimal  @db.Decimal(10, 2)
-  
-  formaPago    String
-  condVenta    String
+  // Datos del cliente (snapshot para el comprobante)
+  clienteNombre    String ?
+  clienteDocumento String ?       // DNI o RUC
+  clienteTelefono  String?
+  clienteEmail     String?
+
+  // Datos de la tienda (snapshot para el comprobante)
+  tiendaNombre     String
+  tiendaDireccion  String?
+  tiendaTelefono   String?
+  tiendaRuc        String?
+  tiendaEmail      String?
 
   // Relaciones
   pedido       Pedido   @relation(fields: [pedidoId], references: [id])
@@ -425,21 +496,36 @@ model Documento {
 
   tienda       Tienda   @relation(fields: [tiendaId], references: [id])
   tiendaId     Int
+
   logEnvio     LogEnvioSunat[]
+  documentoDetalle  DocumentoDetalle[]
 
-  // Nuevos campos para emisión electrónica SUNAT
-  estadoSunat     String?   // "PENDIENTE", "ACEPTADO", "RECHAZADO", "OBSERVADO"
-  codigoSunat     String?   // Código de respuesta SUNAT (CDR)
-  descripcionSunat String?  // Mensaje o descripción de SUNAT (CDR)
-  hashDocumento   String?   // Hash o firma digital para integridad
+  // Campos para emisión electrónica SUNAT
+  estadoSunat      String?   // "PENDIENTE", "ACEPTADO", "RECHAZADO", "OBSERVADO"
+  codigoSunat      String?   // Código de respuesta SUNAT (CDR)
+  descripcionSunat String?   // Mensaje o descripción de SUNAT (CDR)
+  hashDocumento    String?   // Hash o firma digital
 
-  xmlRuta         String?   // Ruta o URL al XML firmado
-  zipRuta         String?   // Ruta o URL al ZIP enviado a SUNAT
-  cdrRuta         String?   // Ruta o URL al CDR recibido (comprobante SUNAT)
-  pdfRuta         String?   // Ruta o URL al PDF generado para el cliente
+  xmlRuta          String?   // Ruta al XML firmado
+  zipRuta          String?   // Ruta al ZIP enviado a SUNAT
+  cdrRuta          String?   // Ruta al CDR recibido
+  pdfRuta          String?   // Ruta al PDF generado
 
-  modoEmision     String?   // "PRUEBAS" o "PRODUCCIÓN"
-  fechaEnvio      DateTime? // Fecha y hora cuando se envió el comprobante a SUNAT
+  modoEmision      String?   // "PRUEBAS" o "PRODUCCIÓN"
+  fechaEnvio       DateTime? // Fecha y hora del envío a SUNAT
+}
+
+model DocumentoDetalle {
+  id             Int        @id @default(autoincrement())
+  documento      Documento  @relation(fields: [documentoId], references: [id])
+  documentoId    Int
+
+  productoNombre String
+  cantidad       Int
+  precioUnitario Decimal     @db.Decimal(10, 2)
+  total          Decimal     @db.Decimal(10, 2) // cantidad * precioUnitario
+
+  // No hay relación directa con Producto → solo snapshot
 }
 
 
@@ -513,6 +599,9 @@ model SerieCorrelativo {
 enum ProveedorPago {
   MERCADOPAGO
   IZIPAY
+  STRIPE
+  YAPE
+  PLIN
   OTRO
 }
 
@@ -535,6 +624,12 @@ model Pago {
 ///////////CALIFICACION///////// check
 ////////////////////////////////
 
+enum EstadoCalificacion {
+  PENDIENTE
+  APROBADA
+  RECHAZADA
+}
+
 model Calificacion {
   id         Int      @id @default(autoincrement())
   usuario    Usuario  @relation(fields: [usuarioId], references: [id]) // N:1 → una calificación pertenece a un usuario
@@ -544,6 +639,8 @@ model Calificacion {
   estrellas  Int
   comentario String?
   fecha      DateTime @default(now())
+  estado     EstadoCalificacion @default(PENDIENTE) // NUEVO CAMPO
+
 }
 
 ////////////////////////////////
@@ -573,7 +670,6 @@ model SolicitudCotizacion {
   imagenUrl   String?
   descripcion String?
   estado      EstadoCotizacion      @default(PENDIENTE)
-  propuestas  PropuestaCotizacion[] // 1:N → una cotización puede recibir muchas propuestas de vendedores
 
 //para usuarios no autenticados
   contactoEmail    String?
@@ -583,19 +679,28 @@ model SolicitudCotizacion {
 }
 
 ////////////////////////////////
-//////PROPUESTACOTIZACION/////// check pero es opcional ya que los mensajes se manejaran por wsp
+//////TICKETS /////// 
 //////////////////////////////
 
-model PropuestaCotizacion {
-  id           Int                 @id @default(autoincrement())
-  cotizacion   SolicitudCotizacion @relation(fields: [cotizacionId], references: [id]) // N:1 → pertenece a una cotización
-  cotizacionId Int
-  tienda       Tienda              @relation(fields: [tiendaId], references: [id]) // N:1 → un cupón pertenece a una tienda
-  tiendaId     Int
-  precio       Float
-  descripcion  String?
-  fecha        DateTime            @default(now())
+enum EstadoTicket {
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  CERRADO
 }
+
+model TicketSoporte {
+  id          Int         @id @default(autoincrement())
+  usuario     Usuario     @relation(fields: [usuarioId], references: [id])
+  usuarioId   Int
+  titulo      String
+  descripcion String?
+  imagenUrl   String?     // opcional: para subir capturas de error o evidencia
+  creadoEn    DateTime    @default(now())
+  estado      EstadoTicket @default(PENDIENTE)
+}
+
+
 
 ////////////////////////////////
 ///////////FAVORITO//////////// check 

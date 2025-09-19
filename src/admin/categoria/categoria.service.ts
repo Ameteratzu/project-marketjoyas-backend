@@ -79,5 +79,11 @@ async getAllPublic(nombre?: string) {
   });
 }
 
+async findOne(id: number) {
+    const estilo = await this.prisma.categoria.findUnique({ where: { id } });
+    if (!estilo) throw new NotFoundException('Categoria no encontrado');
+    return estilo;
+  }
+
 
 }

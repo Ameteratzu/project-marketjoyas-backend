@@ -17,15 +17,12 @@ import { Roles } from '../auth/roles.decorator';
 import { CrearProductoDto } from './dtos/crear-producto.dto';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import type { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { UpdateProductoDto } from './dtos/actualizar-producto.dto';
 import { BuscarProductoDto } from './dtos/buscar-producto.dto';
 import { CategoriaIdDto } from './dtos/categoria-id.dto';
 import { FiltrarProductosDto } from './dtos/filtrar-productos.dto';
+import { AumentarStockDto } from './dtos/aumentar-stock.dto';
 
 @Controller('productos')
 export class ProductosController {
@@ -118,7 +115,10 @@ export class ProductosController {
     @GetUser() user: JwtPayload,
     @Param() params: CategoriaIdDto,
   ) {
-    return this.productosService.findByCategoryPrivate(params.categoriaId, user);
+    return this.productosService.findByCategoryPrivate(
+      params.categoriaId,
+      user,
+    );
   }
 
   // Habilitar producto
@@ -175,5 +175,40 @@ export class ProductosController {
   })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productosService.findOne(id);
+  }
+
+  //////////AUMENTAR STOCK
+
+  @Patch(':id/aumentar-stock')
+  @ApiBearerAuth()
+  @Roles('VENDEDOR', 'TRABAJADOR')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({
+    summary: 'Aumentar stock de un producto existente (solo su tienda)',
+  })
+  async aumentarStock(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: AumentarStockDto,
+    @GetUser() user: JwtPayload,
+  ) {
+    return this.productosService.aumentarStock(id, dto.cantidad, user);
+  }
+
+  //////REDUCIR STOCK
+
+  @Patch(':id/reducir-stock')
+  @ApiBearerAuth()
+  @Roles('VENDEDOR', 'TRABAJADOR')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBody({ type: AumentarStockDto })
+  @ApiOperation({
+    summary: 'Reducir stock de un producto existente (solo su tienda)',
+  })
+  async reducirStock(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: AumentarStockDto,
+    @GetUser() user: JwtPayload,
+  ) {
+    return this.productosService.reducirStock(id, dto.cantidad, user);
   }
 }

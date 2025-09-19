@@ -99,7 +99,7 @@ export class AdminService {
             rol: true,
           },
         },
-        suscripcion: true,
+        suscripciones: true,
         trabajadores: {
           select: {
             id: true,

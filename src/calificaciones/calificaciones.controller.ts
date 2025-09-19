@@ -8,6 +8,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ActualizarCalificacion } from './dtos/ActualizarCalificacion.dto';
+import { ActualizarEstadoDto } from './dtos/ActualizarEstado.dto';
 
 
 
@@ -54,9 +55,10 @@ export class CalificacionesController {
     })
     findAll(
         @Query('page') page: number = 1,   // Número de página (opcional, por defecto 1)
-        @Query('limit') limit: number = 10 // Cantidad de registros por página (opcional, por defecto 10)
+        @Query('limit') limit: number = 10, // Cantidad de registros por página (opcional, por defecto 10)
+        @GetUser() user: JwtPayload
     ) {
-        return this.service.findAll(page, limit);
+        return this.service.findAll(page, limit, user);
     }
 
     /**
@@ -75,8 +77,8 @@ export class CalificacionesController {
     @ApiOperation({
         summary: 'Un CLIENTE visualizara una calificacion por id',
     })
-    findOne(@Param('id') id: string) {
-        return this.service.findOne(+id); // +id convierte el string a number
+    findOne(@Param('id') id: string, @GetUser() user: JwtPayload) {
+        return this.service.findOne(+id, user); // +id convierte el string a number
     }
 
     /**
@@ -121,4 +123,21 @@ export class CalificacionesController {
     remove(@Param('id') id: string, @GetUser() user: JwtPayload) {
         return this.service.remove(+id, user);
     }
+
+    // Actualizar un estado solo por el ADMIN
+    @Patch(':id/estado')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('ADMIN') // solo admin puede acceder
+    @ApiOperation({
+        summary: 'Un ADMIN puede cambiar el estado de una calificacion por defaul esta en PENDIENTE, cambios a APROBADO o RECHAZADO',
+    })
+    updateEstado(
+        @Param('id') id: string,
+        @Body() dto: ActualizarEstadoDto,
+        @GetUser() user: JwtPayload
+    ) {
+        return this.service.updateEstado(+id, dto, user);
+    }
+
 }

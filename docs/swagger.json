@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/usuarios/registro/cliente": {
+    "/api/usuarios/registro/cliente": {
       "post": {
         "operationId": "UsuariosController_crearCliente",
         "parameters": [],
@@ -25,7 +25,7 @@
         ]
       }
     },
-    "/usuarios/registro/vendedor": {
+    "/api/usuarios/registro/vendedor": {
       "post": {
         "operationId": "UsuariosController_crearVendedor",
         "parameters": [],
@@ -56,7 +56,7 @@
         ]
       }
     },
-    "/usuarios/registro/demovendedor": {
+    "/api/usuarios/registro/demovendedor": {
       "post": {
         "operationId": "UsuariosController_crearDemoVendedor",
         "parameters": [],
@@ -88,7 +88,7 @@
         ]
       }
     },
-    "/usuarios/registro/trabajador": {
+    "/api/usuarios/registro/trabajador": {
       "post": {
         "operationId": "UsuariosController_crearTrabajador",
         "parameters": [],
@@ -117,7 +117,7 @@
         ]
       }
     },
-    "/usuarios/actualizar/info": {
+    "/api/usuarios/actualizar/info": {
       "patch": {
         "operationId": "UsuariosController_actualizarInfo",
         "parameters": [],
@@ -147,7 +147,7 @@
         ]
       }
     },
-    "/usuarios/actualizar/direccion": {
+    "/api/usuarios/actualizar/direccion": {
       "patch": {
         "operationId": "UsuariosController_actualizarDireccion",
         "parameters": [],
@@ -177,7 +177,7 @@
         ]
       }
     },
-    "/usuarios/actualizar/foto": {
+    "/api/usuarios/actualizar/foto": {
       "patch": {
         "operationId": "UsuariosController_actualizarFotoPerfil",
         "parameters": [],
@@ -207,7 +207,7 @@
         ]
       }
     },
-    "/usuarios/registro/admin": {
+    "/api/usuarios/registro/admin": {
       "post": {
         "operationId": "UsuariosController_crearAdmin",
         "parameters": [],
@@ -232,7 +232,7 @@
         ]
       }
     },
-    "/auth/login": {
+    "/api/auth/login": {
       "post": {
         "operationId": "AuthController_login",
         "parameters": [],
@@ -256,7 +256,7 @@
         ]
       }
     },
-    "/auth/oauth/google": {
+    "/api/auth/oauth/google": {
       "get": {
         "operationId": "OAuthController_googleAuth",
         "parameters": [],
@@ -270,7 +270,7 @@
         ]
       }
     },
-    "/auth/oauth/google/redirect": {
+    "/api/auth/oauth/google/redirect": {
       "get": {
         "operationId": "OAuthController_googleAuthRedirect",
         "parameters": [],
@@ -284,7 +284,7 @@
         ]
       }
     },
-    "/productos": {
+    "/api/productos": {
       "post": {
         "operationId": "ProductosController_create",
         "parameters": [],
@@ -344,7 +344,7 @@
         ]
       }
     },
-    "/productos/buscar": {
+    "/api/productos/buscar": {
       "get": {
         "operationId": "ProductosController_buscarPorNombre",
         "parameters": [
@@ -381,7 +381,7 @@
         ]
       }
     },
-    "/productos/filtrar": {
+    "/api/productos/filtrar": {
       "get": {
         "operationId": "ProductosController_filtrarProductos",
         "parameters": [
@@ -495,7 +495,7 @@
         ]
       }
     },
-    "/productos/categoria/{categoriaId}": {
+    "/api/productos/categoria/{categoriaId}": {
       "get": {
         "operationId": "ProductosController_findByCategoryPublic",
         "parameters": [
@@ -532,7 +532,7 @@
         ]
       }
     },
-    "/productos/mis-productos": {
+    "/api/productos/mis-productos": {
       "get": {
         "operationId": "ProductosController_findByTienda",
         "parameters": [],
@@ -562,7 +562,7 @@
         ]
       }
     },
-    "/productos/buscar/mis-productos": {
+    "/api/productos/buscar/mis-productos": {
       "get": {
         "operationId": "ProductosController_buscarPorNombrePrivado",
         "parameters": [
@@ -601,7 +601,7 @@
         ]
       }
     },
-    "/productos/categoria/mis-productos/{categoriaId}": {
+    "/api/productos/categoria/mis-productos/{categoriaId}": {
       "get": {
         "operationId": "ProductosController_findByCategoryPrivate",
         "parameters": [
@@ -643,7 +643,7 @@
         ]
       }
     },
-    "/productos/{id}/habilitar": {
+    "/api/productos/{id}/habilitar": {
       "patch": {
         "operationId": "ProductosController_habilitar",
         "parameters": [
@@ -672,7 +672,7 @@
         ]
       }
     },
-    "/productos/{id}": {
+    "/api/productos/{id}": {
       "patch": {
         "operationId": "ProductosController_update",
         "parameters": [
@@ -774,7 +774,107 @@
         ]
       }
     },
-    "/cloudinary/upload": {
+    "/api/productos/{id}/aumentar-stock": {
+      "patch": {
+        "operationId": "ProductosController_aumentarStock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AumentarStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Aumentar stock de un producto existente (solo su tienda)",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/api/productos/{id}/reducir-stock": {
+      "patch": {
+        "operationId": "ProductosController_reducirStock",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AumentarStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reducir stock de un producto existente (solo su tienda)",
+        "tags": [
+          "Productos"
+        ]
+      }
+    },
+    "/api/cloudinary/generate-signature": {
+      "get": {
+        "operationId": "CloudinaryController_generateSignature",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Generar firma para subida segura a Cloudinary",
+        "tags": [
+          "Cloudinary"
+        ]
+      }
+    },
+    "/api/cloudinary/upload": {
       "post": {
         "operationId": "CloudinaryController_uploadImage",
         "parameters": [],
@@ -799,13 +899,13 @@
             "description": ""
           }
         },
-        "summary": "Subir imágenes a Cloudinary",
+        "summary": "Subir imágenes a Cloudinary desde backend",
         "tags": [
           "Cloudinary"
         ]
       }
     },
-    "/favoritos": {
+    "/api/favoritos": {
       "post": {
         "operationId": "FavoritosController_addFavorito",
         "parameters": [],
@@ -861,7 +961,7 @@
         ]
       }
     },
-    "/favoritos/{productoId}": {
+    "/api/favoritos/{productoId}": {
       "delete": {
         "operationId": "FavoritosController_removeFavorito",
         "parameters": [
@@ -889,7 +989,7 @@
         ]
       }
     },
-    "/comparacion": {
+    "/api/comparacion": {
       "post": {
         "operationId": "ComparacionController_addComparacion",
         "parameters": [],
@@ -945,7 +1045,7 @@
         ]
       }
     },
-    "/comparacion/{productoId}": {
+    "/api/comparacion/{productoId}": {
       "delete": {
         "operationId": "ComparacionController_removeComparacion",
         "parameters": [
@@ -973,7 +1073,7 @@
         ]
       }
     },
-    "/admin/crear-admin": {
+    "/api/admin/crear-admin": {
       "post": {
         "operationId": "AdminController_createAdmin",
         "parameters": [],
@@ -1003,7 +1103,7 @@
         ]
       }
     },
-    "/admin/usuarios": {
+    "/api/admin/usuarios": {
       "get": {
         "operationId": "AdminController_findAllUsers",
         "parameters": [],
@@ -1023,7 +1123,7 @@
         ]
       }
     },
-    "/admin/usuarios/{id}/rol": {
+    "/api/admin/usuarios/{id}/rol": {
       "patch": {
         "operationId": "AdminController_changeUserRole",
         "parameters": [
@@ -1062,7 +1162,7 @@
         ]
       }
     },
-    "/admin/tiendas": {
+    "/api/admin/tiendas": {
       "get": {
         "operationId": "AdminController_getAllTiendas",
         "parameters": [],
@@ -1092,7 +1192,7 @@
         ]
       }
     },
-    "/gemas": {
+    "/api/gemas": {
       "post": {
         "operationId": "GemaController_create",
         "parameters": [],
@@ -1149,7 +1249,7 @@
         ]
       }
     },
-    "/gemas/{id}": {
+    "/api/gemas/{id}": {
       "get": {
         "operationId": "GemaController_findOne",
         "parameters": [
@@ -1242,7 +1342,7 @@
         ]
       }
     },
-    "/materiales": {
+    "/api/materiales": {
       "post": {
         "operationId": "MaterialController_create",
         "parameters": [],
@@ -1299,7 +1399,7 @@
         ]
       }
     },
-    "/materiales/{id}": {
+    "/api/materiales/{id}": {
       "get": {
         "operationId": "MaterialController_findOne",
         "parameters": [
@@ -1392,7 +1492,7 @@
         ]
       }
     },
-    "/ocasiones": {
+    "/api/ocasiones": {
       "post": {
         "operationId": "OcasionController_create",
         "parameters": [],
@@ -1449,7 +1549,7 @@
         ]
       }
     },
-    "/ocasiones/{id}": {
+    "/api/ocasiones/{id}": {
       "get": {
         "operationId": "OcasionController_findOne",
         "parameters": [
@@ -1542,7 +1642,7 @@
         ]
       }
     },
-    "/estilos": {
+    "/api/estilos": {
       "post": {
         "operationId": "EstiloController_create",
         "parameters": [],
@@ -1599,7 +1699,7 @@
         ]
       }
     },
-    "/estilos/{id}": {
+    "/api/estilos/{id}": {
       "get": {
         "operationId": "EstiloController_findOne",
         "parameters": [
@@ -1692,7 +1792,7 @@
         ]
       }
     },
-    "/categoria": {
+    "/api/categoria": {
       "get": {
         "operationId": "CategoriaController_getAllPublic",
         "parameters": [
@@ -1751,7 +1851,34 @@
         ]
       }
     },
-    "/categoria/{id}": {
+    "/api/categoria/{id}": {
+      "get": {
+        "operationId": "CategoriaController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener una Categoria por ID",
+        "tags": [
+          "Categoria"
+        ]
+      },
       "patch": {
         "operationId": "CategoriaController_updateCategory",
         "parameters": [
@@ -1817,7 +1944,7 @@
         ]
       }
     },
-    "/cotizaciones/{id}/estado": {
+    "/api/cotizaciones/{id}/estado": {
       "patch": {
         "operationId": "CotizacionController_cambiarEstadoCotizacion",
         "parameters": [
@@ -1856,7 +1983,7 @@
         ]
       }
     },
-    "/cotizaciones": {
+    "/api/cotizaciones": {
       "get": {
         "operationId": "CotizacionController_getAllSolicitudesCotizacion",
         "parameters": [],
@@ -1914,7 +2041,7 @@
         ]
       }
     },
-    "/cotizaciones/aprobadas": {
+    "/api/cotizaciones/aprobadas": {
       "get": {
         "operationId": "CotizacionController_getSolicitudesAprobadas",
         "parameters": [],
@@ -1944,7 +2071,7 @@
         ]
       }
     },
-    "/cotizaciones/mias": {
+    "/api/cotizaciones/mias": {
       "get": {
         "operationId": "CotizacionController_getMisSolicitudes",
         "parameters": [],
@@ -1964,7 +2091,7 @@
         ]
       }
     },
-    "/cotizaciones/{id}": {
+    "/api/cotizaciones/{id}": {
       "delete": {
         "operationId": "CotizacionController_eliminarSolicitud",
         "parameters": [
@@ -1993,7 +2120,7 @@
         ]
       }
     },
-    "/tiendas": {
+    "/api/tiendas": {
       "get": {
         "operationId": "TiendaController_getAllPublicas",
         "parameters": [
@@ -2017,7 +2144,7 @@
         ]
       }
     },
-    "/tiendas/{id}": {
+    "/api/tiendas/{id}": {
       "get": {
         "operationId": "TiendaController_getUnaPublica",
         "parameters": [
@@ -2041,7 +2168,7 @@
         ]
       }
     },
-    "/tiendas/mi-tienda": {
+    "/api/tiendas/mi-tienda": {
       "patch": {
         "operationId": "TiendaController_actualizarTienda",
         "parameters": [],
@@ -2071,7 +2198,7 @@
         ]
       }
     },
-    "/carrito": {
+    "/api/carrito": {
       "post": {
         "operationId": "CarritoController_agregarProducto",
         "parameters": [],
@@ -2144,7 +2271,7 @@
         ]
       }
     },
-    "/carrito/{productoId}/quitar-uno": {
+    "/api/carrito/{productoId}/quitar-uno": {
       "patch": {
         "operationId": "CarritoController_quitarUnaUnidad",
         "parameters": [
@@ -2173,7 +2300,7 @@
         ]
       }
     },
-    "/carrito/{productoId}": {
+    "/api/carrito/{productoId}": {
       "delete": {
         "operationId": "CarritoController_eliminarProducto",
         "parameters": [
@@ -2202,7 +2329,7 @@
         ]
       }
     },
-    "/certificados-joyas": {
+    "/api/certificados-joyas": {
       "post": {
         "operationId": "CertificadoJoyaController_create",
         "parameters": [],
@@ -2258,7 +2385,7 @@
         ]
       }
     },
-    "/certificados-joyas/{id}": {
+    "/api/certificados-joyas/{id}": {
       "get": {
         "operationId": "CertificadoJoyaController_findOne",
         "parameters": [
@@ -2355,7 +2482,7 @@
         ]
       }
     },
-    "/calificaciones": {
+    "/api/calificaciones": {
       "post": {
         "operationId": "CalificacionesController_create",
         "parameters": [],
@@ -2431,7 +2558,7 @@
         ]
       }
     },
-    "/calificaciones/{id}": {
+    "/api/calificaciones/{id}": {
       "get": {
         "operationId": "CalificacionesController_findOne",
         "parameters": [
@@ -2531,7 +2658,46 @@
         ]
       }
     },
-    "/direcciones": {
+    "/api/calificaciones/{id}/estado": {
+      "patch": {
+        "operationId": "CalificacionesController_updateEstado",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarEstadoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un ADMIN puede cambiar el estado de una calificacion por defaul esta en PENDIENTE, cambios a APROBADO o RECHAZADO",
+        "tags": [
+          "Calificaciones"
+        ]
+      }
+    },
+    "/api/direcciones": {
       "post": {
         "operationId": "DireccionesController_create",
         "parameters": [],
@@ -2579,7 +2745,7 @@
         ]
       }
     },
-    "/direcciones/{id}": {
+    "/api/direcciones/{id}": {
       "get": {
         "operationId": "DireccionesController_findOne",
         "parameters": [
@@ -2672,7 +2838,7 @@
         ]
       }
     },
-    "/pedidos/confirmar": {
+    "/api/pedidos/confirmar": {
       "post": {
         "operationId": "PedidoController_confirmarCompra",
         "parameters": [],
@@ -2692,7 +2858,7 @@
         ]
       }
     },
-    "/pedidos": {
+    "/api/pedidos": {
       "get": {
         "operationId": "PedidoController_obtenerPedidos",
         "parameters": [],
@@ -2712,7 +2878,7 @@
         ]
       }
     },
-    "/pedidos/tienda": {
+    "/api/pedidos/tienda": {
       "get": {
         "operationId": "PedidoController_obtenerPedidosTienda",
         "parameters": [],
@@ -2742,7 +2908,7 @@
         ]
       }
     },
-    "/pedidos/confirmar/{tiendaId}": {
+    "/api/pedidos/confirmar/{tiendaId}": {
       "post": {
         "operationId": "PedidoController_confirmarCompraPorTienda",
         "parameters": [
@@ -2778,7 +2944,7 @@
         ]
       }
     },
-    "/pedidos/{id}": {
+    "/api/pedidos/{id}": {
       "get": {
         "operationId": "PedidoController_obtenerDetallePedido",
         "parameters": [
@@ -2812,9 +2978,53 @@
         "tags": [
           "Pedidos"
         ]
+      },
+      "patch": {
+        "operationId": "PedidoController_actualizarPedidoCompleto",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarPedidoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar datos completos del pedido (formaPago, moneda, productos, etc)",
+        "tags": [
+          "Pedidos"
+        ]
       }
     },
-    "/pedidos/{id}/estado": {
+    "/api/pedidos/{id}/estado": {
       "patch": {
         "operationId": "PedidoController_actualizarEstado",
         "parameters": [
@@ -2827,6 +3037,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarEstadoPDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "",
@@ -2850,7 +3070,7 @@
         ]
       }
     },
-    "/cupon/create": {
+    "/api/cupon/create": {
       "post": {
         "operationId": "CuponController_crear",
         "parameters": [],
@@ -2880,7 +3100,7 @@
         ]
       }
     },
-    "/cupon": {
+    "/api/cupon": {
       "get": {
         "operationId": "CuponController_obtenerTodos",
         "parameters": [],
@@ -2900,7 +3120,7 @@
         ]
       }
     },
-    "/cupon/{id}": {
+    "/api/cupon/{id}": {
       "get": {
         "operationId": "CuponController_obtenerPorId",
         "parameters": [
@@ -2929,7 +3149,7 @@
         ]
       }
     },
-    "/cupon/actualizar/{id}": {
+    "/api/cupon/actualizar/{id}": {
       "patch": {
         "operationId": "CuponController_actualizar",
         "parameters": [
@@ -2968,7 +3188,7 @@
         ]
       }
     },
-    "/cupon/validar/{codigo}": {
+    "/api/cupon/validar/{codigo}": {
       "post": {
         "operationId": "CuponController_validar",
         "parameters": [
@@ -2997,7 +3217,7 @@
         ]
       }
     },
-    "/cupon/usar/{codigo}": {
+    "/api/cupon/usar/{codigo}": {
       "patch": {
         "operationId": "CuponController_usar",
         "parameters": [
@@ -3026,7 +3246,7 @@
         ]
       }
     },
-    "/cupon/eliminar/{id}": {
+    "/api/cupon/eliminar/{id}": {
       "delete": {
         "operationId": "CuponController_eliminar",
         "parameters": [
@@ -3055,7 +3275,7 @@
         ]
       }
     },
-    "/recuperacion-password/generar-token": {
+    "/api/recuperacion-password/generar-token": {
       "post": {
         "description": "Genera un token para restablecer la contraseña del usuario y lo muestra en consola (simula envío de correo).",
         "operationId": "RecuperacionPasswordController_generarToken",
@@ -3081,7 +3301,7 @@
         ]
       }
     },
-    "/recuperacion-password/validar-token": {
+    "/api/recuperacion-password/validar-token": {
       "post": {
         "description": "Valida que el token enviado por el usuario sea válido y no esté expirado o usado.",
         "operationId": "RecuperacionPasswordController_validarToken",
@@ -3107,7 +3327,7 @@
         ]
       }
     },
-    "/recuperacion-password/cambiar-contrasena": {
+    "/api/recuperacion-password/cambiar-contrasena": {
       "post": {
         "description": "Cambia la contraseña del usuario usando el token de recuperación y marca el token como usado.",
         "operationId": "RecuperacionPasswordController_cambiarContrasena",
@@ -3133,7 +3353,7 @@
         ]
       }
     },
-    "/oferta-global/create": {
+    "/api/oferta-global/create": {
       "post": {
         "description": "Permite a un ADMIN crear una oferta global y asociarla a productos.",
         "operationId": "OfertaGlobalController_create",
@@ -3171,7 +3391,7 @@
         ]
       }
     },
-    "/oferta-global/listar": {
+    "/api/oferta-global/listar": {
       "get": {
         "description": "Obtiene todas las ofertas globales junto con los productos asociados.",
         "operationId": "OfertaGlobalController_findAll",
@@ -3202,7 +3422,7 @@
         ]
       }
     },
-    "/oferta-global/listar/{id}": {
+    "/api/oferta-global/listar/{id}": {
       "get": {
         "description": "Permite obtener los detalles de una oferta global específica por su ID.",
         "operationId": "OfertaGlobalController_findOne",
@@ -3239,7 +3459,7 @@
         ]
       }
     },
-    "/oferta-global/update/{id}": {
+    "/api/oferta-global/update/{id}": {
       "patch": {
         "description": "Permite actualizar los datos de una oferta global, incluyendo los productos asociados.",
         "operationId": "OfertaGlobalController_update",
@@ -3286,7 +3506,7 @@
         ]
       }
     },
-    "/oferta-global/desactivar/{id}": {
+    "/api/oferta-global/desactivar/{id}": {
       "patch": {
         "description": "Marca la oferta global como inactiva sin eliminarla físicamente.",
         "operationId": "OfertaGlobalController_desactivar",
@@ -3316,7 +3536,7 @@
         ]
       }
     },
-    "/oferta-global/activar/{id}": {
+    "/api/oferta-global/activar/{id}": {
       "patch": {
         "description": "Marca la oferta global como activa.",
         "operationId": "OfertaGlobalController_activar",
@@ -3346,7 +3566,7 @@
         ]
       }
     },
-    "/oferta-global/delete/{id}": {
+    "/api/oferta-global/delete/{id}": {
       "delete": {
         "description": "Elimina físicamente la oferta global de la base de datos.",
         "operationId": "OfertaGlobalController_eliminar",
@@ -3375,20 +3595,228 @@
           "OfertaGlobal"
         ]
       }
+    },
+    "/api/documento/generar/{pedidoId}": {
+      "post": {
+        "operationId": "DocumentoController_generarDocumento",
+        "parameters": [
+          {
+            "name": "pedidoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generar boleta o factura desde pedido",
+        "tags": [
+          "Documento"
+        ]
+      }
+    },
+    "/api/documento/visualizar/{id}": {
+      "get": {
+        "operationId": "DocumentoController_getDocumento",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener documento por ID",
+        "tags": [
+          "Documento"
+        ]
+      }
+    },
+    "/api/seriesb": {
+      "post": {
+        "operationId": "SerieCorrelativoBController_crearSerie",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearSerieDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Crear nueva serie para una tienda",
+        "tags": [
+          "Series Correlativas BOLETA"
+        ]
+      },
+      "get": {
+        "operationId": "SerieCorrelativoBController_obtenerSeries",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener todas las series de la tienda del usuario",
+        "tags": [
+          "Series Correlativas BOLETA"
+        ]
+      }
+    },
+    "/api/seriesb/{id}": {
+      "get": {
+        "operationId": "SerieCorrelativoBController_obtenerPorId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener una serie por ID",
+        "tags": [
+          "Series Correlativas BOLETA"
+        ]
+      },
+      "patch": {
+        "operationId": "SerieCorrelativoBController_actualizarSerie",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditarSerieDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Actualizar una serie por ID",
+        "tags": [
+          "Series Correlativas BOLETA"
+        ]
+      },
+      "delete": {
+        "operationId": "SerieCorrelativoBController_eliminarSerie",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Eliminar una serie por ID",
+        "tags": [
+          "Series Correlativas BOLETA"
+        ]
+      }
     }
   },
   "info": {
     "title": "MarketJoyas",
-    "description": "Documentacion de endpoints de marketjoyas",
+    "description": "Documentación de endpoints de marketjoyas",
     "version": "1.0",
     "contact": {}
   },
-  "tags": [
-    {
-      "name": "ENDPOINTS",
-      "description": ""
-    }
-  ],
+  "tags": [],
   "servers": [],
   "components": {
     "securitySchemes": {
@@ -3890,6 +4318,18 @@
           "precio"
         ]
       },
+      "AumentarStockDto": {
+        "type": "object",
+        "properties": {
+          "cantidad": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "cantidad"
+        ]
+      },
       "CreateFavoritoDto": {
         "type": "object",
         "properties": {
@@ -4324,6 +4764,17 @@
           }
         }
       },
+      "ActualizarEstadoDto": {
+        "type": "object",
+        "properties": {
+          "estado": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "estado"
+        ]
+      },
       "CrearDireccion": {
         "type": "object",
         "properties": {
@@ -4388,6 +4839,68 @@
             "type": "string",
             "example": "Casa",
             "description": "Tipo de dirección (Casa, Oficina, Dpto, etc.)"
+          }
+        }
+      },
+      "ActualizarEstadoPDto": {
+        "type": "object",
+        "properties": {
+          "estado": {
+            "enum": [
+              "PENDIENTE",
+              "EMPAQUETADO",
+              "DESPACHO",
+              "ENVIO",
+              "ENTREGA",
+              "BORRADO"
+            ],
+            "type": "string",
+            "description": "Nuevo estado del pedido",
+            "example": "EMPAQUETADO"
+          }
+        },
+        "required": [
+          "estado"
+        ]
+      },
+      "ProductoActualizarDto": {
+        "type": "object",
+        "properties": {
+          "productoId": {
+            "type": "number"
+          },
+          "cantidad": {
+            "type": "number",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "productoId",
+          "cantidad"
+        ]
+      },
+      "ActualizarPedidoDto": {
+        "type": "object",
+        "properties": {
+          "formaPago": {
+            "type": "object"
+          },
+          "moneda": {
+            "type": "object"
+          },
+          "tipoCambio": {
+            "type": "number"
+          },
+          "condVenta": {
+            "type": "string"
+          },
+          "productos": {
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductoActualizarDto"
+            }
           }
         }
       },
@@ -4513,6 +5026,64 @@
           "descuento",
           "validoHasta"
         ]
+      },
+      "CrearSerieDto": {
+        "type": "object",
+        "properties": {
+          "tipoDocumento": {
+            "type": "string",
+            "example": "BOLETA",
+            "description": "Tipo de documento"
+          },
+          "serie": {
+            "type": "string",
+            "example": "B001",
+            "description": "Serie del documento"
+          },
+          "ultimoNumero": {
+            "type": "number",
+            "minimum": 0,
+            "example": 0,
+            "description": "Último número utilizado"
+          },
+          "activo": {
+            "type": "boolean",
+            "example": true,
+            "description": "Estado activo o inactivo"
+          }
+        },
+        "required": [
+          "tipoDocumento",
+          "serie",
+          "ultimoNumero",
+          "activo"
+        ]
+      },
+      "EditarSerieDto": {
+        "type": "object",
+        "properties": {
+          "tipoDocumento": {
+            "type": "string",
+            "example": "BOLETA",
+            "description": "Tipo de documento"
+          },
+          "serie": {
+            "type": "string",
+            "example": "B001",
+            "description": "Serie del documento"
+          },
+          "ultimoNumero": {
+            "type": "number",
+            "minimum": 0,
+            "example": 0,
+            "description": "Último número utilizado"
+          },
+          "activo": {
+            "type": "boolean",
+            "example": true,
+            "description": "Estado activo o inactivo"
+          }
+        }
       }
     }
   }

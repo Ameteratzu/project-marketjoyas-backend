@@ -77,7 +77,7 @@ export class ProductosService {
     });
   }
 
-  //Funcion para actualizar productos, añadir stock
+  //Funcion para actualizar productos
 
   async update(id: number, dto: UpdateProductoDto, user: JwtPayload) {
     if (!user.tiendaId) {
@@ -275,16 +275,116 @@ export class ProductosService {
     return producto;
   }
 
-  //Obtener productos por tienda (VENDEDOR SOLO PUEDE VER PRODUCTOS DE SU TIENDA)
+  //Obtener productos por tienda (VENDEDOR SOLO PUEDE VER PRODUCTOS DE SU TIENDA) la actualice para que se pueda buscar por nombre
 
-  async findByTienda(user: JwtPayload) {
+  async findByTienda(user: JwtPayload, nombre?: string) {
     if (!user.tiendaId) {
       throw new ForbiddenException('El usuario no pertenece a una tienda');
     }
 
+    const where: any = { tiendaId: user.tiendaId };
+
+    if (nombre) {
+      where.nombre = {
+        contains: nombre.trim(),
+      };
+    }
+
     return this.prisma.producto.findMany({
-      where: { tiendaId: user.tiendaId },
+      where,
       include: { imagenes: true, categoria: true, calificaciones: true },
+    });
+  }
+
+  /////////////////////////////////UN VENDEDOR O TRABADOR AUMENTA ESPECIFICAMENTE EL STOCK DE UN PRODUCTO DE SU TIENDA/////////////////
+
+  async aumentarStock(productoId: number, cantidad: number, user: JwtPayload) {
+    if (!user.tiendaId) {
+      throw new ForbiddenException('El usuario no pertenece a una tienda');
+    }
+
+    const producto = await this.prisma.producto.findUnique({
+      where: { id: productoId },
+    });
+
+    if (!producto) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+
+    if (producto.tiendaId !== user.tiendaId) {
+      throw new ForbiddenException(
+        'No tienes permiso para modificar este producto',
+      );
+    }
+
+    const nuevoStock = producto.enStock + cantidad;
+
+    return this.prisma.$transaction(async (prisma) => {
+      const productoActualizado = await prisma.producto.update({
+        where: { id: productoId },
+        data: { enStock: nuevoStock },
+      });
+
+      await prisma.movimientoInventario.create({
+        data: {
+          tipo: 'ENTRADA',
+          cantidad,
+          productoId,
+          usuarioId: user.sub,
+        },
+      });
+
+      return productoActualizado;
+    });
+  }
+
+  /////////////////////////////////UN VENDEDOR O TRABADOR REDUCE ESPECIFICAMENTE EL STOCK DE UN PRODUCTO DE SU TIENDA/////////////////
+
+  async reducirStock(productoId: number, cantidad: number, user: JwtPayload) {
+    if (!user.tiendaId) {
+      throw new ForbiddenException('El usuario no pertenece a una tienda');
+    }
+
+    const producto = await this.prisma.producto.findUnique({
+      where: { id: productoId },
+    });
+
+    if (!producto) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+
+    if (producto.tiendaId !== user.tiendaId) {
+      throw new ForbiddenException(
+        'No tienes permiso para modificar este producto',
+      );
+    }
+
+    if (cantidad <= 0) {
+      throw new BadRequestException('La cantidad debe ser mayor que cero');
+    }
+
+    if (producto.enStock < cantidad) {
+      throw new BadRequestException('No hay suficiente stock disponible');
+    }
+
+    const nuevoStock = producto.enStock - cantidad;
+
+    return this.prisma.$transaction(async (prisma) => {
+      const productoActualizado = await prisma.producto.update({
+        where: { id: productoId },
+        data: { enStock: nuevoStock },
+      });
+
+      await prisma.movimientoInventario.create({
+        data: {
+          tipo: 'SALIDA',
+          cantidad,
+          productoId,
+          usuarioId: user.sub,
+        },
+      });
+
+      return productoActualizado;
     });
   }
 

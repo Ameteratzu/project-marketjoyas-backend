@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EstadoPedido } from '@prisma/client';
+import { ActualizarPedidoDto } from './actualizar-pedido.dto';
 
 @Injectable()
 export class PedidoService {
@@ -348,6 +349,77 @@ async obtenerPedidosPorTienda(tiendaId: number) {
 
   return pedidos;
 }
+
+//ACTUALIZAR EL PEDIDO COMPLETO (PARA ESPECIFICAR SI PAGO AL CONTADO, EL TIPO DE CAMBIO)
+
+
+async actualizarPedidoCompleto(
+  pedidoId: number,
+  tiendaId: number,
+  dto: ActualizarPedidoDto,
+) {
+  const pedido = await this.prisma.pedido.findUnique({
+    where: { id: pedidoId },
+    include: { productos: true },
+  });
+
+  if (!pedido) {
+    throw new NotFoundException('Pedido no encontrado');
+  }
+
+  if (pedido.tiendaId !== tiendaId) {
+    throw new BadRequestException('No tienes permiso para modificar este pedido');
+  }
+
+  if (pedido.estado !== 'PENDIENTE' && pedido.estado !== 'EMPAQUETADO') {
+    throw new BadRequestException(
+      'Solo se pueden modificar pedidos en estado PENDIENTE o EMPAQUETADO',
+    );
+  }
+
+  // Validación adicional de tipoCambio
+  if (dto.tipoCambio && dto.moneda === 'PEN') {
+    throw new BadRequestException(
+      'El tipo de cambio solo aplica si la moneda no es PEN',
+    );
+  }
+
+  // Actualizar productos del pedido
+  if (dto.productos) {
+    // Eliminar los productos actuales del pedido
+    await this.prisma.pedidoDetalle.deleteMany({
+      where: { pedidoId },
+    });
+
+    // Agregar nuevos productos al pedido
+    await this.prisma.pedidoDetalle.createMany({
+      data: dto.productos.map((p) => ({
+        pedidoId,
+        productoId: p.productoId,
+        cantidad: p.cantidad,
+      })),
+    });
+  }
+
+  // Actualizar los campos del pedido
+  const pedidoActualizado = await this.prisma.pedido.update({
+    where: { id: pedidoId },
+    data: {
+      formaPago: dto.formaPago,
+      moneda: dto.moneda,
+      tipoCambio: dto.tipoCambio,
+      condVenta: dto.condVenta,
+    },
+    include: {
+      productos: {
+        include: { producto: true },
+      },
+    },
+  });
+
+  return pedidoActualizado;
+}
+
 
 
 
