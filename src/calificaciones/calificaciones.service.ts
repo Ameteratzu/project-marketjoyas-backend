@@ -35,10 +35,13 @@ export class CalificacionesService {
      * @param limit - Cantidad de registros por página (por defecto 10)
      * @returns Lista de calificaciones con información del producto
      */
-    async findAll(page: number, limit: number) {
+    async findAll(page: number, limit: number, user: JwtPayload) {
         return this.prisma.calificacion.findMany({
             skip: (page - 1) * limit, // se saltan los registros de páginas anteriores
             take: limit,              // se toma solo la cantidad limitada de registros
+            where:{
+                usuarioId: user.sub,
+            },
             include: {
                 usuario: false,       // no se incluye información del usuario
                 producto: true,       // se incluye información del producto asociado
@@ -52,9 +55,9 @@ export class CalificacionesService {
      * @throws NotFoundException si no existe la calificación
      * @returns La calificación encontrada
      */
-    async findOne(id: number) {
+    async findOne(id: number, user: JwtPayload) {
         const califiaciones = await this.prisma.calificacion.findUnique({
-            where: { id },
+            where: { id, usuarioId: user.sub },
             include: {
                 usuario: false,
                 producto: true,

@@ -54,9 +54,10 @@ export class CalificacionesController {
     })
     findAll(
         @Query('page') page: number = 1,   // Número de página (opcional, por defecto 1)
-        @Query('limit') limit: number = 10 // Cantidad de registros por página (opcional, por defecto 10)
+        @Query('limit') limit: number = 10, // Cantidad de registros por página (opcional, por defecto 10)
+        @GetUser() user: JwtPayload
     ) {
-        return this.service.findAll(page, limit);
+        return this.service.findAll(page, limit, user);
     }
 
     /**
@@ -75,8 +76,8 @@ export class CalificacionesController {
     @ApiOperation({
         summary: 'Un CLIENTE visualizara una calificacion por id',
     })
-    findOne(@Param('id') id: string) {
-        return this.service.findOne(+id); // +id convierte el string a number
+    findOne(@Param('id') id: string, @GetUser() user: JwtPayload) {
+        return this.service.findOne(+id, user); // +id convierte el string a number
     }
 
     /**
