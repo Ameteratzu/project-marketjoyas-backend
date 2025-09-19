@@ -87,11 +87,6 @@ jobs:
             echo "🔄 Aplicando migraciones..."
             npx prisma migrate deploy
             
-            echo "🌱 Ejecutando seed..."
-            npm install -D ts-node @types/node
-            npx prisma db seed
-            npm uninstall -D ts-node @types/node
-            
             echo "🔄 Reiniciando API..."
             pm2 delete marketjoyas-api || true
             pm2 start npm --name "marketjoyas-api" -- run start:prod
