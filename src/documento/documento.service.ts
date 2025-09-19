@@ -149,4 +149,21 @@ export class DocumentoService {
 
     return documento;
   }
+
+
+  // Mostrar una boleta / factura por Id
+  async mostrar(id: number, user: JwtPayload){
+    const documento = await this.prisma.documento.findFirst({
+      where: { id, usuarioId: user.sub },
+      include: {
+        documentoDetalle: true,
+      },
+    });
+
+    if(!documento){
+      throw new NotFoundException("Documento no encontrado")
+    }
+
+    return documento;
+  }
 }

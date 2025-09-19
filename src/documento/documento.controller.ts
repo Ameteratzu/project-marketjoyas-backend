@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -31,4 +32,16 @@ export class DocumentoController {
   ) {
     return this.documentoService.crearDocumentoDesdePedido(pedidoId, dto, user);
   }
+
+
+  // Mostrar una boleta por id y por el VENDEDOR o TRABAJADOR que lo halla emitido
+  @Get('/visualizar/:id')
+  @Roles('VENDEDOR', 'TRABAJADOR')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener documento por ID' })
+  async getDocumento(@Param('id', ParseIntPipe) id: number, @GetUser() user: JwtPayload){
+    return this.documentoService.mostrar(id, user);
+  }
+
 }
