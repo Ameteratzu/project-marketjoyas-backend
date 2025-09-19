@@ -1068,7 +1068,17 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1742,6 +1752,33 @@
       }
     },
     "/categoria/{id}": {
+      "get": {
+        "operationId": "CategoriaController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtener una Categoria por ID",
+        "tags": [
+          "Categoria"
+        ]
+      },
       "patch": {
         "operationId": "CategoriaController_updateCategory",
         "parameters": [
@@ -3409,6 +3446,52 @@
           "OfertaGlobal"
         ]
       }
+    },
+    "/documento/generar/{pedidoId}": {
+      "post": {
+        "operationId": "DocumentoController_generarDocumento",
+        "parameters": [
+          {
+            "name": "pedidoId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerarDocumentoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generar boleta o factura desde pedido",
+        "tags": [
+          "Documento"
+        ]
+      }
     }
   },
   "info": {
@@ -4587,6 +4670,35 @@
           "titulo",
           "descuento",
           "validoHasta"
+        ]
+      },
+      "GenerarDocumentoDto": {
+        "type": "object",
+        "properties": {
+          "tipoDocumento": {
+            "type": "object"
+          },
+          "clienteNombre": {
+            "type": "string"
+          },
+          "clienteDocumento": {
+            "type": "string"
+          },
+          "clienteTelefono": {
+            "type": "string"
+          },
+          "clienteEmail": {
+            "type": "string"
+          },
+          "formaPago": {
+            "type": "string"
+          },
+          "condVenta": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "tipoDocumento"
         ]
       }
     }

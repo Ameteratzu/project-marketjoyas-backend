@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -39,6 +40,12 @@ export class CategoriaController {
 async getAllPublic(@Query('nombre') nombre?: string) {
   return this.categoriaService.getAllPublic(nombre);
 }
+
+@Get(':id')
+  @ApiOperation({ summary: 'Obtener una Categoria por ID' })
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.categoriaService.findOne(id);
+  }
 
   // Crear categoria
   @Roles('ADMIN')

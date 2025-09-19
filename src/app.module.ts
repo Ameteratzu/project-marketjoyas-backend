@@ -22,7 +22,6 @@ import { PedidoModule } from './pedido/pedido.module';
 import { CuponModule } from './cupon/cupon.module';
 import { RecuperacionPasswordModule } from './recuperacion-password/recuperacion-password.module';
 import { OfertaGlobalModule } from './oferta-global/oferta-global.module';
-import { BoletaModule } from './boleta/boleta.module';
 import { DocumentoModule } from './documento/documento.module';
 
 
@@ -52,7 +51,6 @@ import { DocumentoModule } from './documento/documento.module';
     CuponModule,
     RecuperacionPasswordModule,
     OfertaGlobalModule,
-    BoletaModule,
     DocumentoModule,
 
   ],
