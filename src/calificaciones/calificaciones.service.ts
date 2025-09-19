@@ -3,6 +3,7 @@ import { RegistrarCalificacion } from './dtos/RegistrarCalificacion.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtPayload } from '../auth/interfaces/jwt-payload.interface';
 import { ActualizarCalificacion } from './dtos/ActualizarCalificacion.dto';
+import { ActualizarEstadoDto } from './dtos/ActualizarEstado.dto';
 
 /**
  * Servicio para manejar operaciones relacionadas con las calificaciones de productos.
@@ -39,7 +40,7 @@ export class CalificacionesService {
         return this.prisma.calificacion.findMany({
             skip: (page - 1) * limit, // se saltan los registros de páginas anteriores
             take: limit,              // se toma solo la cantidad limitada de registros
-            where:{
+            where: {
                 usuarioId: user.sub,
             },
             include: {
@@ -103,13 +104,35 @@ export class CalificacionesService {
      * @throws ForbiddenException si el usuario no es el dueño de la calificación
      * @returns La calificación eliminada
      */
-    async remove(id: number, user: JwtPayload){
+    async remove(id: number, user: JwtPayload) {
         const calificacion = await this.prisma.calificacion.findUnique({ where: { id } });
         if (!calificacion) throw new NotFoundException('Calificación no encontrada');
         if (calificacion.usuarioId !== user.sub) throw new ForbiddenException('No tienes permisos para eliminar esta calificación');
 
         return this.prisma.calificacion.delete({
             where: { id },
+        });
+    }
+
+
+    async updateEstado(id: number, dto: ActualizarEstadoDto, user: JwtPayload) {
+        // validar que sea admin
+        if (user.rol !== 'ADMIN') {
+            throw new ForbiddenException('Solo el administrador puede cambiar estados');
+        }
+
+        // buscar la calificación
+        const calificacion = await this.prisma.calificacion.findUnique({ where: { id } });
+        if (!calificacion) {
+            throw new NotFoundException('Calificación no encontrada');
+        }
+
+        // actualizar solo el estado
+        return this.prisma.calificacion.update({
+            where: { id },
+            data: {
+                estado: dto.estado,
+            },
         });
     }
 }

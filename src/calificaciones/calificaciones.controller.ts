@@ -8,6 +8,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ActualizarCalificacion } from './dtos/ActualizarCalificacion.dto';
+import { ActualizarEstadoDto } from './dtos/ActualizarEstado.dto';
 
 
 
@@ -122,4 +123,21 @@ export class CalificacionesController {
     remove(@Param('id') id: string, @GetUser() user: JwtPayload) {
         return this.service.remove(+id, user);
     }
+
+    // Actualizar un estado solo por el ADMIN
+    @Patch(':id/estado')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('ADMIN') // solo admin puede acceder
+    @ApiOperation({
+        summary: 'Un ADMIN puede cambiar el estado de una calificacion por defaul esta en PENDIENTE, cambios a APROBADO o RECHAZADO',
+    })
+    updateEstado(
+        @Param('id') id: string,
+        @Body() dto: ActualizarEstadoDto,
+        @GetUser() user: JwtPayload
+    ) {
+        return this.service.updateEstado(+id, dto, user);
+    }
+
 }

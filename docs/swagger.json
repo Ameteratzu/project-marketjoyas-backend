@@ -2558,6 +2558,45 @@
         ]
       }
     },
+    "/calificaciones/{id}/estado": {
+      "patch": {
+        "operationId": "CalificacionesController_updateEstado",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarEstadoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Un ADMIN puede cambiar el estado de una calificacion por defaul esta en PENDIENTE, cambios a APROBADO o RECHAZADO",
+        "tags": [
+          "Calificaciones"
+        ]
+      }
+    },
     "/direcciones": {
       "post": {
         "operationId": "DireccionesController_create",
@@ -4440,6 +4479,17 @@
             "description": "Comentario opcional del usuario"
           }
         }
+      },
+      "ActualizarEstadoDto": {
+        "type": "object",
+        "properties": {
+          "estado": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "estado"
+        ]
       },
       "CrearDireccion": {
         "type": "object",
